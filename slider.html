@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="slider-container">
+      <div class="slider">
+        <label for="ticket-price">Ticket Price: $<span id="tp">5</span></label>
+        <input
+          type="range"
+          min="0"
+          max="25"
+          value="5"
+          class="slider"
+          id="ticket-price"
+          name="ticket-price"
+        >
+      </div>
+      <div class="slider">
+        <label for="performance-number">Number of Performances: <span id="np">8</span></label>
+        <input
+          type="range"
+          min="1"
+          max="25"
+          value="8"
+          class="slider"
+          id="performance-number"
+          name="performance-number"
+        >
+      </div>
+      <div class="slider">
+        <label for="tickets-for-sale">Tickets for Sale (per Show): <span id="ts">100</span></label>
+        <input
+          type="range"
+          min="0"
+          max="500"
+          value="100"
+          step="20"
+          class="slider"
+          id="tickets-for-sale"
+          name="tickets-for-sale"
+        >
+      </div>
+      <div class="slider">
+        <label for="number-of-weeks">Number of Weeks: <span id="nw">2</span></label>
+        <input
+          type="range"
+          min="1"
+          max="4"
+          value="2"
+          class="slider"
+          id="number-of-weeks"
+          name="number-of-weeks"
+        >
+      </div>
+      <div class="output">
+        <div>Approximate cost:</div>
+        <h2>$<span id="minimum"></span> - $<span id="maximum"></span></h2>
+        <div>Based on an estimate of $<span id="ticket-sales"></span> in ticket sales.</div>
+      </div>
+    </div>
+    <script>
+      const values = {
+        priceValue: 5,
+        get price() {
+          return this.priceValue;
+        },
+        set price(val) {
+          this.priceValue = val;
+          printPrice();
+        },
+        perfValue: 8,
+        get perf() {
+          return this.perfValue;
+        },
+        set perf(val) {
+          this.perfValue = val;
+          printPerf();
+        },
+        ticketsValue: 100,
+        get tickets() {
+          return this.ticketsValue;
+        },
+        set tickets(val) {
+          this.ticketsValue = val;
+          printTickets();
+        },
+        weeksValue: 2,
+        get weeks() {
+          return this.weeksValue;
+        },
+        set weeks(val) {
+          this.weeksValue = val;
+          printWeeks();
+        }
+      };
+
+      const ticketPrice = document.getElementById('ticket-price');
+      ticketPrice.addEventListener('input', (e) => {
+        values.price = e.target.value;
+        calculateCost();
+      });
+
+      const printPrice = () => {
+        const tp = document.getElementById('tp');
+        tp.innerText = values.price;
+      };
+
+      const performances = document.getElementById('performance-number');
+      performances.addEventListener('input', (e) => {
+        values.perf = e.target.value;
+        calculateCost();
+      });
+
+      const printPerf = () => {
+        const np = document.getElementById('np');
+        np.innerText = values.perf;
+      };
+
+      const ticketNumber = document.getElementById('tickets-for-sale');
+      ticketNumber.addEventListener('input', (e) => {
+        values.tickets = e.target.value;
+        calculateCost();
+      });
+
+      const printTickets = () => {
+        const ts = document.getElementById('ts');
+        ts.innerText = values.tickets;
+      };
+
+      const weeks = document.getElementById('number-of-weeks');
+      weeks.addEventListener('input', (e) => {
+        values.weeks = e.target.value;
+        calculateCost();
+      });
+
+      const printWeeks = () => {
+        const nw = document.getElementById('nw');
+        nw.innerText = values.weeks;
+      };
+
+      const calculateCost = () => {
+        const ticketSales = values.price * values.perf * values.tickets;
+        const sales = document.getElementById('ticket-sales');
+        sales.innerText = ticketSales;
+        const ticketExcess = (ticketSales - 600) > 0 ? ticketSales - 600 : 0;
+        const minimum = 400 + 350 * values.weeks + 60 * values.perf + .1 * ticketExcess;
+        const min = document.getElementById('minimum');
+        min.innerText = minimum;
+        const maximum = 600 + 500 * values.weeks + 80 * values.perf + .2 * ticketExcess;
+        const max = document.getElementById('maximum');
+        max.innerText = maximum;
+      };
+
+      calculateCost();
+    </script>
+    <style>
+      div.slider-container {
+        margin: auto;
+        padding: 5%;
+        width: 30%;
+        background: #CCCCCC;
+        border-radius: 5px;
+      }
+
+      div.slider {
+        margin: 50px 0;
+      }
+
+      label, input {
+        font-family: "Georgia";
+        display: block;
+        width: 100%;
+      }
+
+      div.output {
+        font-family: "Gill Sans", sans-serif;
+      }
+
+      @media only screen and (max-width: 768px) {
+        div.slider-container {
+          width: 90%;
+        }
+      }
+    </style>
+  </body>
+</html>
