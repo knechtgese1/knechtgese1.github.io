@@ -389,6 +389,7 @@
   .clear {
     font-family: sans-serif;
     font-size: 20px;
+    color: black;
     margin-top: 20px;
     border-radius: 10px;
   }
