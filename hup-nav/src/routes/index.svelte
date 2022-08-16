@@ -209,6 +209,10 @@
     color: black;
   }
 
+  :disabled {
+    opacity: 50%;
+  }
+
   .button-list {
     background: pink;
   }
