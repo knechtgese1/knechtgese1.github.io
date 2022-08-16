@@ -286,7 +286,7 @@
 
   .back {
     background: rgba(255, 0, 0, 0.75);
-    font-size: 20px;
+    font-size: 10px;
   }
 
   .enter {
