@@ -273,7 +273,7 @@
     height: 50px;
     margin: 5px;
     font-size: 40px;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-family: sans-serif;
     align-items: center;
     justify-content: center;
   }
@@ -308,7 +308,7 @@
   }
 
   .roomlist-header button {
-    font-family: "Impact", "Helvetica Neue", Helvetica, Arial;
+    font-family: sans-serif;
     font-size: 16px;
     background: orange;
     border-radius: 10px;
@@ -369,7 +369,7 @@
   .done {
     padding: 10px 20px;
     text-align: center;
-    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-family: sans-serif;
     font-size: 50px;
     background: goldenrod;
     border-radius: 10px;
@@ -380,7 +380,7 @@
   }
 
   .clear {
-    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-family: sans-serif;
     font-size: 20px;
     margin-top: 20px;
     border-radius: 10px;
