@@ -206,6 +206,7 @@
     font-weight: 900;
     align-items: center;
     justify-content: center;
+    color: black;
   }
 
   .button-list {
@@ -287,10 +288,12 @@
   .back {
     background: rgba(255, 0, 0, 0.75);
     font-size: 10px;
+    color: black;
   }
 
   .enter {
     background: rgba(128, 255, 128, 0.75);
+    color: black;
   }
 
   .roomlist {
@@ -313,6 +316,7 @@
     font-family: sans-serif;
     font-size: 10px;
     background: orange;
+    color: black;
     border-radius: 10px;
   }
 
@@ -374,6 +378,7 @@
     font-family: sans-serif;
     font-size: 50px;
     background: goldenrod;
+    color: black;
     border-radius: 10px;
   }
 
