@@ -60,7 +60,7 @@ export const navigate = (start: number, end: number) => {
   }
   if ((shortestPath(start, end).direction === 'clockwise' && cwPassedElevator) || (shortestPath(start, end).direction === 'counter-clockwise' && ccwPassedElevator)) {
     result.push(`Turn ${path === 'clockwise' ? 'left' : 'right'}`);
-    result.push(`Take lift ${cwPassedElevator || ccwPassedElevator} to floor ${(end - end % 100) / 100}`);
+    result.push(`Elevator ${cwPassedElevator || ccwPassedElevator} to floor ${(end - end % 100) / 100}`);
     result.push(`Turn ${path === 'clockwise' ? 'right' : 'left'}`);
     result.push(`Walk to room ${end}`);
     return result;
@@ -87,7 +87,7 @@ export const navigate = (start: number, end: number) => {
     }
   }
   result.push(`Turn ${firstPath === 'clockwise' ? 'left' : 'right'}`);
-  result.push(`Take lift ${elevator} to floor ${(end - end % 100)/ 100}`);
+  result.push(`Elevator ${elevator} to floor ${(end - end % 100)/ 100}`);
   result.push(`Turn ${firstPath === 'clockwise' ? 'left' : 'right'}`);
   result.push(`Walk to room ${end}`);
   return result;
