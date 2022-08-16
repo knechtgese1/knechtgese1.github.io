@@ -321,7 +321,7 @@
   }
 
   .room-queue {
-    height: 250px;
+    height: 150px;
     overflow: scroll;
   }
 
