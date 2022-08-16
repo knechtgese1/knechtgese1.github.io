@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { fly, fade } from 'svelte/transition';
+  import { navigate, sortRoomList } from './_utils'
 
   let mode = 'list';
 
@@ -9,7 +11,16 @@
 
   let allowSubmit = false;
 
+  let roomListString = '';
+
   let roomList: number[] = [];
+
+  let showClearModal = false;
+
+  onMount(async () => {
+    roomListString = localStorage.getItem('hup-navigator-room-list') || '';
+    roomList = JSON.parse(roomListString || '[]');
+  });
 
   const validateRoomNumber = (room: number) => {
     return ((room % 100) > 0 && (room % 100) < 73 && room < 1500 && room > 700);
@@ -32,6 +43,7 @@
         allowSubmit = false;
       } else {
         roomList[roomList.length] = Number(roomNumber);
+        localStorage.setItem('hup-navigator-room-list', JSON.stringify(roomList));
         roomNumber = '';
         allowSubmit = false;
       }
@@ -42,110 +54,20 @@
     console.log(index);
     roomList.splice(index, 1);
     roomList = roomList;
+    localStorage.setItem('hup-navigator-room-list', JSON.stringify(roomList));
   };
 
   const moveUp = (index: number) => {
     let temp = roomList[index - 1];
     roomList[index - 1] = roomList[index];
     roomList[index] = temp;
+    localStorage.setItem('hup-navigator-room-list', JSON.stringify(roomList));
   };
   const moveDown = (index: number) => {
     let temp = roomList[index + 1];
     roomList[index + 1] = roomList[index];
     roomList[index] = temp;
-  };
-
-  let cwPassedElevator = '';
-  let ccwPassedElevator = '';
-  const shortestPath = (start: number, end: number) => {
-    let cwWalker = start % 100;
-    let ccwWalker = start % 100; //just room number
-    let endRoom = end % 100;
-    let cwCounter = 0;
-    let ccwCounter = 0;
-    //clockwise first
-    while (cwWalker !== endRoom) {
-      if (cwWalker % 36 === 0) { //passing 36 or 72
-        cwCounter += 5; //going through the lounge
-      }
-      if (cwWalker === 12) {
-        cwPassedElevator = 'B'; //elevator flag
-      }
-      if (cwWalker === 48) {
-        cwPassedElevator = 'A';
-      }
-      cwWalker++; //walk one room cw
-      if (cwWalker === 73) cwWalker = 1;
-      cwCounter++; //count the distance
-    }
-    while (ccwWalker !== endRoom) {
-      if (ccwWalker % 36 === 1) {
-        ccwCounter += 5; //going through the lounge
-      }
-      if (ccwWalker === 13) {
-        ccwPassedElevator = 'B'; //elevator flag
-      }
-      if (ccwWalker === 49) {
-        ccwPassedElevator = 'A';
-      }
-      ccwWalker--; //walk one room ccw
-      if (ccwWalker === 0) ccwWalker = 72;
-      ccwCounter++; //count the distance
-    }
-    return {
-      distance: Math.min(cwCounter, ccwCounter),
-      direction: cwCounter < ccwCounter ? 'clockwise' : 'counter-clockwise'
-    };
-  };
-
-  const needElevator = (start: number, end: number) => {
-    return (start - start % 100) !== (end - end % 100);
-  };
-
-  const navigate = (start: number, end: number) => {
-    cwPassedElevator = '';
-    ccwPassedElevator = '';
-    const result: string[] = [];
-    result.push(`Exit room ${start}`);
-    const path = shortestPath(start, end).direction;
-    if (!needElevator(start, end)) {
-      result.push(`Turn ${path === 'clockwise' ? 'left' : 'right'}`);
-      result.push(`Walk to room ${end}`);
-      return result;
-    }
-    if ((shortestPath(start, end).direction === 'clockwise' && cwPassedElevator) || (shortestPath(start, end).direction === 'counter-clockwise' && ccwPassedElevator)) {
-      result.push(`Turn ${path === 'clockwise' ? 'left' : 'right'}`);
-      result.push(`Take elevator ${cwPassedElevator || ccwPassedElevator} to floor ${(end - end % 100) / 100}`);
-      result.push(`Turn ${path === 'clockwise' ? 'right' : 'left'}`);
-      result.push(`Walk to room ${end}`);
-      return result;
-    }
-    const startToA = Math.min(shortestPath(start, 48).distance, shortestPath(start, 49).distance);
-    const startToB = Math.min(shortestPath(start, 12).distance, shortestPath(start, 13).distance);
-    const endToA = Math.min(shortestPath(end, 48).distance, shortestPath(end, 49).distance);
-    const endToB = Math.min(shortestPath(end, 12).distance, shortestPath(end, 13).distance);
-    let firstPath = '';
-    let elevator = '';
-    if (Math.min(startToA, startToB, endToA, endToB) === startToA || Math.min(startToA, startToB, endToA, endToB) === endToA) {
-      elevator = "A";
-      if (startToA > 0 && endToA > 0) {
-        firstPath = shortestPath(start, 48).direction;
-      } else {
-        firstPath = start % 100 === 48 ? 'clockwise' : 'counter-clockwise';
-      }
-    } else {
-      elevator = "B";
-      if (startToB > 0 && endToB > 0) {
-        firstPath = shortestPath(start, 12).direction;
-      } else {
-        firstPath = start % 100 === 12 ? 'clockwise' : 'counter-clockwise';
-      }
-    }
-    result.push(`Turn ${firstPath === 'clockwise' ? 'left' : 'right'}`);
-    result.push(`Take elevator ${elevator} to floor ${(end - end % 100)/ 100}`);
-    result.push(`Turn ${firstPath === 'clockwise' ? 'left' : 'right'}`);
-    result.push(`Walk to room ${end}`);
-    return result;
+    localStorage.setItem('hup-navigator-room-list', JSON.stringify(roomList));
   };
 
   let currentDirections: string[] = [];
@@ -161,10 +83,22 @@
       roomList.shift();
     }
     roomList = roomList;
+    localStorage.setItem('hup-navigator-room-list', JSON.stringify(roomList));
+  };
+
+  const handleSort = (direction: string) => {
+    roomList = sortRoomList(roomList, direction);
+    localStorage.setItem('hup-navigator-room-list', JSON.stringify(roomList));
+  }
+
+  const handleClear = () => {
+    roomList = [];
+    localStorage.setItem('hup-navigator-room-list', JSON.stringify(roomList));
+    showClearModal = false;
   }
 </script>
 
-<div class="main">
+<div class="main" class:modal-show={showClearModal}>
   <div class="buttons">
     <button on:click={() => mode = 'list'} class="button-list">
       LIST
@@ -202,6 +136,8 @@
         <div class="roomlist">
           <div class="roomlist-header">
             <span>Queue</span>
+            <button disabled={roomList.length < 2} on:click={() => handleSort('top-down')}>TOP-DOWN</button>
+            <button disabled={roomList.length < 2} on:click={() => handleSort('bottom-up')}>BOTTOM-UP</button>
             <span>Total: {roomList.length}</span>
           </div>
           <div class="room-queue">
@@ -214,6 +150,7 @@
                 </div>
             {/each}
           </div>
+          <button class="clear" on:click={() => showClearModal = true}>CLEAR QUEUE</button>
         </div>
       </div>
     {/key}
@@ -224,12 +161,27 @@
           {#each currentDirections as command}
             <div class="command">{command}</div>
           {/each}
-          <button class="done" on:click={handleDone}>DONE</button>
+          <button class="done" class:hide={roomList.length < 2} on:click={handleDone}>NEXT</button>
         </div>
       {/key}
     {/key}
   {/if}
 </div>
+
+{#if showClearModal}
+  <div class="modal">
+    <div class="backdrop" />
+    <div class="modal-content-wrapper">
+      <div class="modal-content">
+        <span>Clear all rooms?</span>
+        <div class="modal-buttons">
+          <button on:click={handleClear}>YES</button>
+          <button on:click={() => showClearModal = false}>NO</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{/if}
 
 <style>
   :global(body) {
@@ -349,13 +301,21 @@
     display: flex;
     padding: 10px;
     justify-content: space-between;
+    align-items: center;
     background: goldenrod;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 900;
   }
 
+  .roomlist-header button {
+    font-family: "Impact", "Helvetica Neue", Helvetica, Arial;
+    font-size: 16px;
+    background: orange;
+    border-radius: 10px;
+  }
+
   .room-queue {
-    height: 300px;
+    height: 250px;
     overflow: scroll;
   }
 
@@ -412,6 +372,66 @@
     font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     font-size: 50px;
     background: goldenrod;
+    border-radius: 10px;
+  }
+
+  .done.hide {
+    display: none;
+  }
+
+  .clear {
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+  }
+
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .backdrop {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .modal-content-wrapper {
+    z-index: 10;
+    max-width: 70vw;
+    border-radius: 10px;
+    background-color: white;
+    overflow: hidden;
+  }
+
+  .modal-content {
+    max-height: 50vh;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 100px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  .modal-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 50px;
+  }
+
+  .modal-buttons button {
+    font-size: 20px;
     border-radius: 10px;
   }
 </style>
