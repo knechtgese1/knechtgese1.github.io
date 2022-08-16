@@ -87,7 +87,7 @@ export const navigate = (start: number, end: number) => {
     }
   }
   result.push(`Turn ${firstPath === 'clockwise' ? 'left' : 'right'}`);
-  result.push(`Take elevator ${elevator} to floor ${(end - end % 100)/ 100}`);
+  result.push(`Take lift ${elevator} to floor ${(end - end % 100)/ 100}`);
   result.push(`Turn ${firstPath === 'clockwise' ? 'left' : 'right'}`);
   result.push(`Walk to room ${end}`);
   return result;
