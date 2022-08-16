@@ -257,6 +257,8 @@
   }
 
   .keypad {
+    width: 75%;
+    margin: auto;
     margin-top: 20px;
     display: grid;
     grid-gap: 10px;
@@ -270,9 +272,9 @@
   .enter {
     display: flex;
     border-radius: 10px;
-    height: 50px;
+    height: 30px;
     margin: 5px;
-    font-size: 40px;
+    font-size: 20px;
     font-family: sans-serif;
     align-items: center;
     justify-content: center;
@@ -309,7 +311,7 @@
 
   .roomlist-header button {
     font-family: sans-serif;
-    font-size: 16px;
+    font-size: 10px;
     background: orange;
     border-radius: 10px;
   }
