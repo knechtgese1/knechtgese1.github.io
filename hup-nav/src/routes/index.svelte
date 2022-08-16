@@ -150,7 +150,7 @@
                 </div>
             {/each}
           </div>
-          <button class="clear" on:click={() => showClearModal = true}>CLEAR QUEUE</button>
+          <button class="clear" disabled={roomList.length < 1} on:click={() => showClearModal = true}>CLEAR QUEUE</button>
         </div>
       </div>
     {/key}
@@ -421,6 +421,7 @@
     align-items: center;
     width: 200px;
     height: 100px;
+    padding: 20px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
 
