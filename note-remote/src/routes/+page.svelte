@@ -1,8 +1,9 @@
 <script lang="ts">
   let note: any;
-  import { Clef, Ledger } from '../_components';
+  import { Clef, Ledger, KeySig } from '../_components';
   let clefSign = 0;
   let staffPosition = 0; // 0 = bottom space; +/- 0.5 for each line/space
+  let keySig = -4;
   $: if (note) note.style.bottom = (-9.75 + 2.35 * staffPosition - 6.45 * Number(staffPosition > 1)) + 'vw';
 </script>
 
@@ -14,6 +15,7 @@
   <div id="staff-container">
     <img id="staff" src="/images/staff-lines.svg" alt="">
       <Clef {clefSign} />
+      <KeySig {clefSign} {keySig} />
     <img bind:this={note} id="note" src="/images/quarter-note.svg" alt="" class:invert={staffPosition > 1}>
       <Ledger {staffPosition} />
   </div>
