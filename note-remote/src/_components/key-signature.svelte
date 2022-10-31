@@ -4,17 +4,24 @@
   export let keySig = 0;
   export let clefSign = 0;
   let accidentals = Array(keySig);
+  const getOffsets = (keySig: number, clefSign: number) => {
+    const offsets = [];
+    for (let i = 0; Math.abs(i) < Math.abs(keySig); i+= Math.sign(keySig)) {
+      offsets[Math.abs(i)] = 5.4 - 2.375 * (clefSign + Math.sign(keySig) + (2.5 - 2 * clefSign) * Number(clefSign < 2) + (i / 4) - (Math.sign(keySig) * 1.75 * (Math.abs(i) % 2)) - 3.5 * (Number(clefSign === 3) * Number (i === 0 || i === 2) + Number(i > 3 && (i % 2 === 0))));
+    }
+    return offsets;
+  }
   let signature: any = [];
   $: if (keySig !== 0) {
     for (let i = Math.sign(keySig); Math.abs(i) <= Math.abs(keySig); i+= Math.sign(keySig)) {
-      signature.push([Math.sign(keySig) === 1 ? 'sharp' : 'flat', clefs[clefSign], orderOfSharps[i - 1 + 8 * Number(i < 0)]]);
+      signature.push([Math.sign(keySig) === 1 ? 'sharp' : 'flat', clefs[clefSign], orderOfSharps[i - 1 + 8 * Number(i < 0)], getOffsets(keySig, clefSign)[Math.abs(i) - 1]]);
     }
   } else {signature = []}
 
 </script>
 
-{#each signature as [accidental, clef, name], i}
-  <img bind:this={accidentals[i]} class={accidental} id={`${clef}-${name}-${accidental}`} src={`/images/${accidental}.svg`} class:invisible={Math.abs(keySig) < (i + 1)} style={`left:${28 + 2.25 * i}vw`} alt="" transition:fade />
+{#each signature as [accidental, clef, name, offset], i}
+  <img bind:this={accidentals[i]} class={accidental} id={`${clef}-${name}-${accidental}`} src={`/images/${accidental}.svg`} class:invisible={Math.abs(keySig) < (i + 1)} style={`left:${28 + 2.25 * i}vw;top:${offset}vw;` } alt="" transition:fade />
 {/each}
 
 <style>
@@ -26,75 +33,5 @@
 
   .invisible {
     display: none;
-  }
-
-  #treble-F-sharp {
-    left: 28vw;
-    top: -3vw;
-  }
-
-  #treble-C-sharp {
-    left: 30.25vw;
-    top: 0.65vw;
-  }
-
-  #treble-G-sharp {
-    left: 32.5vw;
-    top: -4.1vw;
-  }
-
-  #treble-D-sharp {
-    left: 34.75vw;
-    top: -0.5vw;
-  }
-
-  #treble-A-sharp {
-    left: 37vw;
-    top: 3.1vw;
-  }
-
-  #treble-E-sharp {
-    left: 39.25vw;
-    top: -1.7vw;
-  }
-
-  #treble-B-sharp {
-    left: 41.5vw;
-    top: 1.85vw;
-  }
-
-  #treble-B-flat {
-    left: 28vw;
-    top: 1.85vw;
-  }
-
-  #treble-E-flat {
-    left: 30.25vw;
-    top: -1.7vw;
-  }
-
-  #treble-A-flat {
-    left: 32.5vw;
-    top: 3.1vw;
-  }
-
-  #treble-D-flat {
-    left: 34.75vw;
-    top: -0.5vw;
-  }
-
-  #treble-G-flat {
-    left: 37vw;
-    top: 4.25vw;
-  }
-
-  #treble-C-flat {
-    left: 39.25vw;
-    top: 0.65vw;
-  }
-
-  #treble-F-flat {
-    left: 41.5vw;
-    top: 5.4vw;
   }
 </style>

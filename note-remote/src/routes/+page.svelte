@@ -1,9 +1,9 @@
 <script lang="ts">
   let note: any;
   import { Clef, Ledger, KeySig } from '../_components';
-  let clefSign = 1;
+  let clefSign = 0;
   let staffPosition = 0; // 0 = bottom space; +/- 0.5 for each line/space
-  let keySig = 1;
+  let keySig = -1;
   $: if (note) note.style.bottom = (-9.75 + 2.35 * staffPosition - 6.45 * Number(staffPosition > 1)) + 'vw';
 </script>
 
