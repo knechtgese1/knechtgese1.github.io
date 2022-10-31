@@ -1,9 +1,9 @@
 <script lang="ts">
+  import { orderOfSharps, clefs } from '../routes/_consts';
   import { fade } from 'svelte/transition';
-  const orderOfSharps = 'FCGDAEB';
-  const clefs = ['treble', 'bass', 'alto', 'tenor'];
   export let keySig = 0;
   export let clefSign = 0;
+  let accidentals = Array(keySig);
   let signature: any = [];
   $: if (keySig !== 0) {
     for (let i = Math.sign(keySig); Math.abs(i) <= Math.abs(keySig); i+= Math.sign(keySig)) {
@@ -13,11 +13,9 @@
 
 </script>
 
-{#if clefSign === 0}
-  {#each signature as [accidental, clef, name], i}
-    <img class={accidental} id={`${clef}-${name}-${accidental}`} src={`/images/${accidental}.svg`} class:invisible={Math.abs(keySig) < (i + 1)} alt="" transition:fade />
-  {/each}
-{/if}
+{#each signature as [accidental, clef, name], i}
+  <img bind:this={accidentals[i]} class={accidental} id={`${clef}-${name}-${accidental}`} src={`/images/${accidental}.svg`} class:invisible={Math.abs(keySig) < (i + 1)} style={`left:${28 + 2.25 * i}vw`} alt="" transition:fade />
+{/each}
 
 <style>
   .sharp,
@@ -83,5 +81,20 @@
   #treble-D-flat {
     left: 34.75vw;
     top: -0.5vw;
+  }
+
+  #treble-G-flat {
+    left: 37vw;
+    top: 4.25vw;
+  }
+
+  #treble-C-flat {
+    left: 39.25vw;
+    top: 0.65vw;
+  }
+
+  #treble-F-flat {
+    left: 41.5vw;
+    top: 5.4vw;
   }
 </style>

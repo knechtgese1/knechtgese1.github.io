@@ -1,5 +1,7 @@
 export const orderOfSharps = 'FCGDAEB';
 
+export const clefs = ['treble', 'bass', 'alto', 'tenor'];
+
 const getNoteName = (noteName: string) => {
   return noteName.replace(/[0-9]/g, '');
 }
