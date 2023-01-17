@@ -6,6 +6,10 @@ const getNoteName = (noteName: string) => {
   return noteName.replace(/[0-9]/g, '');
 }
 
+const getLetter = (noteName: string) => {
+  return noteName[0];
+}
+
 const getAccidental = (noteName: string) => {
   noteName = getNoteName(noteName);
   return noteName.length === 1 ? 'natural' : (noteName[1] === "#" ? 'sharp' : 'flat');
@@ -44,7 +48,7 @@ export const parseNote = (noteName: string, keySig: number) => {
   const fullNote: Note = {
     noteName: getNoteName(noteName),
     octave: getOctave(noteName),
-    letterName: noteName[0],
+    letterName: getLetter(noteName),
     accidental: getAccidental(noteName),
     buttonAccidental: needButtonAccidental(noteName, keySig),
     staffAccidental: needStaffAccidental(noteName, keySig),

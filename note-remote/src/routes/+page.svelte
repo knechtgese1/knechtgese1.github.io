@@ -1,9 +1,10 @@
 <script lang="ts">
   let note: any;
   import { Clef, Ledger, KeySig } from '../_components';
-  let clefSign = 2;
-  let staffPosition = 0; // 0 = bottom space; +/- 0.5 for each line/space
-  let keySig = 7;
+  let choices = ['D4', 'A4'];
+  let clefSign = 0;
+  let staffPosition = -1; // 0 = bottom space; +/- 0.5 for each line/space
+  let keySig = 2;
   $: if (note) note.style.bottom = (-9.75 + 2.35 * staffPosition - 6.45 * Number(staffPosition > 1)) + 'vw';
 </script>
 
@@ -21,7 +22,8 @@
   </div>
 
   <div id="buttons-container">
-
+    <button>D</button>
+    <button>A</button>
   </div>
 </div>
 
@@ -93,10 +95,10 @@
     border-radius: 1vw;
     border-width: 3px;
     border-style: outset;
-    width: 7vw;
-    height: 7vw;
+    width: 5vw;
+    height: 5vw;
     font-family: 'Poppins';
-    font-size: 4vw;
+    font-size: 2.5vw;
     color: white;
   }
 
