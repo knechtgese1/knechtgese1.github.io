@@ -17,7 +17,7 @@
   const clearData = {...data};
 
   const emptyPoint: Point = {
-    date: new Date(Date.now()),
+    date: 0,
     dateString: '',
     timeString: '',
     value: 0,
@@ -61,12 +61,12 @@
           }
         });
         if (!point.timeString) point.timeString = '12:00';
-        point.date = getMs(dateString, point.timeString);
+        point.date = getMs(dateString, point.timeString).getTime();
         data.data = data.data.concat(point);
       }
     });
     data.data.sort((a: Point, b: Point) => {
-      return a.date.getTime() - b.date.getTime() ;
+      return a.date - b.date;
     });
   };
 

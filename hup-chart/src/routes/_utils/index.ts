@@ -11,9 +11,9 @@ export const convertTime = (time: string) => {
 };
 
 export const getMs = (rawDate: string, time: string) => {
-  const [hours, minutes] = convertTime(time);
+  const [hours, minutes] = time.split(':');
   const date = new Date(rawDate);
-  date.setHours(hours);
-  date.setMinutes(minutes);
+  date.setHours(Number(hours));
+  date.setMinutes(Number(minutes));
   return date;
 };

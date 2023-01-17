@@ -7,7 +7,7 @@ export type Data = {
 };
 
 export type Point = {
-  date: Date;
+  date: number;
   dateString: string;
   timeString: string;
   value: number;
