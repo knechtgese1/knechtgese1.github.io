@@ -1,4 +1,8 @@
 <script lang="ts">
+  import Chart from './_components/chart.svelte';
+  import { convertTime, getMs } from './_utils';
+  import type { Point, Data } from './_types/types';
+
   let display = "data";
   let value = '';
   let rawData = [];
@@ -10,20 +14,7 @@
     data: [],
   };
 
-  type Data = {
-    component?: string;
-    minimum?: number;
-    maximum?: number;
-    units?: string;
-    data: Point[];
-  };
-
-  type Point = {
-    date: Date;
-    dateString: string;
-    timeString: string;
-    value: number;
-  };
+  const clearData = {...data};
 
   const emptyPoint: Point = {
     date: new Date(Date.now()),
@@ -32,31 +23,12 @@
     value: 0,
   }
 
-  const convertTime = (time: string) => {
-    if (!time) {
-      return [12, 0]; // return noon if no time is given
-    }
-    const [clock, modifier] = time.split(' ');
-    const [hr, min] = clock.split(':');
-    let hours = Number(hr) % 12;
-    let minutes = Number(min);
-    if (modifier === 'PM') hours += 12;
-    return [hours, minutes];
-  }
-
-  const getMs = (rawDate: string, time: string) => {
-    const [hours, minutes] = convertTime(time);
-    const date = new Date(rawDate);
-    date.setHours(hours);
-    date.setMinutes(minutes);
-    return date;
-  }
-
   $: if (value) {
     data.data = [];
     rawData = value.split('\n');
     rawData.forEach((line: string) => {
       const parsedLine = line.split(/\s{3,}/).slice(0, -1);
+      if (!parsedLine || !parsedLine[0]) return;
       if (parsedLine[0] === 'Component') {
         data.component = parsedLine[1];
       } else if (parsedLine[0].includes('Latest Ref')) {
@@ -64,7 +36,7 @@
         data.minimum = parseFloat(limits[0]);
         data.maximum = parseFloat(limits[2]);
         data.units = limits[3];
-      } else {
+      } else if (parsedLine.length === 3) {
         let point: Point = { ...emptyPoint };
         let hours = 12;
         let minutes = 0;
@@ -98,6 +70,12 @@
     });
   };
 
+  const handleClear = () => {
+    value = '';
+    rawData = [];
+    data = clearData;
+  };
+
 </script>
 
 {#if display === 'data'}
@@ -126,7 +104,7 @@
       <li><i>etc.</i></li>
     </ul>
     {#if data.data.length > 0}
-      <h1>Data (read-only):</h1>
+      <h2>Data (read-only):</h2>
       <ul class="data-wrapper">
         {#if data.data.length > 1}
           <li><b>{data.component}, {data.minimum}-{data.maximum} {data.units}</b></li>
@@ -143,6 +121,7 @@
 {:else if display === 'chart'}
   <div class="chart-wrapper">
     <button on:click={() => display = 'data'}>GO TO DATA</button>
+    <Chart {data} />
   </div>
 {/if}
 
@@ -174,20 +153,23 @@
     height: 60vh;
     background: #fffff4;
     border: 3px double black;
+    border-radius: 6px;
     resize: none;
   }
 
   .sample {
     border-left: 3px double black;
     border-top: 3px double black;
-    width: 19rem;
+    border-radius: 6px 0 0 0;
+    width: 20rem;
     padding: 0.5rem;
   }
 
   .data-wrapper {
     background: #f4f4ff;
     border: 3px double black;
-    height: 25.5rem;
+    border-radius: 6px;
+    height: 26.3rem;
     overflow: scroll;
     padding: 0.5rem;
   }
