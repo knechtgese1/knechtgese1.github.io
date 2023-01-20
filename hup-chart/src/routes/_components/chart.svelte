@@ -32,12 +32,12 @@
       index + 1 === points.length ? 0 : Math.sqrt(Math.pow(points[index + 1][0] - point[0], 2) + Math.pow(points[index + 1][1] - point[1], 2))
     );
     angles = coords.map((point, index, points) => 
-      index + 1 === points.length ? 0 : ((Math.asin((points[index + 1][0] - point[0]) / hypotenuses[index]) * 180 / Math.PI) - 90) * Math.sign(points[index + 1][1] - point[1])
-    );
+      index + 1 === points.length ? 0 : ((Math.asin((points[index + 1][1] - point[1]) / hypotenuses[index]) * -180 / Math.PI)
+    ));
   }
 </script>
 
-<figure bind:clientHeight={height} bind:clientWidth={width} style="--chart-height: 50vw; --chart-width: 50vw;">
+<figure bind:clientHeight={height} bind:clientWidth={width} style="--chart-height: 80vh; --chart-width: 50vw;">
   <ul>
     {#each coords as [x, y], i}
       <li style="--y: {y}px; --x: {x}px;">
