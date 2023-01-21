@@ -1,8 +1,10 @@
 export type Data = {
-  component?: string;
-  minimum?: number;
-  maximum?: number;
-  units?: string;
+  component: string;
+  minimum: number;
+  maximum: number;
+  units: string;
+  firstDate: number;
+  lastDate: number;
   data: Point[];
 };
 

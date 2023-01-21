@@ -3,10 +3,6 @@
 
   export let data: Data;
 
-  $: if (data) {
-    console.log(data);
-  }
-
   let dataSet = data.data.map(point => [point.date, point.value]);
 
   let height = 0;
@@ -14,16 +10,29 @@
 
   let minYvalue = 0;
   let maxYvalue = Math.max(...dataSet.map(point => point[1]));
-  let minXvalue = Math.min(...dataSet.map(point => point[0]));
-  let maxXvalue = Math.max(...dataSet.map(point => point[0]));
+  let minXvalue = data.firstDate;
+  let maxXvalue = data.lastDate;
 
   let coords = dataSet.map(() => [0, 0]);
   let hypotenuses = dataSet.map(() => 0);
   let angles = dataSet.map(() => 0);
   let hovered = dataSet.map(() => false);
+  let hasNote = dataSet.map(() => false);
+  let notes = dataSet.map(() => '');
+  let isDragging = dataSet.map(() => false);
+  let noteOffsets = dataSet.map(() => [0, 0]);
+  let mouseX = 0;
+  let mouseY = 0;
+  let startingOffsetX = 0;
+  let startingOffsetY = 0;
 
   const getTooltip = (i: number) => {
     return [data.data[i].dateString + '\u00A0' + data.data[i].timeString, data.data[i].value + (data.units || '')];
+  }
+
+  const addNote = (i: number) => {
+    hasNote[i] = !hasNote[i];
+    if (!hasNote[i]) notes[i] = '';
   }
 
   $: if (width || height) {
@@ -35,18 +44,44 @@
       index + 1 === points.length ? 0 : ((Math.asin((points[index + 1][1] - point[1]) / hypotenuses[index]) * -180 / Math.PI)
     ));
   }
+
+  const startMoving = (e: MouseEvent, i: number) => {
+    isDragging[i] = true;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    console.log('mouse', mouseX, mouseY);
+    [startingOffsetX, startingOffsetY] = noteOffsets[i];
+  }
+
+  const handleMove = (e:MouseEvent, i: number) => {
+    if (isDragging[i]) {
+      noteOffsets[i][0] = startingOffsetX + e.clientX - mouseX;
+      noteOffsets[i][1] = startingOffsetY - e.clientY + mouseY;
+      console.log(noteOffsets[i]);
+    }
+  }
 </script>
 
 <figure bind:clientHeight={height} bind:clientWidth={width} style="--chart-height: 80vh; --chart-width: 50vw;">
   <ul>
     {#each coords as [x, y], i}
-      <li style="--y: {y}px; --x: {x}px;">
+      <li style="--y: {y}px; --x: {x}px; --xoff: {x + noteOffsets[i][0]}px; --yoff: {y + noteOffsets[i][1]}px;">
         <div class="line-segment" style="--hypotenuse: {hypotenuses[i]}; --angle: {angles[i]}" />
-        <div class="data-point" data-x={dataSet[i][0]} data-y={dataSet[i][1]} on:mouseenter={() => hovered[i] = true} on:mouseleave={() => hovered[i] = false}/>
-        <div class="tooltip" class:hovered={hovered[i]}>
-          {getTooltip(i)[0]}<br>
-          {getTooltip(i)[1]}
-        </div>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <div class="data-point" data-x={dataSet[i][0]} data-y={dataSet[i][1]} on:mouseenter={() => hovered[i] = true} on:mouseleave={() => hovered[i] = false} on:click|stopPropagation={() => addNote(i)} class:noted={hasNote[i]} />
+          <div class="tooltip" class:hovered={hovered[i] && !hasNote[i]}>
+            {getTooltip(i)[0]}<br>
+            {getTooltip(i)[1]}
+          </div>
+          {#if hasNote[i]}
+            <div class="note" on:mousedown={(e) => startMoving(e, i)} on:mouseup={() => isDragging[i] = false} on:mousemove={(e) => handleMove(e, i)} style="">
+              <div class="note-data">
+              {getTooltip(i)[0]}<br>
+              {getTooltip(i)[1]}
+              </div>
+              <div class="text" contenteditable="true" bind:textContent={notes[i]}></div>
+            </div>
+          {/if}
       </li>
     {/each}
   </ul>
@@ -101,11 +136,43 @@
     display: block;
   }
 
+  .note {
+    background: #F8F8F8;
+    font-family:Arial, Helvetica, sans-serif;
+    border: 1px solid black;
+    padding: 0.5rem;
+    width: fit-content;
+    opacity: 0.75;
+    position: absolute;
+    bottom: calc(var(--yoff) + 10px);
+    left: calc(var(--xoff) - 1px);
+    z-index: 1;
+  }
+
+  .note .text {
+    box-sizing: border-box;
+    border: 1px solid black;
+    text-align: left;
+    margin-top: 3px;
+    padding: 3px 3px 6px;
+    display: block;
+    height: 1.75rem;
+    width: 100%;
+  }
+
   .data-point:hover {
     height: 10px;
     width: 10px;
     bottom: calc(var(--y) - 4px);
     left: calc(var(--x) - 5px);
+  }
+
+  .data-point.noted {
+    height: 10px;
+    width: 10px;
+    bottom: calc(var(--y) - 4px);
+    left: calc(var(--x) - 5px);
+    background-color: red;
   }
 
   .line-segment {

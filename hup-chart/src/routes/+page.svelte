@@ -11,6 +11,8 @@
     minimum: 0,
     maximum: 0,
     units: '',
+    firstDate: 0,
+    lastDate: 0,
     data: [],
   };
 
@@ -68,6 +70,10 @@
     data.data.sort((a: Point, b: Point) => {
       return a.date - b.date;
     });
+    data.firstDate = (new Date(data.data[0].dateString)).getTime();
+    const lastDate = new Date(data.data[data.data.length - 1].dateString);
+    lastDate.setDate(lastDate.getDate() + 1);
+    data.lastDate = lastDate.getTime();
   };
 
   const handleClear = () => {
