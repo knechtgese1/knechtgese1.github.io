@@ -49,7 +49,6 @@
     isDragging[i] = true;
     mouseX = e.clientX;
     mouseY = e.clientY;
-    console.log('mouse', mouseX, mouseY);
     [startingOffsetX, startingOffsetY] = noteOffsets[i];
   }
 
@@ -57,7 +56,6 @@
     if (isDragging[i]) {
       noteOffsets[i][0] = startingOffsetX + e.clientX - mouseX;
       noteOffsets[i][1] = startingOffsetY - e.clientY + mouseY;
-      console.log(noteOffsets[i]);
     }
   }
 </script>
