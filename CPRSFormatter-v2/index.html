@@ -18,17 +18,17 @@
 <style>
 #clipb
 {
-	width: 704px; 
+	width: 704px;
 	height: 18px;
 	min-height: 18px;
 	max-height: 18px;
 	margin-left: 8px;
 	margin-bottom: 5px;
-	border-width: 2px 2px 2px; 
-	background-color:white; 
-	border-style: solid; 
+	border-width: 2px 2px 2px;
+	background-color:white;
+	border-style: solid;
 	overflow: hidden;
-	border-color: rgb(109, 119, 119) rgb(247, 247, 247) rgb(247, 247, 247) rgb(119, 119, 119); 
+	border-color: rgb(109, 119, 119) rgb(247, 247, 247) rgb(247, 247, 247) rgb(119, 119, 119);
 }
 #edtData
 {
@@ -39,17 +39,17 @@
 	word-wrap: break-word;
 	text-align: left;
 	font-family: Courier;
-	border-width: 2px 2px 2px; 
-	background-color:white; 
-	border-style: solid; 
-	border-color: rgb(119, 119, 119) rgb(247, 247, 247) rgb(247, 247, 247) rgb(119, 119, 119); 
-	width: 700px; 
-	margin-right: auto; 
-	margin-left: auto; 
-	display: block; 
-	height: 400px; 
-	overflow-y: auto; 
-	min-height: 400px; 
+	border-width: 2px 2px 2px;
+	background-color:white;
+	border-style: solid;
+	border-color: rgb(119, 119, 119) rgb(247, 247, 247) rgb(247, 247, 247) rgb(119, 119, 119);
+	width: 700px;
+	margin-right: auto;
+	margin-left: auto;
+	display: block;
+	height: 400px;
+	overflow-y: auto;
+	min-height: 400px;
 	max-height: 400px;
      font-size: 10pt;
 	overflow-x: hidden;
@@ -105,7 +105,7 @@ background-color:#313131;
     font-weight: bold;
     display: inline-block;
     line-height: 0px;
-    padding: 12px 2px 2px 2px;   
+    padding: 12px 2px 2px 2px;
 }
 #close:before {
     content: "X";
@@ -138,7 +138,7 @@ var listMicro = new Array();
 var listMicroSpec = new Array();
 var medList = new Array();
 var replaceArray = new Array();
-var msDay = 86400000;  
+var msDay = 86400000;
 var cbcData = "";
 var chemistryData = "";
 var urineData = "";
@@ -155,11 +155,11 @@ var calledMeds = 0;
 var medListOutpatient = false;
 //UPMC CHANGES
 replaceArray["CREATININE-e"] = "Creatinine";
-replaceArray["TOTAL BILIRUBIN"] = "TBil"; 
-replaceArray["DIRECT BILIRUBIN"] = "DBil"; 
-replaceArray["ALP"] = "ALK"; 
-replaceArray["TOTAL PROTEIN,SERUM"] = "Protein"; 
-replaceArray["LIPASE (LX)"] = "Lipase"; 
+replaceArray["TOTAL BILIRUBIN"] = "TBil";
+replaceArray["DIRECT BILIRUBIN"] = "DBil";
+replaceArray["ALP"] = "ALK";
+replaceArray["TOTAL PROTEIN,SERUM"] = "Protein";
+replaceArray["LIPASE (LX)"] = "Lipase";
 replaceArray["HGB A1C"] = "A1c";
 
 //Chemistries
@@ -175,7 +175,7 @@ replaceArray["PHOSPHORUS"] = "Phos";
 replaceArray["TROPONIN I"] = "Trop I";
 replaceArray["FERRITIN"] = "Ferritin";
 replaceArray["D-DIMER"] = "D-dimer";
-replaceArray["ALPHA-FETOPROTEIN"] = "AFP"; 
+replaceArray["ALPHA-FETOPROTEIN"] = "AFP";
 replaceArray["PROSTATIC SPECIFIC ANTIGEN"] = "PSA";
 replaceArray["METHYLMALONIC ACID (SERUM)"] = "Serum MMA";
 replaceArray["HEMOGLOBIN A1C"] = "A1c";
@@ -213,6 +213,7 @@ replaceArray["URIC ACID,URINE RANDOM"] = "Uric acid, random";
 replaceArray["TPMT"]  = "TPMT";
 replaceArray["LIPASE (WHAV)DC'd 7-13-99"];
 replaceArray["CREATININE,SERUM"] = "Creatinine";
+replaceArray["CREATININE, SERUM"] = "Creatinine";
 replaceArray["CREATININE"] = "Creatinine";
 replaceArray["CARBON DIOXIDE"] = "CO2";
 replaceArray["ALT(SGPT)"] = "ALT";
@@ -368,7 +369,7 @@ replaceArray["IGG"] = "IgG";
 replaceArray["DC'D LAMBDA"] = "Total Lambda LC";
 replaceArray["KAPPA QNT,SERUM DC'D 4/13/15"] = "Total Kappa LC";
 replaceArray["RETICULOCYTES (%)"] = "Retic %";
-replaceArray["ABSOLUTE RETIC COUNT"] = "Abs Retic #"; 
+replaceArray["ABSOLUTE RETIC COUNT"] = "Abs Retic #";
 replaceArray["RETICULOCYTE HGB"] = "Retic Hgb";
 replaceArray["IMMATURE RETIC FRACTION"] = "Imm Retic Frxn";
 replaceArray["IMMATURE PLT FRACTION"] = "Imm plt";
@@ -611,7 +612,7 @@ replaceArray["Q-FEVER IGG PH1 SCR"] = "Q-Fever IgG Ph1";
 replaceArray["Q-FEVER IGM PH1 SCR"] = "Q-Fever IgM Ph1";
 replaceArray["Q-FEVER IGG PH2 SCR"] = "Q-Fever IgG Ph2";
 replaceArray["Q-FEVER IGM PH2 SCR"] = "Q-Fever IgM Ph2";
-replaceArray["BRUCELLA IGG"] = "Brucella IgG"; 
+replaceArray["BRUCELLA IGG"] = "Brucella IgG";
 replaceArray["BRUCELLA IGM"] = "Brucella IgM";
 replaceArray["HISTOPLASMA AB (ID)"] = "Histoplasma Ab";
 
@@ -759,10 +760,65 @@ replaceArray["ANION GAP(POC)"] = "ANION GAP";
 
 
 
-var listTrends = ["CBC","Diff","Smear", "Chem","Cardiac","Iron","Liver","Coags","Lipid-a1c","Glucose","UA","UDS","ABG"];
-var listElements = [["WBC","HGB","HCT","PLT","MCV"],["PMN", "Lymph", "Mono", "Eos", "Baso","Bands","Promyelocytes","Myelocytes","Metamyelocytes","Blasts"],["SMEAR"],["SODIUM","POTASSIUM","CHLORIDE","CO2","ANION GAP","UREA NITROGEN","Creatinine","Calcium","Mag","Phos"],["Trop I","CK-MB","CK","BNP"],["Iron","TIBC","Iron sat","Ferritin"],["AST","ALT","ALK","TBil","DBil","Albumin","Protein","Ammonia"],["PT","INR","PTT","Fibrinogen","D-dimer"],["A1c","Spot Albumin/Cr ratio","CHOL","LDL","LDL,DIRECT","HDL","TG","VLDL"],["Glucose"],["SPECIFIC GRAVITY","URINE pH","URINE BLOOD","LEUKOCYTE ESTERASE","NITRITE, URINE","URINE PROTEIN","URINE GLUCOSE","URINE KETONES","URINE BILIRUBIN", "UROBILINOGEN"],["AMPHETAMINES SCREEN","BARBITURATES SCREEN","BENZODIAZEPI SCREEN","CANNABINOIDS SCREEN","COCAINE SCREEN","OPIATES SCREEN","METHADONE SCREEN","OXYCODONE SCREEN","BUPRENORPHINE SCREEN","FENTANYL SCREEN","Ethyl Glucuronide"],["ABG"]];
-var listNames = [["WBC","HGB","HCT","PLT","MCV"],["PMN", "Lymph", "Mono", "Eos", "Baso","Bands","Promy","Myelo","Metam","Blast"],["SMEAR"],["Na","K","Cl","CO2","AG","BUN","Cr","Ca","Mg","PO4"],["Troponin I","CK-MB","CPK","BNP"],["Iron","TIBC","TSat","Ferritin"],["AST","ALT","AlkP","TBil","DBil","Alb","Prtn","NH4"],["PT","INR","PTT","Fibrinogen","D-dimer"],["A1c","Alb/Cr","Chol","LDL    ","LDL Direct", "HDL","TG", "VLDL"],["Glucose"],["SG","pH","Blood","LE","Nitr","Prtn","Gluc","Keto","Bili", "Urobi"],["AMP","BAR","BZD","CBD","COC","OPI","MTD","OXY","BUP","FEN","ETG"],["ABG"]];
-var listTrendSpecimens = ["||BLOOD||","||BLOOD||","||BLOOD||","||SERUM||PLASMA||","||SERUM||PLASMA||BLOOD||","||SERUM||PLASMA||BLOOD||","||SERUM||PLASMA||BLOOD||","||SERUM||PLASMA||BLOOD||","||SERUM||PLASMA||BLOOD||URINE||","||SERUM||PLASMA||BLOOD||","||URINE||","||URINE||","||ARTERIAL BLOOD||"];
+var listTrends = [
+	"CBC",
+	"Diff",
+	"Smear",
+	"Chem",
+	"Cardiac",
+	"Iron",
+	"Liver",
+	"Coags",
+	"Lipid-a1c",
+	"Glucose",
+	"UA",
+	"UDS",
+	"ABG"
+];
+var listElements = [
+	["WBC","HGB","HCT","PLT","MCV"],
+	["PMN", "Lymph", "Mono", "Eos", "Baso","Bands","Promyelocytes","Myelocytes","Metamyelocytes","Blasts"],
+	["SMEAR"],
+	["SODIUM","POTASSIUM","CHLORIDE","CO2","ANION GAP","UREA NITROGEN","Creatinine","Calcium","Mag","Phos"],
+	["Trop I","CK-MB","CK","BNP"],
+	["Iron","TIBC","Iron sat","Ferritin"],
+	["AST","ALT","ALK","TBil","DBil","Albumin","Protein","Ammonia"],
+	["PT","INR","PTT","Fibrinogen","D-dimer"],
+	["A1c","Spot Albumin/Cr ratio","CHOL","LDL","LDL,DIRECT","HDL","TG","VLDL"],
+	["Glucose"],
+	["SPECIFIC GRAVITY","URINE pH","URINE BLOOD","LEUKOCYTE ESTERASE","NITRITE, URINE","URINE PROTEIN","URINE GLUCOSE","URINE KETONES","URINE BILIRUBIN", "UROBILINOGEN"],
+	["AMPHETAMINES SCREEN","BARBITURATES SCREEN","BENZODIAZEPI SCREEN","CANNABINOIDS SCREEN","COCAINE SCREEN","OPIATES SCREEN","METHADONE SCREEN","OXYCODONE SCREEN","BUPRENORPHINE SCREEN","FENTANYL SCREEN","Ethyl Glucuronide"],
+	["ABG"]];
+var listNames = [
+	["WBC","HGB","HCT","PLT","MCV"],
+	["PMN", "Lymph", "Mono", "Eos", "Baso","Bands","Promy","Myelo","Metam","Blast"],
+	["SMEAR"],
+	["Na","K","Cl","CO2","AG","BUN","Cr","Ca","Mg","PO4"],
+	["Troponin I","CK-MB","CPK","BNP"],
+	["Iron","TIBC","TSat","Ferritin"],
+	["AST","ALT","AlkP","TBil","DBil","Alb","Prtn","NH4"],
+	["PT","INR","PTT","Fibrinogen","D-dimer"],
+	["A1c","Alb/Cr","Chol","LDL    ","LDL Direct", "HDL","TG", "VLDL"],
+	["Glucose"],
+	["SG","pH","Blood","LE","Nitr","Prtn","Gluc","Keto","Bili", "Urobi"],
+	["AMP","BAR","BZD","CBD","COC","OPI","MTD","OXY","BUP","FEN","ETG"],
+	["ABG"]
+];
+var listTrendSpecimens = [
+	"||BLOOD||",
+	"||BLOOD||",
+	"||BLOOD||",
+	"||SERUM||PLASMA||",
+	"||SERUM||PLASMA||BLOOD||",
+	"||SERUM||PLASMA||BLOOD||",
+	"||SERUM||PLASMA||BLOOD||",
+	"||SERUM||PLASMA||BLOOD||",
+	"||SERUM||PLASMA||BLOOD||URINE||",
+	"||SERUM||PLASMA||BLOOD||",
+	"||URINE||",
+	"||URINE||",
+	"||ARTERIAL BLOOD||"
+];
 
 var listMedID = new Array();
 
@@ -777,7 +833,7 @@ function loadFunction()
 		ttHTML += "<td>" + listTrends[i] + "</td><td>";
 		ttHTML += "<input title ='Single " + listTrends[i] + "' onclick='ff()' type='radio' id='" + listTrends[i] + "single' name='" + listTrends[i] + "' checked></td><td>";
 		ttHTML += "<input title ='Week " + listTrends[i] + "' onclick='ff()' type='radio' id='" + listTrends[i] + "week' name='" + listTrends[i] + "'></td><td>"
-		ttHTML += "<input title ='All " + listTrends[i] + "' onclick='ff()' type='radio' id='" + listTrends[i] + "all'  name='" + listTrends[i] + "'></td>"; 
+		ttHTML += "<input title ='All " + listTrends[i] + "' onclick='ff()' type='radio' id='" + listTrends[i] + "all'  name='" + listTrends[i] + "'></td>";
 		ttHTML += "</tr>";
 	}
 	ttHTML += "<tr><td>Changes</td><td><input onclick ='ff()' type='radio' id='viewchangessingle' name='viewchange' checked></td><td>";
@@ -791,7 +847,7 @@ function generateTrendText(tE)
 	var ttHTML = "";
 	if(listTrends.indexOf(tE) != -1)
 	{
-		var num = 0;		
+		var num = 0;
 		if(document.getElementById(tE + "week").checked)
 			num = 1;
 		if(document.getElementById(tE + "all").checked)
@@ -821,7 +877,7 @@ function generateTrendText(tE)
 				}
 			}
 			//need to select specimens in chronologic order:
-			
+
 			ttHTML += "\n" + replicate("=",blankLength) + "\n";
 			var listTrendTimes = [];
 			for(var i = 0; i < ne; i++)
@@ -867,7 +923,7 @@ function generateTrendText(tE)
 					while(!exitLoop)
 					{
 						if(j == listTrendTimes.length)
-						{ 
+						{
 							exitLoop = true;
 						} else
 						{
@@ -950,7 +1006,7 @@ function generateTrendText(tE)
                 if(listTrends[index] == "UDS")
                 {
                   curString += replicate(" ",Math.max(5,listNames[index][j].length + 1));
-                } else 
+                } else
                 {
                   curString += replicate(" ",Math.max(6,listNames[index][j].length + 1));
                 }
@@ -1010,7 +1066,7 @@ function opf()
 function msToDate(ts)
 {
 	var td = new Date(ts);
-	var retSt = (td.getMonth()+1) + "/" + td.getDate() + "/" + td.getFullYear()+ " "; 
+	var retSt = (td.getMonth()+1) + "/" + td.getDate() + "/" + td.getFullYear()+ " ";
 	if(td.getHours() < 10)
 		retSt += "0";
 	retSt += td.getHours() + ":";
@@ -1031,7 +1087,7 @@ function compareDay(ta, tb)
 function msToDay(ts)
 {
 	var td = new Date(ts);
-	var retSt = (td.getMonth()+1) + "/" + td.getDate() + "/" + td.getFullYear(); 
+	var retSt = (td.getMonth()+1) + "/" + td.getDate() + "/" + td.getFullYear();
 	return retSt;
 }
 function msToMH(ts)
@@ -1108,7 +1164,7 @@ function getIndex(labs, date, spec)
 			}
 		}
 		retList[labs[i]] = retVal;
-	}	
+	}
 	return retList;
 }
 
@@ -1136,7 +1192,7 @@ function getNTime(labs, spec, n)
 						}
 					}
 					if (pos != -1)
-						timeList.splice(pos,0,listTime[labs[i]][j]);							
+						timeList.splice(pos,0,listTime[labs[i]][j]);
 				}
 			}
 		}
@@ -1289,10 +1345,10 @@ function getTCV(lab, t1, specimen)
 				}
 			}
 		}
-	} 
+	}
 	if(tcv == -1)
 		return [-1,-1,-1];
-	return [tcv, listTime[lab][minLoc], minLoc];	
+	return [tcv, listTime[lab][minLoc], minLoc];
 }
 
 function timeFormat(s)
@@ -1338,7 +1394,7 @@ function generateText(name, prop, specimen, id)
 				post = "</span>";
 			}
 			trendText += name + ": " + pre + listVals[prop][j] + post + " @ " + listTime[prop][j] + "\n";
-		}		
+		}
 	}
 	return "<span id = '" + id + "' style='display:none'>" + trendText + "</span>";
 }
@@ -1358,7 +1414,7 @@ function templateSpecial(lab, base)
 	if(!(lab in listVals))
 	{
 		listVals[lab] = new Array();
-		listCrit[lab] = new Array();			
+		listCrit[lab] = new Array();
 		listUH[lab] = new Array();
 		listPH[lab] = new Array();
 		listTime[lab] = new Array();
@@ -1398,7 +1454,7 @@ function printData(prop, specimenList, tagLine)
 		{
 			minV = j;
 			j = listVals[prop].length;
-		}		
+		}
 	}
 	if(minV != -1)
 	{
@@ -1420,26 +1476,26 @@ function printData(prop, specimenList, tagLine)
 			{
 				if(listComment[prop][minV].indexOf("hemolysis") != -1 && (listUH[prop][minV] == "comment" || listUH[prop][minV] == "***"))
 				{
-						return tmpProp + ": " + "<span ondblclick=\"alert('" + listComment[prop][minV] + "')\">" + "hemolyzed</span> @ " + listTime[prop][minV] + " \n";	
+						return tmpProp + ": " + "<span ondblclick=\"alert('" + listComment[prop][minV] + "')\">" + "hemolyzed</span> @ " + listTime[prop][minV] + " \n";
 				}
 			}
-			return tmpProp + ": " + "<span ondblclick=\"alert('" + listComment[prop][minV] + "')\">" + pf + listUH[prop][minV] + pof + "</span> @ " + listTime[prop][minV] + " \n";		
+			return tmpProp + ": " + "<span ondblclick=\"alert('" + listComment[prop][minV] + "')\">" + pf + listUH[prop][minV] + pof + "</span> @ " + listTime[prop][minV] + " \n";
 		}
 		else
 		{
-			return tmpProp + ": " + pf + listUH[prop][minV] + pof + " @ " + listTime[prop][minV] + " \n";	
+			return tmpProp + ": " + pf + listUH[prop][minV] + pof + " @ " + listTime[prop][minV] + " \n";
 		}
-		//return "<span ondblclick=\"odc('" + tmpProp + "')\">" +  tmpProp + ": " + pf + listUH[prop][minV] + pof + "</span>" + " @ " + listTime[prop][minV] + " \n";							
-	}		
+		//return "<span ondblclick=\"odc('" + tmpProp + "')\">" +  tmpProp + ": " + pf + listUH[prop][minV] + pof + "</span>" + " @ " + listTime[prop][minV] + " \n";
+	}
 	return "";
 }
-	
+
 /* Main function that splits array into discrete lab elements, then generates text */
-function fs() 
+function fs()
 {
 	if(typeof String.prototype.trim !== 'function') {
 		String.prototype.trim = function() {
-			return this.replace(/^\s+|\s+$/g, ''); 
+			return this.replace(/^\s+|\s+$/g, '');
 		}
 	}
     var str1 = clipb.value;
@@ -1454,13 +1510,13 @@ function fs()
     listMicro = new Array();
     listMicroSpec = new Array();
     medList = new Array();
-	
+
 	var curTime = "";
     var curSpec = "";
     var resultTime = "";
 	var curComment = "";
 	medListOutpatient = false;
-	for (i = 0; i < vals.length; i++) 
+	for (i = 0; i < vals.length; i++)
 	{
 		var labCode = / \[([0-9]{3,4})\]/;
 		var includeList = false;
@@ -1483,7 +1539,7 @@ function fs()
 			includeList = false;
 			if(vals[i].indexOf("  ACTIVE") != -1 || vals[i].indexOf("  ACTIVE (S)") != -1 || vals[i].indexOf("  PENDING") != -1)
 			{
-				medListOutpatient = true;			
+				medListOutpatient = true;
 			}
 			var mL = vals[i].substr(3).replace(" ACTIVE (S)","").replace(" ACTIVE","").replace(" PENDING","").replace("Non-VA ","").trim() + " ";
 			i++;
@@ -1498,7 +1554,7 @@ function fs()
 			i--;
 			medList.push(mL);
 		}
-        if (includeList) 
+        if (includeList)
 		{
             	var temp = vals[i];
 			var tj = i;
@@ -1542,24 +1598,24 @@ function fs()
 		    } else if(val == "Not" || val == "NOT")
 			{
 				var tempVal = temp.replace("Not "," ").replace("NOT "," ");
-				val = "Not " + valsearch.exec(tempVal.substring(temp.indexOf("  ")));				
+				val = "Not " + valsearch.exec(tempVal.substring(temp.indexOf("  ")));
 			}else if(val == "SEE" || val == "See")
 			{
 				var tempVal = temp.replace("SEE "," ").replace("See "," ");
-				val = "SEE " + valsearch.exec(tempVal.substring(temp.indexOf("  ")));				
+				val = "SEE " + valsearch.exec(tempVal.substring(temp.indexOf("  ")));
 			} else if(val == "Non" || val == "NON")
 			{
 				var tempVal = temp.replace("Non "," ").replace("NON "," ");
-				val = "Non " + valsearch.exec(tempVal.substring(temp.indexOf("  ")));				
+				val = "Non " + valsearch.exec(tempVal.substring(temp.indexOf("  ")));
 			} else if(val == "OCCASIONAL" || val == "Occasional")
 			{
 				var tempVal = temp.replace("OCCASIONAL "," ").replace("Occasional "," ");
-				val = "Occasional " + valsearch.exec(tempVal.substring(temp.indexOf("  ")));				
+				val = "Occasional " + valsearch.exec(tempVal.substring(temp.indexOf("  ")));
 			} else if(val == "SLIGHT" || val == "Slight")
 			{
 				var tempVal = temp.replace("SLIGHT "," ").replace("Slight "," ");
-				val = "Slight " + valsearch.exec(tempVal.substring(temp.indexOf("  ")));				
-			} 
+				val = "Slight " + valsearch.exec(tempVal.substring(temp.indexOf("  ")));
+			}
 			if(val == "NEGATIVE" || val == "NEG" || val == "NON-REACTIVE" || val == "negative" || val == "Non Reactive" || val == "Not Reactive" || val == "nonreactive" || val == "Nonreactive" || val == "Not DETECTED")
 			{
 				val = "Neg";
@@ -1593,7 +1649,7 @@ function fs()
 				val = "none";
 			if(val == "NONREPORTABLE")
 				val = "***";
-			
+
 			if(lab in replaceArray)
 				lab = replaceArray[lab];
 		  if(lab == "Centromere" || lab == "Peripheral" || lab == "Speckled" || lab == "Homogeneous" || lab == "Nucleolar")
@@ -1625,7 +1681,7 @@ function fs()
 		  if(!("ANA Titer"  in listVals))
 		  {
 				listVals["ANA Titer"] = new Array();
-				listCrit["ANA Titer"] = new Array();			
+				listCrit["ANA Titer"] = new Array();
 				listUH["ANA Titer"] = new Array();
 				listPH["ANA Titer"] = new Array();
 				listTime["ANA Titer"] = new Array();
@@ -1640,7 +1696,7 @@ function fs()
 				    if(tv.indexOf(":") != -1 && parseInt(tv.split(":")[1]) > 40)
 				    {
 					   crit = "H";
-		    } 
+		    }
 	    var uh = val;
 	    if(crit != "N")
 		    uh += " " + crit;
@@ -1648,8 +1704,8 @@ function fs()
 	    listUH["ANA Titer"].push(uh);
 	    var ph = val + "%";
 	    if(crit != "N")
-		   ph += " " + crit;   
-	    listPH["ANA Titer"].push(ph); 
+		   ph += " " + crit;
+	    listPH["ANA Titer"].push(ph);
          listTime["ANA Titer"].push(curTime);
 		    		    listSpecimen["ANA Titer"].push(curSpec);
 	    listComment["ANA Titer"].push(curComment);
@@ -1658,7 +1714,7 @@ function fs()
 		  if(!(lab in listVals))
 		  {
 				listVals[lab] = new Array();
-				listCrit[lab] = new Array();			
+				listCrit[lab] = new Array();
 				listUH[lab] = new Array();
 				listPH[lab] = new Array();
 				listTime[lab] = new Array();
@@ -1680,13 +1736,13 @@ function fs()
 	        listUH[lab].push(uh);
 		    var ph = val + "%";
 		    if(crit != "N")
-			ph += " " + crit;   
+			ph += " " + crit;
 		    listPH[lab].push(ph);
 		    listTime[lab].push(curTime);
-			
+
 			if(curSpec.indexOf("MIXED VENOUS") != -1)
 				curSpec = "MIXED VENOUS BLOOD";
-			
+
 		    listSpecimen[lab].push(curSpec);
 			listComment[lab].push(curComment);
 			if(lab == "Calcium")
@@ -1694,8 +1750,8 @@ function fs()
 			if(lab == "Retic %")
 				templateSpecial("Retic Index","Retic %");
 			if(lab == "Osmolality" && curSpec == "SERUM")
-				templateSpecial("Osm Gap","Osmolality");	
-			} else if (vals[i].indexOf("====================================") != -1 && listMicro.length > 0) 
+				templateSpecial("Osm Gap","Osmolality");
+			} else if (vals[i].indexOf("====================================") != -1 && listMicro.length > 0)
 			{
 				var tlm = listMicro.pop();
 				var ts = tlm.split("\n");
@@ -1706,8 +1762,8 @@ function fs()
 				{
 					listMicro.push(tlm);
 				}
-						
-			} else if (vals[i].indexOf("Specimen:") != -1) 
+
+			} else if (vals[i].indexOf("Specimen:") != -1)
 			{
 				curSpec = vals[i].split(": ")[1].split(". ")[0].trim();
 				var newI = i +1;
@@ -1725,7 +1781,7 @@ function fs()
 					newI++;
 				}
 				curComment = curComment.replace(/\</g,"&#060;").replace(/\>/g,"&#062;").replace(/@/g," at ");
-			} else if (vals[i].indexOf("Specimen Collection Date:") != -1) 
+			} else if (vals[i].indexOf("Specimen Collection Date:") != -1)
 			{
 				curTime = vals[i].replace("Specimen Collection Date:", "").trim();
 				if(curTime.indexOf("@") == -1)
@@ -1781,7 +1837,7 @@ function fs()
 					if(vals[i].trim() == "")
 					{
 						if(vals[i + 1].trim() == "" || vals[i + 1].indexOf("GRAM STAIN:") != -1 || vals[i + 1].indexOf("ANTIBIOTIC SUSCEPTIBILITY TEST RESULTS:") != -1 || vals[i + 1].indexOf("CULTURE RESULTS") != -1 || vals[i + 1].indexOf("=--=--=--=--=--=--=--=--=--=--=-") != -1)
-							onlyBlank = true;	
+							onlyBlank = true;
 					} else
 					{
 						textS += vals[i].trim() + "\n";
@@ -1874,7 +1930,7 @@ function fs()
 				{
 					listMicro.push(textS);
 				}
-			} 
+			}
 			else if(vals[i].indexOf("ANTIBIOTIC SUSCEPTIBILITY TEST RESULTS:") != -1)
 			{
 				var textS = "|||||||||||||||";
@@ -1902,9 +1958,9 @@ function fs()
 				{
 					listMicro.push(textS);
 				}
-			} 
+			}
 	}
-	/* 
+	/*
 		Filling in special values
 	*/
 	// Calcium
@@ -1922,7 +1978,7 @@ function fs()
 			listCrit["Corrected Calcium"][i] = "N";
 			listVals["Corrected Calcium"][i] = ccS;
 			if(ccS < 8.5)
-				listCrit["Corrected Calcium"][i] = "L";	
+				listCrit["Corrected Calcium"][i] = "L";
 			if(ccS > 10.5)
 				listCrit["Corrected Calcium"][i] = "H";
 			listUH["Corrected Calcium"][i] =  ccS + " (alb " + alb + " on " + t2.split("@")[0] + ")";
@@ -1932,7 +1988,7 @@ function fs()
 	} else
 	{
 		deleteSpecial("Corrected Calcium");
-	}	
+	}
 	if("Retic %" in listVals && "HCT" in listVals)
 	{
 		for(var i = 0; i < listVals["Retic Index"].length; i++)
@@ -1951,7 +2007,7 @@ function fs()
 			} else if(hctr < 35)
 			{
 				rpi /= 1.5;
-			}		
+			}
 			listVals["Retic Index"][i] = "" + rpi.toFixed(2) + "";
 			listCrit["Retic Index"][i] = "N";
 			listUH["Retic Index"][i] = rpi.toFixed(2) + " (HCT " + hctr + " on " + hctl[1].split("@")[0] + ")";
@@ -1993,13 +2049,13 @@ function fs()
 						}
 					} catch(e)
 					{
-					
+
 					}
 				}
 				if(eC == -1)
-					eC = 0;	
+					eC = 0;
 				eC = parseFloat(eC);
-				var osmGap = os1 - 2*s1 - b1/2.8 - g1/18 - eC/4;		
+				var osmGap = os1 - 2*s1 - b1/2.8 - g1/18 - eC/4;
 				listVals["Osm Gap"][i] = "" + osmGap.toFixed(1) + "";
 				listCrit["Osm Gap"][i] = "N";
 				listUH["Osm Gap"][i] = osmGap.toFixed(1);
@@ -2009,7 +2065,7 @@ function fs()
 		} else
 		{
 			deleteSpecial("Osm Gap");
-		}		
+		}
 	} else
 	{
 		deleteSpecial("Osm Gap");
@@ -2100,7 +2156,7 @@ function fs()
 				}
 			}
 		}
-		listTrendTimes.sort(function(a,b){return b-a;});		
+		listTrendTimes.sort(function(a,b){return b-a;});
 		for(var i = 0; i < listTrendTimes.length; i++)
 		{
 			if(i == 0)
@@ -2158,7 +2214,7 @@ function fs()
 				}
 			}
 		}
-		listTrendTimes.sort(function(a,b){return b-a;});		
+		listTrendTimes.sort(function(a,b){return b-a;});
 		for(var i = 0; i < listTrendTimes.length; i++)
 		{
 			if(i == 0)
@@ -2341,7 +2397,7 @@ function fs()
 						{
 							valString += "Primary non-gap metabolic acidosis and  ";
 						}
-						
+
 						//expected paco2 = (1.5*bicarb) + 8 +/- 2
 						var expco2 = 1.5*bicarb + 8;
 						if(co2 - expco2 > 2)
@@ -2374,7 +2430,7 @@ function fs()
 							valString += "Primary respiratory acidosis with  secondary metabolic alkalosis";
 						}
 					}
-						
+
 				} else if(ph > 7.42)
 				{
 					if(co2crit == "N" && bicarbcrit == "N")
@@ -2432,7 +2488,7 @@ function fs()
 						{
 							valString += "Primary metabolic alkalosis with  appropriate respiratory compensation";
 						}
-					} 
+					}
 				} else  //not acidosis/alkalosis
 				{
 					if(co2crit == "H" && bicarbcrit == "H")
@@ -2445,7 +2501,7 @@ function fs()
 					{
 						valString += "No acid/base abnormality";
 					}
-				}			
+				}
 			}
 			listVals["ABG"].push(valString);
 			listUH["ABG"].push(valString);
@@ -2453,12 +2509,12 @@ function fs()
 			listCrit["ABG"].push("N");
 			listSpecimen["ABG"].push("ARTERIAL BLOOD");
 			listTime["ABG"].push(msToDate(listTrendTimes[i]));
-		}	
+		}
 	}
 }
 
 function fr()
-{	
+{
     cbcData = "";
     chemistryData = "";
     urineData = "";
@@ -2470,7 +2526,7 @@ function fr()
 	cexclude += "HCT(POC)||TCO2(POC)||O2,SAT(POC)||O2,SAT||TEMPERATURE||"
     uexclude = "";
     csfData = "";
-	
+
 	if("WBC" in listVals)
 	{
 		var valList = ["WBC","HGB","HCT","PLT"];
@@ -2489,11 +2545,11 @@ function fr()
 		var cbc1 = replicate(" ", wbc.toString().length) + "\\ " + valueCritRed(hgb,inList,"HGB") + " /";
 		var cbc2 = valueCritRed(wbc,inList,"WBC") + " ------ " + valueCritRed(plt,inList,"PLT") ;
 		var cbc3 = replicate(" ", wbc.toString().length) + "/ " + valueCritRed(hct,inList,"HCT") + " \\";
-		var mL = Math.max(replaceTags(cbc0).length, replaceTags(cbc1).length, replaceTags(cbc2).length, replaceTags(cbc3).length) + 4;	
+		var mL = Math.max(replaceTags(cbc0).length, replaceTags(cbc1).length, replaceTags(cbc2).length, replaceTags(cbc3).length) + 4;
 		var wbc2 = "***";
 		var hgb2 = "***";
 		var plt2 = "***";
-		var hct2 = "***";	
+		var hct2 = "***";
 		if(t2 != -1)
 		{
 			inList = getIndex(valList, t2, "BLOOD");
@@ -2512,7 +2568,7 @@ function fr()
 		}
 		if(t3 != -1)
 		{
-			mL = Math.max(replaceTags(cbc0).length, replaceTags(cbc1).length, replaceTags(cbc2).length, replaceTags(cbc3).length) + 4;	
+			mL = Math.max(replaceTags(cbc0).length, replaceTags(cbc1).length, replaceTags(cbc2).length, replaceTags(cbc3).length) + 4;
 			var wbc3 = "***";
 			var hgb3 = "***";
 			var plt3 = "***";
@@ -2530,7 +2586,7 @@ function fr()
 			cbc1 += replicate(" ", wbc3.toString().length) + "\\ " + valueCritRed(hgb3,inList,"HGB") + " /";
 			cbc2 += valueCritRed(wbc3,inList,"WBC") + " ------ " + valueCritRed(plt3,inList,"PLT");
 			cbc3 += replicate(" ", wbc3.toString().length) + "/ " + valueCritRed(hct3,inList,"HCT") + " \\";
-		}		
+		}
 		if(wbc != "***" || wbc2 != "***")
 		{
 			cexclude += "WBC||";
@@ -2560,8 +2616,8 @@ function fr()
 		{
 			if(tDiff != t1)
 				cbcDiff += " @ " + tDiff;
-			cbcDiff += "\n";		
-		}		
+			cbcDiff += "\n";
+		}
 		if(cbcExtras != "")
 		{
 			if(tDiff != t1)
@@ -2586,9 +2642,9 @@ function fr()
 				if(mentI > 13)
 					anemiaText += "Mentzer index of " + mentI.toFixed(2) + " (> 13, predictive of IDA)"
 				if(mentI < 13)
-					anemiaText += "Mentzer index of " + mentI.toFixed(2) + " (< 13, predictive of B-thal)" 
+					anemiaText += "Mentzer index of " + mentI.toFixed(2) + " (< 13, predictive of B-thal)"
 				anemiaText += "\n";
-			}	
+			}
 		}
 		// WBC RISE
 		var wbcmin = getMinima("WBC", Date.now(), 10);
@@ -2598,9 +2654,9 @@ function fr()
 			var percwbc = 100*(wbc - listVals["WBC"][wbcmin])/(listVals["WBC"][wbcmin]);
 			if(percwbc > 30)
 			{
-				wbcText = "WBC rise of " + Math.round(percwbc) + "% (" + listVals["WBC"][wbcmin] + " -> " + wbc + ") over " + Math.round((timeToDate(t1) - timeToDate(listTime["WBC"][wbcmin]))/msDay) + " days\n";		
+				wbcText = "WBC rise of " + Math.round(percwbc) + "% (" + listVals["WBC"][wbcmin] + " -> " + wbc + ") over " + Math.round((timeToDate(t1) - timeToDate(listTime["WBC"][wbcmin]))/msDay) + " days\n";
 			}
-		}		
+		}
 
 		// HGB DROP
 		var hgbmax = getMaxima("HGB", Date.now(), 10);
@@ -2610,10 +2666,10 @@ function fr()
 			var perchgb = 100*(listVals["HGB"][hgbmax] - hgb)/(listVals["HGB"][hgbmax]);
 			if(perchgb > 30)
 			{
-				hgbText = "HGB drop of " + Math.round(perchgb) + "% (" + listVals["HGB"][hgbmax] + " -> " + hgb + ") over " + Math.round((timeToDate(t1) - timeToDate(listTime["HGB"][hgbmax]))/msDay) + " days\n";		
+				hgbText = "HGB drop of " + Math.round(perchgb) + "% (" + listVals["HGB"][hgbmax] + " -> " + hgb + ") over " + Math.round((timeToDate(t1) - timeToDate(listTime["HGB"][hgbmax]))/msDay) + " days\n";
 			}
 		}
-		
+
 		// PLT DROP
 		var pltmax = getMaxima("PLT", Date.now(), 10);
 		var pltText = "";
@@ -2622,13 +2678,13 @@ function fr()
 			var percPlt = 100*(listVals["PLT"][pltmax] - plt)/(listVals["PLT"][pltmax]);
 			if(percPlt > 30)
 			{
-				pltText = "Platelet drop of " + Math.round(percPlt) + "% (" + listVals["PLT"][pltmax] + " -> " + plt + ") over " + Math.round((timeToDate(t1) - timeToDate(listTime["PLT"][pltmax]))/msDay) + " days\n";		
+				pltText = "Platelet drop of " + Math.round(percPlt) + "% (" + listVals["PLT"][pltmax] + " -> " + plt + ") over " + Math.round((timeToDate(t1) - timeToDate(listTime["PLT"][pltmax]))/msDay) + " days\n";
 			}
 		}
 		cbcData += cbc0 + "\n" + cbc1 + "\n" + cbc2 + "\n" + cbc3 + "\n\n" + cbcDiff + cbcExtras + anemiaText + wbcText + hgbText + pltText;
 		cexclude += "RBC||MCV||RDW||MCHC||MCH||MPV||";
 	}
-    if("Creatinine" in listVals) 
+    if("Creatinine" in listVals)
     {
 		var valList = ["SODIUM","POTASSIUM","CHLORIDE","CO2","UREA NITROGEN","Creatinine","Glucose"];
 		var t1 = getNTime(valList, "SERUM", 0);
@@ -2638,7 +2694,7 @@ function fr()
 			t1 = getNTime(valList, "PLASMA", 0);
 			onlyPlasma = true;
 		}
-		
+
 		if(t1 != -1)
 		{
 			var t2 = getNTime(valList, "SERUM", 1);
@@ -2678,9 +2734,9 @@ function fr()
 			if(comm.indexOf("1+ hemolysis") != -1)
 				hemo1 = 1;
 			if(comm.indexOf("2+ hemolysis") != -1)
-				hemo1 = 2;		
+				hemo1 = 2;
 			if(comm.indexOf("3+ hemolysis") != -1)
-				hemo1 = 3;		
+				hemo1 = 3;
 			var hemo1s = " ";
 			var hemo1tx = "";
 			var hemo2tx = "";
@@ -2747,7 +2803,7 @@ function fr()
 					if(corNa2 < 135 || corNa2 > 145)
 					{
 						corNa2 = "<span style='color: red; font-weight: bold'>" + pad(corNa2,6) + "</span>";
-						
+
 					} else
 					{
 						corNa2 = pad(corNa2,6);
@@ -2758,15 +2814,15 @@ function fr()
 					corNa2 = pgetValList(listVals, "SODIUM", inList, "  ***") + " ";
 					agN = parseInt(getValList(listVals, "SODIUM", inList, "  ***"));
 				}
-				
+
 				var comm2 = getComment(listComment,"POTASSIUM", inList, "");
 				var hemo2 = 0;
 				if(comm2.indexOf("1+ hemolysis") != -1)
 					hemo2 = 1;
 				if(comm2.indexOf("2+ hemolysis") != -1)
-					hemo2 = 2;		
+					hemo2 = 2;
 				if(comm2.indexOf("3+ hemolysis") != -1)
-					hemo2 = 3;		
+					hemo2 = 3;
 				var hemo2s = " ";
 				if(hemo2 > 0)
 				{
@@ -2810,7 +2866,7 @@ function fr()
 					}
 				}
 				anionGap = Math.round(anionGap);
-				
+
 				if(anionGap > 16)
 				{
 					anionGap = "<span style='color: red; font-weight: bold'>" + anionGap + albPoint + "</span>";
@@ -2818,13 +2874,13 @@ function fr()
 				{
 					anionGap = anionGap + albPoint;
 				}
-				
+
 				bmp1 += corNa2 + "| " + pgetValList(listVals, "CHLORIDE", inList, "  ***") + " | " + pgetValList(listVals, "UREA NITROGEN", inList, "  ***") + " /";
 				bmp2 += replicate("-", 22) + " " + getValList(listVals, "Glucose", inList, "***");
 				bmp3 += corK2 + "| " + pgetValList(listVals, "CO2", inList, "  ***") + " | " + pgetValList(listVals, "Creatinine", inList, "  ***") + " \\ Gap: " + anionGap;
-			}		
+			}
 			bmp4 = "";
-			
+
 			// CR RISE
 			var crText = "";
 			if(crnow != "  ***")
@@ -2835,19 +2891,19 @@ function fr()
 					var percr = 100*(crnow - listVals["Creatinine"][crmin])/(listVals["Creatinine"][crmin]);
 					if(percr > 30)
 					{
-						crText = "Cr rise of " + Math.round(percr) + "% (" + listVals["Creatinine"][crmin] + " -> " + crnow + ") over " + Math.round((timeToDate(t1) - timeToDate(listTime["Creatinine"][crmin]))/msDay) + " days\n";		
-						
+						crText = "Cr rise of " + Math.round(percr) + "% (" + listVals["Creatinine"][crmin] + " -> " + crnow + ") over " + Math.round((timeToDate(t1) - timeToDate(listTime["Creatinine"][crmin]))/msDay) + " days\n";
+
 					}
 				}
-			}		
+			}
 			chemistryData += bmp0 + "\n" + bmp1 + "\n" + bmp2 + "\n" + bmp3 +"\n" + afterTx + hemo1tx + hemo2tx + albText + bmp4 + "\n" + crText;
 			cexclude += "SODIUM||POTASSIUM||UREA NITROGEN||CHLORIDE||CO2||Creatinine||Glucose||GLU POC||eGFR(IDMS)||eGFR(DC'D 4-16-10)||ANION GAP||ANION GAP(POC)||";
 		}
-	}	
+	}
     	if("URINE COLOR" in listVals)	//UA
 	{
 		var valList = ["URINE COLOR","Appearance","SPECIFIC GRAVITY","URINE pH","URINE BLOOD","LEUKOCYTE ESTERASE","NITRITE, URINE","URINE PROTEIN","URINE GLUCOSE","URINE KETONES","URINE BILIRUBIN", "UROBILINOGEN", "URINE ASCORBIC ACID"];
-		var t1 = getNTime(valList, "URINE", 0);	
+		var t1 = getNTime(valList, "URINE", 0);
 		var inList = getIndex(valList, t1, "URINE");
 		urineData += "UA: ";
 		var bland = true;
@@ -2883,9 +2939,9 @@ function fr()
 			bland = false;
 		}
 		//urineData += "UA: " + getValListT(listVals, "URINE COLOR", inList, "", "", "/") + getValListT(listVals, "Appearance", inList, "", "", "  ") + getValListT(listVals, "SPECIFIC GRAVITY", inList, "", "SG: ", "  ") + getValListT(listVals, "URINE pH", inList, "", "pH: ", "");
-		
+
 		var negList = "";
-		
+
 		var listNames = ["Blood","LE","Nitrite","Protein","Glucose","Ketones","Bili","Urobili","Vit C"];
 		for(var j = 4; j < valList.length; j++)
 		{
@@ -2902,14 +2958,14 @@ function fr()
 					bland = false;
 					urineData += "<span style='color: red; font-weight: bold'>" + tmp + "</span> " + listNames[j-4] + "  ";
 				}
-			}			
+			}
 		}
 		if(bland)
 		{
 			urineData += "bland";
 		} else
 		{
-			urineData += "otherwise bland";	
+			urineData += "otherwise bland";
 		}
 		/*
 		if(negList != "")
@@ -2917,7 +2973,7 @@ function fr()
 			urineData += "  " + negList;
 		} else
 		{
-			
+
 		}*/
 		urineData += " @ " + t1 + "\n";
 		uexclude += valList.join("||") + "||";
@@ -2925,7 +2981,7 @@ function fr()
 	if("URINE WBC/HPF" in listVals) //urine micro
 	{
 		var valList = ["URINE WBC/HPF","URINE BACTERIA","URINE RBC/HPF","SQUAM EPITH CELLS","URINE MUCUS","HYALINE CASTS","URINE WBC CASTS","URINE RBC CASTS","GRANULAR CASTS","TRI PHOSPHATE CRYSTALS","CA++ OXALATE CRYSTALS","URIC ACID CRYSTALS","URINE WBC CLUMPS","RENAL EPITH CELLS","TRANSITIONAL CELLS","URINE SPERM","BUDDING YEAST","YEAST HYPHAE","URINE EPITH CELLS","URINE CASTS","AMORPHOUS CRYSTALS","URINE CRYSTALS"];
-		var t1 = getNTime(valList, "URINE", 0);	
+		var t1 = getNTime(valList, "URINE", 0);
 		var inList = getIndex(valList, t1, "URINE");
 		var listNames = ["WBCs","Bacteria","RBCs","Squamous cells","Mucus","Hyaline casts","WBC Casts","RBC Casts","Granular casts","Triphosphate crystals","Ca++ oxalate crystals","Uric acid crystals","WBC clumps","Renal epi cells","Transitional cells","Sperm","Budding yeast","Hyphae","Epi cells","Casts","Amorphous crystals","Crystals"]
 		urineData += "Urine micro: ";
@@ -2955,8 +3011,8 @@ function fr()
 					urineData += ",  ";
 				urineData += "no reported " + listNames[j];
 				ds = 1;
-			}*/		
-		}		
+			}*/
+		}
 		if(negList == "No ")
 			negList = "";
 		urineData += " " + negList + " @ " + t1 + "\n";
@@ -2965,7 +3021,7 @@ function fr()
 	if("DAU PH" in listVals || "COCAINE SCREEN" in listVals || "FENTANYL SCREEN" in listVals) //UDS
 	{
 		var valList = ["AMPHETAMINES SCREEN","BARBITURATES SCREEN","BENZODIAZEPI SCREEN","CANNABINOIDS SCREEN","COCAINE SCREEN","OPIATES SCREEN","METHADONE SCREEN","OXYCODONE SCREEN","BUPRENORPHINE SCREEN","PHENCYCLIDINE SCR", "FENTANYL SCREEN"];
-		var t1 = getNTime(valList, "URINE", 0);	
+		var t1 = getNTime(valList, "URINE", 0);
 		var inList = getIndex(valList, t1, "URINE");
 		var listNames = ["Amphetamines","Barbiturates","BZDs","Cannabinoids","Cocaine","Opiates","Methadone","Oxycodone","Buprenorphine","Phencyclidine","Fentanyl"];
 		urineData += "UDS: ";
@@ -2987,7 +3043,7 @@ function fr()
 						poslist += "  ";
 					poslist += "<span style='color: red; font-weight: bold'>+" + listNames[j] + "</span>";
 				}
-			}		
+			}
 		}
 		if(poslist != "")
 		{
@@ -3011,7 +3067,7 @@ function fr()
 		var valList = ["Na"];
 		var t1 = getNTime(valList, "URINE", 0);
 		var inList = getIndex(valList, t1, "URINE");
-		var nau = parseFloat(listVals["Na"][inList["Na"]].replace("&#060; ",''));	
+		var nau = parseFloat(listVals["Na"][inList["Na"]].replace("&#060; ",''));
 		var lts = "";
 		if(listVals["Na"][inList["Na"]].indexOf("&#060;") != -1)
 		{
@@ -3028,7 +3084,7 @@ function fr()
 		var valList = ["Urea nitrogen"];
 		var t1 = getNTime(valList, "URINE", 0);
 		var inList = getIndex(valList, t1, "URINE");
-		var nau = parseFloat(listVals["Urea nitrogen"][inList["Urea nitrogen"]]);	
+		var nau = parseFloat(listVals["Urea nitrogen"][inList["Urea nitrogen"]]);
 		var nas = getTCV("UREA NITROGEN",t1,"SERUM||PLASMA||");
 		var cru = getTCV("Creatinine",t1,"URINE||");
 		var crs = getTCV("Creatinine",t1,"SERUM||PLASMA||");
@@ -3042,7 +3098,7 @@ function fr()
 		if(t1 != -1)
 		{
 			var inList = getIndex(valList, t1, "PLEURAL FLUID");
-			var tpp = parseFloat(listVals["Protein"][inList["Protein"]]);	
+			var tpp = parseFloat(listVals["Protein"][inList["Protein"]]);
 			var tps = getTCV("Protein",t1,"SERUM||PLASMA||");
 			var ldp = getTCV("LDH",t1,"PLEURAL FLUID||");
 			var lds = getTCV("LDH",t1,"SERUM||PLASMA||");
@@ -3070,13 +3126,13 @@ function fr()
 	{
 		var valList = ["Color"];
 		var t1 = getNTime(valList, "PERITONEAL FLUID", 0);
-		var inList = getIndex(valList, t1, "PERITONEAL FLUID");		
+		var inList = getIndex(valList, t1, "PERITONEAL FLUID");
 		var color = listVals["Color"][inList["Color"]];
 		if(t1 != -1)
 			peritonealData += "Color: " + color + "  @ " + t1 + "\n";
 		valList = ["Appearance"];
 		t1 = getNTime(valList, "PERITONEAL FLUID", 0);
-		inList = getIndex(valList, t1, "PERITONEAL FLUID");		
+		inList = getIndex(valList, t1, "PERITONEAL FLUID");
 		var appear = listVals["Appearance"][inList["Appearance"]]
 		if(t1 != -1)
 			peritonealData += "Appearance: " + appear + "  @ " + t1 + "\n";
@@ -3087,10 +3143,10 @@ function fr()
 		var valList = ["Albumin"];
 		var t1 = getNTime(valList, "PERITONEAL FLUID", 0);
 		if(t1 != -1)
-		{	
+		{
 			var inList = getIndex(valList, t1, "PERITONEAL FLUID");
 			var tpp = parseFloat(listVals["Albumin"][inList["Albumin"]]);
-			var tps = getTCV("Albumin",t1,"SERUM||PLASMA||"); 
+			var tps = getTCV("Albumin",t1,"SERUM||PLASMA||");
 			if(tps[0] != -1)
 			{
 				var saag = tps[0] - tpp;
@@ -3098,14 +3154,14 @@ function fr()
 			}
 		}
 		if(t1 != -1)
-			peritonealData += "Albumin: " + tpp + "  @ " + t1 + "\n";		
+			peritonealData += "Albumin: " + tpp + "  @ " + t1 + "\n";
 		pexclude += "||Albumin||";
 	}
 	if("Protein" in listVals)
 	{
 		var valList = ["Protein"];
 		var t1 = getNTime(valList, "PERITONEAL FLUID", 0);
-		var inList = getIndex(valList, t1, "PERITONEAL FLUID");		
+		var inList = getIndex(valList, t1, "PERITONEAL FLUID");
 		var prot = listVals["Protein"][inList["Protein"]]
 		if(t1 != -1)
 			peritonealData += "Protein: " + prot + "  @ " + t1 + "\n";
@@ -3115,7 +3171,7 @@ function fr()
 	{
 		var valList = ["RBC"];
 		var t1 = getNTime(valList, "PERITONEAL FLUID", 0);
-		var inList = getIndex(valList, t1, "PERITONEAL FLUID");		
+		var inList = getIndex(valList, t1, "PERITONEAL FLUID");
 		var RBC = listVals["RBC"][inList["RBC"]]
 		if(t1 != -1)
 			peritonealData += "RBC: " + RBC + "  @ " + t1 + "\n";
@@ -3124,7 +3180,7 @@ function fr()
 	{
 		var valList = ["Nucleated cells"];
 		var t1 = getNTime(valList, "PERITONEAL FLUID", 0);
-		var inList = getIndex(valList, t1, "PERITONEAL FLUID");		
+		var inList = getIndex(valList, t1, "PERITONEAL FLUID");
 		var appear = listVals["Nucleated cells"][inList["Nucleated cells"]]
 		if(t1 != -1)
 			peritonealData += "Nucleated cells: " + appear + "  @ " + t1 + "\n";
@@ -3133,48 +3189,48 @@ function fr()
 	{
 		var valList = ["PMN"];
 		var t1 = getNTime(valList, "PERITONEAL FLUID", 0);
-		var inList = getIndex(valList, t1, "PERITONEAL FLUID");		
+		var inList = getIndex(valList, t1, "PERITONEAL FLUID");
 		var PMN = listVals["PMN"][inList["PMN"]]
 		if(t1 != -1)
-			peritonealData += "PMN: " + PMN + "%  @ " + t1 + "\n";	
+			peritonealData += "PMN: " + PMN + "%  @ " + t1 + "\n";
 	}
 	if("Lymph" in listVals)
 	{
 		var valList = ["Lymph"];
 		var t1 = getNTime(valList, "PERITONEAL FLUID", 0);
-		var inList = getIndex(valList, t1, "PERITONEAL FLUID");		
+		var inList = getIndex(valList, t1, "PERITONEAL FLUID");
 		var Lymph = listVals["Lymph"][inList["Lymph"]]
 		if(t1 != -1)
-			peritonealData += "Lymph: " + Lymph + "%  @ " + t1 + "\n";		
+			peritonealData += "Lymph: " + Lymph + "%  @ " + t1 + "\n";
 	}
 	if("Mono" in listVals)
 	{
 		var valList = ["Mono"];
 		var t1 = getNTime(valList, "PERITONEAL FLUID", 0);
-		var inList = getIndex(valList, t1, "PERITONEAL FLUID");		
+		var inList = getIndex(valList, t1, "PERITONEAL FLUID");
 		var Mono = listVals["Mono"][inList["Mono"]]
 		if(t1 != -1)
-			peritonealData += "Mono: " + Mono + "%  @ " + t1 + "\n";	
+			peritonealData += "Mono: " + Mono + "%  @ " + t1 + "\n";
 	}
 	if("Macrophages" in listVals)
 	{
 		var valList = ["Macrophages"];
 		var t1 = getNTime(valList, "PERITONEAL FLUID", 0);
-		var inList = getIndex(valList, t1, "PERITONEAL FLUID");		
+		var inList = getIndex(valList, t1, "PERITONEAL FLUID");
 		var Macrophages = listVals["Macrophages"][inList["Macrophages"]]
 		if(t1 != -1)
-			peritonealData += "Macrophages: " + Macrophages + "%  @ " + t1 + "\n";	
+			peritonealData += "Macrophages: " + Macrophages + "%  @ " + t1 + "\n";
 	}
 	if("Mesothelial cells" in listVals)
 	{
 		var valList = ["Mesothelial cells"];
 		var t1 = getNTime(valList, "PERITONEAL FLUID", 0);
-		var inList = getIndex(valList, t1, "PERITONEAL FLUID");		
+		var inList = getIndex(valList, t1, "PERITONEAL FLUID");
 		var Mes = listVals["Mesothelial cells"][inList["Mesothelial cells"]]
 		if(t1 != -1)
-			peritonealData += "Mesothelial cells: " + Mes + "%  @ " + t1 + "\n";			
+			peritonealData += "Mesothelial cells: " + Mes + "%  @ " + t1 + "\n";
 	}
-	pexclude += "||RBC||Nucleated cells||PMN||Lymph||Mono||Macrophages||Mesothelial cells||";	
+	pexclude += "||RBC||Nucleated cells||PMN||Lymph||Mono||Macrophages||Mesothelial cells||";
 	cexclude += "PERIPHERAL BLOOD SMEAR||";
 	otherData = "";
 	var mL = 0;
@@ -3185,9 +3241,9 @@ function fr()
 			mL = pL;
 	}
 	mL += 5;
-    for (var prop in listVals) 
+    for (var prop in listVals)
 	{
-		if (cexclude.indexOf("||" + prop + "||") == -1) 
+		if (cexclude.indexOf("||" + prop + "||") == -1)
 		{
 			var bloodOnly = false;
 			if(prop.substr(0,3).toLowerCase() == "crp")
@@ -3231,7 +3287,7 @@ function fr()
 				var repSp = "";
 				otherData += tmpProp + " (" + listSpecimen[prop][minV] + ")" + ": " + pf + listUH[prop][minV] + pof + replicate(" " , mL - tmpProp.length - listUH[prop][minV].toString().length) + "@ " + listTime[prop][minV] + " \n";
 				prevList += listSpecimen[prop][j] + "||";
-			}	
+			}
 		}
     }
 	if(cbcData != "")
@@ -3250,7 +3306,7 @@ function fr()
 		otherData = "OTHER:" + "\n" + otherData  + "\n\n";
 }
 
-function isNumber (o) 
+function isNumber (o)
 {
   return ! isNaN (o-0) && o != null;
 }
@@ -3286,7 +3342,7 @@ replace2array["URINE EPITH CELLS"] = "Urine epis";
 replace2array["URINE CASTS"] = "Casts";
 replace2array["AMORPHOUS CRYSTALS"] = "Amorphous crystals";
 replace2array["URINE CRYSTALS"] = "Crystals";
- 
+
 function ff()
 {
 	var changeData = "";
@@ -3295,11 +3351,11 @@ function ff()
 		qnum = 1;
 	if(document.getElementById("viewchangesall").checked)
 		qnum = 2;
-	
+
 	//DISPLAYED IF DISPLAYING SIGNIFICANT CHANGES IN LAB VALUES
 	if(qnum != 0)
 	{
-		for (var prop in listVals) 
+		for (var prop in listVals)
 		{
 			var dexclude = "||";
 			for(var j = 0; j < listVals[prop].length; j++)
@@ -3352,13 +3408,13 @@ function ff()
 		changeData = "SIGNIFICANT CHANGES:" + "\n" + changeData + "\n\n";
 	var tmpStr = changeData + cbcData + chemistryData + urineData + pleuralData + peritonealData + csfData + otherData + trendData;
 	var micro = "";
-	
-	
+
+
 	// DISPLAYING MICRO DATA
 	for(var i = 0; i < listMicro.length; i++)
 	{
 		//micro += listMicro[i] += "-------------------------\n";
-		
+
 		if(listMicro[i].indexOf("Gram stain") == -1 && listMicro[i].indexOf("|||||||||||||||") == -1 && listMicro[i].indexOf("Susceptibilities:") == -1 && listMicro[i].indexOf("SUSCEPTIBILITY") == -1 && listMicro[i].indexOf("NO GROWTH TO DATE; TESTING IN PROGRESS") != -1)
 		{
 			var ts = listMicroSpec[i];
@@ -3391,7 +3447,7 @@ function ff()
 		micro = "MICRO:" +"\n" + micro;
 	var finalData = "";
 	var tmpSplit = tmpStr.split("\n");
-	
+
 	// CONSOLIDATING INTO SINGLE LINES
 	for(var i = 0; i < tmpSplit.length; i++)
 	{
@@ -3495,7 +3551,7 @@ function ff()
 				finalData += tmpSplit[i];
 			}
 		}
-		finalData += "\n";		
+		finalData += "\n";
 	}
 	var ts2 = micro.split("\n");
 	for(var i = 0; i < ts2.length; i++)
@@ -3533,9 +3589,9 @@ function ff()
 			{
 			medName = mL.split("  ")[0];
 			xmlhttp.push(new XMLHttpRequest());
-			xmlhttp[numberMeds].onreadystatechange = function() 
+			xmlhttp[numberMeds].onreadystatechange = function()
 			{
-				if (this.readyState == 4 && this.status == 200) 
+				if (this.readyState == 4 && this.status == 200)
 				{
 	  	   			var xmldoc = this.responseXML;
 					listMedID.push(xmldoc.getElementsByTagName("rxcui")[0].childNodes[0].nodeValue);
@@ -3544,7 +3600,7 @@ function ff()
 			};
 			var url = "https://web.archive.org/web/20230117075429/https://rxnav.nlm.nih.gov/REST/approximateTerm?term=" + medName.replace(" ","%20") + "&maxEntries1";
 			xmlhttp[numberMeds].open("GET", url, true);
-			xmlhttp[numberMeds].send();		
+			xmlhttp[numberMeds].send();
 			numberMeds++;
 			}
 			finalData += mL + "\n";
@@ -3563,7 +3619,7 @@ function ff()
 
 			for(var j = 0; j < msAmount.length; j++)
 			{
-			
+
 				if(mL.indexOf(msAmount[j] + "TABLET") != -1 || mL.indexOf(msAmount[j] + "CAP") != -1)
 				{
 					mL = mL.replace(msAmount[j] + "TABLET", " TAKE " + msAmount[j] + "TABLET").replace(msAmount[j] + "CAP", " TAKE " +msAmount[j] + "CAP");
@@ -3577,7 +3633,7 @@ function ff()
 			var msTime = ["AT BEDTIME", "EVERY MORNING", "ONCE DAILY", "TWICE A DAY", "THREE TIMES A DAY", "FOUR TIMES A DAY", "FIVE TIMES A DAY", "SIX TIMES A DAY", "SEVEN TIMES A DAY", "EIGHT TIMES A DAY", "EVERY 3 HOURS", "EVERY 4 HOURS", "EVERY 5 HOURS", "EVERY 6 HOURS", "EVERY 2 HOURS", "1 HOUR BEFORE SEXUAL RELATIONS", "TWICE DAILY WITH A MEAL OR FOOD ", "THREE TIMES A DAY WITH A MEAL OR FOOD ", "FOUR TIMES A DAY WITH A MEAL OR FOOD ", "ONCE DAILY WITH A MEAL OR FOOD "];
 			var msShortTime = ["qhs", "qam", "qd", "bid", "tid", "qid", "5x/day","6x/day","7x/day","8x/day","q3h", "q4h", "q5h","q6h","q2h","1hr before sex", "bid w/f", "tid w/f", "qid w/f", "qd w/f"];
 			var mslist = ["  "," TAKE "," APPLY "," INJECT "," INSTILL "," USE ", " SPRAY ", " APPLY ", " INSERT "];
-			var medTime = "";	
+			var medTime = "";
 			var medTimeLong = "";
 			for(var j = 0; j < mslist.length; j++)
 			{
@@ -3590,11 +3646,11 @@ function ff()
 				{
 					if(mL.indexOf(msTime[j] + " AS NEEDED") != -1)
 					{
-						medTime = msShortTime[j] + " prn";	
+						medTime = msShortTime[j] + " prn";
 					} else
 					{
 						medTime = msShortTime[j];
-					}				
+					}
 					medTimeLong = msTime[j];
 				}
 			}
@@ -3608,9 +3664,9 @@ function ff()
 			if(medTimeLong == "")
 				medUnit = mL.substr(mL.indexOf(medDose) + medDose.length);
 			xmlhttp.push(new XMLHttpRequest());
-			xmlhttp[numberMeds].onreadystatechange = function() 
+			xmlhttp[numberMeds].onreadystatechange = function()
 			{
-				if (this.readyState == 4 && this.status == 200) 
+				if (this.readyState == 4 && this.status == 200)
 				{
 	  	   			var xmldoc = this.responseXML;
 					listMedID.push(xmldoc.getElementsByTagName("rxcui")[0].childNodes[0].nodeValue);
@@ -3619,12 +3675,12 @@ function ff()
 			};
 			var url = "https://web.archive.org/web/20230117075429/https://rxnav.nlm.nih.gov/REST/approximateTerm?term=" + medName.replace(" ","%20") + "&maxEntries1";
 			xmlhttp[numberMeds].open("GET", url, true);
-			xmlhttp[numberMeds].send();		
+			xmlhttp[numberMeds].send();
 			numberMeds++;
 			finalData += medName + " " + medSprays + medDose*medMult + "" + medUnit + " " + medTime + "\n"
 		}
-		
-		
+
+
 	}
 	finalData = finalData.replace(/\n/g,"<br>");
 	finalData = finalData.replace(/NEWLINECOMMENT/g,"\\n");
@@ -3649,7 +3705,7 @@ function allCalled()
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange = function()
 		{
-			if (this.readyState == 4 && this.status == 200) 
+			if (this.readyState == 4 && this.status == 200)
 			{
   	   			var xmldoc = this.responseXML;
 				var interactions = xmldoc.getElementsByTagName("fullInteractionType");
@@ -3681,7 +3737,7 @@ function pad(str,num, char) {
  if (char===undefined) {char=" ";}
  return String(replicate(char,num)+str).slice(0-num);
 }
- 
+
 function replicate(char,num) {
  if(num <= 0)
 	return "";
@@ -3793,11 +3849,11 @@ History is littered with hundreds of conflicts over the future of a community, g
 </p><p>
 The main site for Archive Team is at <a href="http://www.archiveteam.org/">archiveteam.org</a> and contains up to the date information on various projects, manifestos, plans and walkthroughs.
 </p><p>
-This collection contains the output of many Archive Team projects, both ongoing and completed. Thanks to the generous providing of disk space by the Internet Archive, multi-terabyte datasets can be made available, as well as in use by the <a href="http://archive.org/web/web.php">Wayback Machine</a>, providing a path back to lost websites and work. 
+This collection contains the output of many Archive Team projects, both ongoing and completed. Thanks to the generous providing of disk space by the Internet Archive, multi-terabyte datasets can be made available, as well as in use by the <a href="http://archive.org/web/web.php">Wayback Machine</a>, providing a path back to lost websites and work.
 </p><p>
 Our collection has grown to the point of having sub-collections for the type of data we acquire. If you are seeking to browse the contents of these collections, the Wayback Machine is the best first stop. Otherwise, you are free to dig into the stacks to see what you may find.
 </p><p>
-<b>The Archive Team Panic Downloads</b> are full pulldowns of currently extant websites, meant to serve as emergency backups for needed sites that are in danger of closing, or which will be missed dearly if suddenly lost due to hard drive crashes or server failures. 
+<b>The Archive Team Panic Downloads</b> are full pulldowns of currently extant websites, meant to serve as emergency backups for needed sites that are in danger of closing, or which will be missed dearly if suddenly lost due to hard drive crashes or server failures.
 </p><p>
 	</p></div>
 	      </div>
@@ -3821,290 +3877,290 @@ __wm.bt(725,27,25,2,"web","http://www-personal.umich.edu/~fmhoward/formatter.htm
   __wm.rw(1);
 //]]></script>
 <!-- END WAYBACK TOOLBAR INSERT -->
- 
+
 <!-- Intro Section   ================================================== -->
 <div id="popupform" style="display: none">
 <div id="close" onclick="document.getElementById(&#39;popupform&#39;).style.display = &#39;none&#39;;">
 </div>
 <div id="box">
 <b>1. GENERAL TERMS AND CONDITIONS</b><br>
-Thank you for visiting bit.ly/cprsformat (the 'Site' or 'website'). 
-Please read the Terms and Conditions contained in this document 
-carefully since any use of this site constitutes your acceptance of the 
-Terms and Conditions set out herein. If you do not agree to these terms 
+Thank you for visiting bit.ly/cprsformat (the 'Site' or 'website').
+Please read the Terms and Conditions contained in this document
+carefully since any use of this site constitutes your acceptance of the
+Terms and Conditions set out herein. If you do not agree to these terms
 and conditions, please do not use this website.<br>
-Throughout this site, the terms 'we', 'us', 'our', and 'CPRS Formatter' 
-refer to Frederick Howard, and any of his direct and indirect 
-subsidiaries. 'You' refers to any person accessing and/or using this 
+Throughout this site, the terms 'we', 'us', 'our', and 'CPRS Formatter'
+refer to Frederick Howard, and any of his direct and indirect
+subsidiaries. 'You' refers to any person accessing and/or using this
 website.<br><br>
 <b>A) CHANGES</b><br>
-We reserve the right to change, modify, add or remove these Terms and 
-Conditions at any time, and you agree (including by virtue of your 
-continued use of our site) to be bound by any such changes. Unless 
-explicitly stated otherwise, any new features or functionality 
+We reserve the right to change, modify, add or remove these Terms and
+Conditions at any time, and you agree (including by virtue of your
+continued use of our site) to be bound by any such changes. Unless
+explicitly stated otherwise, any new features or functionality
 (including, without limitation, video and related projects) that augment
- or enhance our site shall be subject to these Terms and Conditions. 
-Please check these Terms and Conditions periodically for any 
-modifications. The most current version of these Terms of Use can be 
+ or enhance our site shall be subject to these Terms and Conditions.
+Please check these Terms and Conditions periodically for any
+modifications. The most current version of these Terms of Use can be
 viewed at any time at: bit.ly/cprsformat.<br><br>
 <b>B) LINKS</b><br>
 The Site may contain links to third-party sites or resources. We are not
- responsible for the availability of external sites or resources linked 
-to the Site, and does not endorse and is not responsible or liable for 
-any content, advertising, products or other materials on or available 
-from such sites or resources. Transactions that occur between you and 
+ responsible for the availability of external sites or resources linked
+to the Site, and does not endorse and is not responsible or liable for
+any content, advertising, products or other materials on or available
+from such sites or resources. Transactions that occur between you and
 any third party are strictly between you and the third party and are not
- the responsibility of the Site. Because we are not responsible for the 
-availability or accuracy of these outside resources or their contents, 
+ the responsibility of the Site. Because we are not responsible for the
+availability or accuracy of these outside resources or their contents,
 you should review the terms and conditions and privacy policies of these
  linked sites, as their policies may differ from ours.<br>
-We welcome links to the Site. You may establish a hypertext link to the 
-Site, provided that the link does not state or imply any sponsorship or 
-endorsement of your site by CPRS Formatter. We grant a nonexclusive, 
+We welcome links to the Site. You may establish a hypertext link to the
+Site, provided that the link does not state or imply any sponsorship or
+endorsement of your site by CPRS Formatter. We grant a nonexclusive,
 limited permission ('Permission') to display the Trademarks contained on
- this domain name, brand names and logos to the owner(s) of any web 
+ this domain name, brand names and logos to the owner(s) of any web
 sites ('Owner') that would like to develop a link between their site and
- the corresponding website owned by the Site ('CPRS Formatter Site'). 
-Links to a CPRS Formatter Site other than the one using the 
-bit.ly/cprsformat domain name, brand names or logos are not permitted. 
-The materials on the Owner's site shall not imply any association with 
-or relation to CPRS Formatter or imply in any way that any materials 
+ the corresponding website owned by the Site ('CPRS Formatter Site').
+Links to a CPRS Formatter Site other than the one using the
+bit.ly/cprsformat domain name, brand names or logos are not permitted.
+The materials on the Owner's site shall not imply any association with
+or relation to CPRS Formatter or imply in any way that any materials
 from our CPRS Formatter Site are maintained within Owner's web site.<br>
-No changes or modifications to the bit.ly/cprsformat domain name, brand 
-names or logos may be made. Use of the bit.ly/cprsformat domain name, 
-brand names or logos for purposes other than linking to the CPRS 
+No changes or modifications to the bit.ly/cprsformat domain name, brand
+names or logos may be made. Use of the bit.ly/cprsformat domain name,
+brand names or logos for purposes other than linking to the CPRS
 Formatter Site is expressly forbidden. The domain names, brand names and
- logos must not be used or associated with any obscene, scandalous, 
-inflammatory, pornographic, indecent, profane, defamatory or unlawful 
-site or materials in any way, or in any manner that would adversely 
-affect the name, reputation and goodwill of CPRS Formatter. We retain 
-and reserve all rights in and to CPRS Formatter's trade names, 
-trademarks, copyrights and all other intellectual property with respect 
-to its domain names, brand names and logos. CPRS Formatter reserves the 
-right to cancel the Permission at any time and for any reason. Upon 
-receipt of such notification, use of the domain names, brand names or 
-logos must cease and the link between the web sites must terminate. Use 
-of CPRS Formatter trademarks, trade names, logos, copyrighted material 
+ logos must not be used or associated with any obscene, scandalous,
+inflammatory, pornographic, indecent, profane, defamatory or unlawful
+site or materials in any way, or in any manner that would adversely
+affect the name, reputation and goodwill of CPRS Formatter. We retain
+and reserve all rights in and to CPRS Formatter's trade names,
+trademarks, copyrights and all other intellectual property with respect
+to its domain names, brand names and logos. CPRS Formatter reserves the
+right to cancel the Permission at any time and for any reason. Upon
+receipt of such notification, use of the domain names, brand names or
+logos must cease and the link between the web sites must terminate. Use
+of CPRS Formatter trademarks, trade names, logos, copyrighted material
 or any other intellectual property of CPRS Formatter for any purpose not
  stated herein is expressly forbidden.<br><br>
 <b>C) LEGALLY-COMPELLED DISCLOSURE OF USER INFORMATION</b><br>
-You agree that in the event we receive a subpoena issued by a court or 
-from a law enforcement or government agency, we shall comply with such 
-subpoenas without your consent or prior notice to you and may disclose 
-your IP address, username, name, IP location or other information in 
+You agree that in the event we receive a subpoena issued by a court or
+from a law enforcement or government agency, we shall comply with such
+subpoenas without your consent or prior notice to you and may disclose
+your IP address, username, name, IP location or other information in
 response thereto.<br><br>
 <b>D) SYSTEMS RELIABILITY</b><br>
-CPRS Formatter aims to keep the Site available twenty-four (24) hours a 
-day, seven (7) days a week and to maintain saved information. However, 
-CPRS Formatter shall not be liable for lost altered, or corrupted 
+CPRS Formatter aims to keep the Site available twenty-four (24) hours a
+day, seven (7) days a week and to maintain saved information. However,
+CPRS Formatter shall not be liable for lost altered, or corrupted
 information or non-availability of the Site.<br><br>
 <b>E) PROHIBITED ACTIVITIES</b><br>
-You are prohibited from doing any act that CPRS Formatter in its 
-absolute discretion may deem to be inappropriate and/or would be deemed 
-to be an unlawful act or is prohibited by any laws applicable to this 
+You are prohibited from doing any act that CPRS Formatter in its
+absolute discretion may deem to be inappropriate and/or would be deemed
+to be an unlawful act or is prohibited by any laws applicable to this
 website including but not limited to:<br>
-� Any act that would constitute a breach of either the privacy 
-(including uploading private information without the concerned 
+� Any act that would constitute a breach of either the privacy
+(including uploading private information without the concerned
 individual's consent) or any other of the legal rights of individuals<br>
 � Using this website to defame or libel CPRS Formatter, its employees or
- other individuals or acting in such a way that brings into disrepute 
+ other individuals or acting in such a way that brings into disrepute
 the good name of CPRS Formatter;<br>
-� Uploading files that contain viruses that may cause damage to the 
+� Uploading files that contain viruses that may cause damage to the
 property of CPRS Formatter or the property of other individuals; and<br>
-� Posting or transmitting to this website any non-authorized material 
-including but not limited to material that is in our opinion likely to 
-cause annoyance, detrimental to or in violation of CPRS Formatter's or 
-any third party�s systems or network security, libelous, defamatory, 
-racist, obscene, threatening, pornographic, profane or is otherwise 
+� Posting or transmitting to this website any non-authorized material
+including but not limited to material that is in our opinion likely to
+cause annoyance, detrimental to or in violation of CPRS Formatter's or
+any third party�s systems or network security, libelous, defamatory,
+racist, obscene, threatening, pornographic, profane or is otherwise
 unlawful.<br><br>
 <b>F) DISCLAIMER OF WARRANTIES AND LIABILITY</b><br>
 Neither CPRS Formatter nor its suppliers or licensors makes any warranty
- whatsoever, including without limitation, that the operation of the 
-Site will be uninterrupted or error-free; that any defects will be 
-corrected; that the Site, including the server that makes it available, 
-is free of viruses or other harmful components; or as to the accuracy, 
-completeness, reliability, availability, suitability, quality, 
-non-infringement, operation or result obtained from the use of any 
-Content, product or service provided on, accessible from or distributed 
+ whatsoever, including without limitation, that the operation of the
+Site will be uninterrupted or error-free; that any defects will be
+corrected; that the Site, including the server that makes it available,
+is free of viruses or other harmful components; or as to the accuracy,
+completeness, reliability, availability, suitability, quality,
+non-infringement, operation or result obtained from the use of any
+Content, product or service provided on, accessible from or distributed
 through the Site.<br>
-THE SITE AND ALL CONTENT, PRODUCTS AND SERVICES INCLUDED IN OR 
-ACCESSIBLE FROM THE SITE ARE PROVIDED 'AS IS' AND WITHOUT WARRANTIES OR 
-REPRESENTATIONS OF ANY KIND (EXPRESS, IMPLIED AND STATUTORY, INCLUDING 
-BUT NOT LIMITED TO THE WARRANTIES OF TITLE AND NONINFRINGEMENT AND THE 
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-PURPOSE), ALL OF WHICH CPRS FORMATTER DISCLAIMS TO THE FULLEST EXTENT 
-PERMITTED BY LAW. YOUR USE OF THE SITE AND ITS CONTENT, PRODUCTS AND 
+THE SITE AND ALL CONTENT, PRODUCTS AND SERVICES INCLUDED IN OR
+ACCESSIBLE FROM THE SITE ARE PROVIDED 'AS IS' AND WITHOUT WARRANTIES OR
+REPRESENTATIONS OF ANY KIND (EXPRESS, IMPLIED AND STATUTORY, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF TITLE AND NONINFRINGEMENT AND THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE), ALL OF WHICH CPRS FORMATTER DISCLAIMS TO THE FULLEST EXTENT
+PERMITTED BY LAW. YOUR USE OF THE SITE AND ITS CONTENT, PRODUCTS AND
 SERVICES IS AT YOUR SOLE RISK.<br>
-To the extent permitted under applicable law, no responsibility is 
+To the extent permitted under applicable law, no responsibility is
 assumed for any injury and/or damage to persons, animals or property as a
- matter of products liability, negligence or otherwise, or from any use 
+ matter of products liability, negligence or otherwise, or from any use
 or operation of any ideas, instructions, methods, products or procedures
- contained in the Site. Medical and health care providers should 
-exercise their own independent clinical judgment. No suggested test or 
-procedure should be carried out unless, in the provider's judgment, its 
-use is justified. Because of rapid advances in the medical sciences, we 
-recommend that the independent verification of diagnoses, indications 
+ contained in the Site. Medical and health care providers should
+exercise their own independent clinical judgment. No suggested test or
+procedure should be carried out unless, in the provider's judgment, its
+use is justified. Because of rapid advances in the medical sciences, we
+recommend that the independent verification of diagnoses, indications
 and drug dosages should be made. Discussions, views, and recommendations
- as to medical or health care procedures, methods, products, choice of 
+ as to medical or health care procedures, methods, products, choice of
 drugs, and drug dosages are the responsibility of the authors.<br>
-TO THE EXTENT PERMITTED UNDER APPLICABLE LAW, IN NO EVENT SHALL CPRS 
-FORMATTER OR ITS SUPPLIERS OR LICENSORS BE LIABLE FOR ANY DAMAGES 
-(INCLUDING, WITHOUT LIMITATION, CONSEQUENTIAL, SPECIAL, INCIDENTAL, 
+TO THE EXTENT PERMITTED UNDER APPLICABLE LAW, IN NO EVENT SHALL CPRS
+FORMATTER OR ITS SUPPLIERS OR LICENSORS BE LIABLE FOR ANY DAMAGES
+(INCLUDING, WITHOUT LIMITATION, CONSEQUENTIAL, SPECIAL, INCIDENTAL,
 INDIRECT, OR SIMILAR DAMAGES, PERSONAL INJURY (INCLUDING DEATH), LOSS OF
  PROFITS, CORRUPTION OR LOSS OF DATA, BUSINESS INTERRUPTION OR ANY OTHER
- COMMERCIAL DAMAGES OR LOSSES) ARISING OUT OF OR IN CONNECTION WITH THE 
-USE OR PERFORMANCE OF THE SITE OR ITS CONTENT, PRODUCTS OR SERVCES, OR 
-SHALL THE LIABILITY OF CPRS FORMATTER OR ITS SUPPLIERS AND LICENSORS 
+ COMMERCIAL DAMAGES OR LOSSES) ARISING OUT OF OR IN CONNECTION WITH THE
+USE OR PERFORMANCE OF THE SITE OR ITS CONTENT, PRODUCTS OR SERVCES, OR
+SHALL THE LIABILITY OF CPRS FORMATTER OR ITS SUPPLIERS AND LICENSORS
 EXCEED A SUM EQUAL TO THE FEES PAID BY YOU HEREUNDER, EVEN IF ADVISED OF
  THE POSSIBILITY OF SUCH DAMAGES.<br>
-CPRS Formatter does not claim ownership, endorse or take responsibility 
-for any third-party products, information, guidelines, materials or 
-services that may be offered, advertised, provided or displayed on the 
-Site or incorporated in the Content, products or services contained on, 
+CPRS Formatter does not claim ownership, endorse or take responsibility
+for any third-party products, information, guidelines, materials or
+services that may be offered, advertised, provided or displayed on the
+Site or incorporated in the Content, products or services contained on,
 accessible from or distributed through the Site.<br><br>
 <b>G) EXPORT RESTRICTIONS</b><br>
-Software from this Site may be further subject to United States Export 
-laws, rules and regulations, as amended from time to time. No software 
-from this Site may be downloaded or exported (i) into (or to a national 
-or resident of) Cuba, Iraq, Libya, North Korea, Iran, Syria, Sudan or 
-any other country to which the United States has embargoed goods; or 
+Software from this Site may be further subject to United States Export
+laws, rules and regulations, as amended from time to time. No software
+from this Site may be downloaded or exported (i) into (or to a national
+or resident of) Cuba, Iraq, Libya, North Korea, Iran, Syria, Sudan or
+any other country to which the United States has embargoed goods; or
 (ii) anyone on the United States Treasury Department's list of Specially
- Designated Nationals or the U.S. Commerce Department's Table of Deny 
-Orders. By downloading or using the software, you represent and warrant 
-that you are not located in, under the control of, or a national or 
+ Designated Nationals or the U.S. Commerce Department's Table of Deny
+Orders. By downloading or using the software, you represent and warrant
+that you are not located in, under the control of, or a national or
 resident of any such country or on any such list.<br><br>
 <b>H) MOBILE SERVICES</b><br>
-If CPRS Formatter permits or makes available to you the ability to: (a) 
-upload content to the website via your mobile telephone and/or tablet 
-(�mobile device'), (b) receive and reply to messages, or to access or 
-make posts using text messaging, (c) browse the site from your mobile 
-device or (d) to access features through a mobile application you have 
-downloaded and installed on your mobile device (collectively 'Mobile 
+If CPRS Formatter permits or makes available to you the ability to: (a)
+upload content to the website via your mobile telephone and/or tablet
+(�mobile device'), (b) receive and reply to messages, or to access or
+make posts using text messaging, (c) browse the site from your mobile
+device or (d) to access features through a mobile application you have
+downloaded and installed on your mobile device (collectively 'Mobile
 Services'), your mobile carrier's standard data, Internet, messaging and
  other service fees and charges apply to your use of, and access to, the
- Mobile Services, and you are solely responsible for all such fees and 
-charges. The Mobile Services may not be compatible with all mobile 
-devices, carriers, and services, and CPRS Formatter does not make any 
-representations or warranties regarding such compatibility. You are 
-solely responsible for ensuring that your mobile device is compatible 
+ Mobile Services, and you are solely responsible for all such fees and
+charges. The Mobile Services may not be compatible with all mobile
+devices, carriers, and services, and CPRS Formatter does not make any
+representations or warranties regarding such compatibility. You are
+solely responsible for ensuring that your mobile device is compatible
 with the type of content being provided through the Mobile Services. You
  understand that content delivered as part of the Mobile Services may be
- delivered to your device through premium mobile services and 
-acknowledge that you are solely and exclusively responsible for any 
-charges for such services, including but not limited to any roaming 
+ delivered to your device through premium mobile services and
+acknowledge that you are solely and exclusively responsible for any
+charges for such services, including but not limited to any roaming
 charges.<br>
-You may be given the option to register to receive commercial messages 
-from CPRS Formatter via your mobile device. You understand that you may 
-be charged by your wireless service provider in connection with the 
+You may be given the option to register to receive commercial messages
+from CPRS Formatter via your mobile device. You understand that you may
+be charged by your wireless service provider in connection with the
 receipt of such messages. You may 'opt out' of receiving future messages
- by following the instructions provided (i) in the wireless messages or 
+ by following the instructions provided (i) in the wireless messages or
 (ii) on the website where you registered to receive such messages.<br><br>
 <b>I) JURISDICTION AND GOVERNING LAW</b><br>
 The CPRS Formatter products, services, materials, offers and information
- appearing on this Site are intended for users and/or customers in the 
-United States of America only. CPRS Formatter makes no representation 
+ appearing on this Site are intended for users and/or customers in the
+United States of America only. CPRS Formatter makes no representation
 that the products, services, and content of this website are appropriate
  or available in locations other than the United States of America.<br>
-You and CPRS Formatter agree that any controversy or claim arising from 
-or pertaining to the use of this website shall be governed by the laws 
-of the State of Delaware, USA, without giving effect to its 
+You and CPRS Formatter agree that any controversy or claim arising from
+or pertaining to the use of this website shall be governed by the laws
+of the State of Delaware, USA, without giving effect to its
 choice-of-law provisions, and be submitted to the exclusive jurisdiction
  of the courts of the State of Delaware, USA.<br><br>
 <b>2. PRIVACY POLICY</b><br>
-CPRS Formatter is committed to maintaining your confidence and trust 
-with respect to the privacy of the personal information we collect from 
-you. Please read this privacy policy carefully to understand our 
+CPRS Formatter is committed to maintaining your confidence and trust
+with respect to the privacy of the personal information we collect from
+you. Please read this privacy policy carefully to understand our
 practices about how we collect, use and share your personal information.<br><br>
 <b>A) ABOUT OUR PRIVACY POLICY</b><br>
-This privacy policy describes how the personal information that is 
-collected when you visit the Site, application or product that posts a 
-link to this privacy policy ('Service') will be used by the CPRS 
+This privacy policy describes how the personal information that is
+collected when you visit the Site, application or product that posts a
+link to this privacy policy ('Service') will be used by the CPRS
 Formatter company that owns the Service ('CPRS Formatter,' 'we,' 'us' or
- 'our'). This policy may be supplemented by additional privacy terms or 
+ 'our'). This policy may be supplemented by additional privacy terms or
 notices set forth on certain areas of the Service.<br><br>
 <b>B) INFORMATION WE COLLECT</b><br>
-The Service collects information from you in two ways: directly from 
+The Service collects information from you in two ways: directly from
 your input and automatically through the Service's technologies.<br>
 Information Collected Automatically<br>
 The Service also automatically collects, through our servers and the use
- of cookies (small text files sent to your computer), web beacons (also 
-known as clear or single pixel .gifs) and other technologies, 
+ of cookies (small text files sent to your computer), web beacons (also
+known as clear or single pixel .gifs) and other technologies,
 information that tells us how you use the Service, such as:<br>
  - Internet Protocol ('IP') address used to connect your computer to the Internet;<br>
  - Computer, device and connection information, such as browser type and
  version, operating system, mobile platform and unique device identifier
  ('UDID') and other technical identifiers;<br>
- - Uniform Resource Locator ('URL') click stream data, including date 
-and time stamp, referring and exit URLs, search terms you used, and 
+ - Uniform Resource Locator ('URL') click stream data, including date
+and time stamp, referring and exit URLs, search terms you used, and
 pages you visited or searched for on the Service; and<br>
- - For location-aware services, the physical location of your device in 
+ - For location-aware services, the physical location of your device in
 order to provide you with more relevant content for where you are in the
  world.<br>
-We may use and disclose information that does not reveal your identity 
-or permit direct association with any specific individual, such as 
-browser and device information, anonymous usage data and aggregated 
-information, for any purpose, except where we are restricted by law. If 
-we combine non-personal information with personal information, the 
+We may use and disclose information that does not reveal your identity
+or permit direct association with any specific individual, such as
+browser and device information, anonymous usage data and aggregated
+information, for any purpose, except where we are restricted by law. If
+we combine non-personal information with personal information, the
 combined information will be treated as personal information for as long
  as it remains combined.<br>
 You can control cookies through your browser's settings and other tools.
  However, if you block certain cookies, you may not be able to register,
- login to the Service, access certain parts of the Service or make full 
+ login to the Service, access certain parts of the Service or make full
 use of the Service.<br><br>
 <b>C) USE OF YOUR INFORMATION</b><br>
 We may use your personal information to:<br>
- - Provide the Service to you, such as allow access to or delivery of 
+ - Provide the Service to you, such as allow access to or delivery of
 our products or services, process or fulfill an order or transaction, or
  administer surveys or promotional programs;<br>
  - Respond to your requests, inquiries, comments or concerns;<br>
  - Provide technical, product and other support and help keep the Service working, safe and secure;<br>
- - Offer you customized content and individualized personalization of 
+ - Offer you customized content and individualized personalization of
 the Service to make it more relevant to your interests and needs;<br>
- - Enhance, evaluate and improve the Service, its advertisements and 
-promotional campaigns and our products and services and to develop new 
+ - Enhance, evaluate and improve the Service, its advertisements and
+promotional campaigns and our products and services and to develop new
 products and services;<br>
- - Identify and analyze usage trends, including for the purposes of 
-research, audits, reporting and paying royalties and license fees to 
+ - Identify and analyze usage trends, including for the purposes of
+research, audits, reporting and paying royalties and license fees to
 third-party content providers;<br>
  - Notify you about changes or updates to the Service and our products and services; and<br>
  - Provide you special offers, promotions, surveys and other information
  about the Service as well as products, events and services of ours, our
- affiliates and non-affiliated third parties such as societies and 
+ affiliates and non-affiliated third parties such as societies and
 sponsors.<br>
-We may on occasion also match or combine the personal information that 
-you provide with information that we obtain from other sources or that 
-is already in our records, whether collected online or offline or by 
-predecessor or affiliated group companies, for the purposes described 
+We may on occasion also match or combine the personal information that
+you provide with information that we obtain from other sources or that
+is already in our records, whether collected online or offline or by
+predecessor or affiliated group companies, for the purposes described
 above.<br><br>
 <b>D) DISCLOSURE OF YOUR INFORMATION</b><br>
 We may share your personal information with:<br>
- - Relevant agents, representatives, joint ventures, and entities for 
-which we are acting as an agent, licensee or publisher, such as 
+ - Relevant agents, representatives, joint ventures, and entities for
+which we are acting as an agent, licensee or publisher, such as
 societies and sponsors;<br>
- - Applicable suppliers and service providers, including editors, 
-reviewers, credit card processors, customer support, email service 
+ - Applicable suppliers and service providers, including editors,
+reviewers, credit card processors, customer support, email service
 providers, mailing houses and shipping agents, and IT service providers;
  and<br>
  - to assist us with producing and delivering our products and services,
- developing and operating our businesses, systems and applications, 
-processing payments, customer support, marketing, promotion and 
+ developing and operating our businesses, systems and applications,
+processing payments, customer support, marketing, promotion and
 communications and for other purposes set forth in this privacy policy.<br>
-We also may share your personal information with our affiliated group 
-companies worldwide and with societies, sponsors and other 
-non-affiliated third parties that wish to send you information about 
+We also may share your personal information with our affiliated group
+companies worldwide and with societies, sponsors and other
+non-affiliated third parties that wish to send you information about
 their products and services that may be of interest to you as determined
- by your choices in managing your communications preferences following 
+ by your choices in managing your communications preferences following
 the process described below.<br>
-If the Service offers a content database or learning service 
+If the Service offers a content database or learning service
 ('Subscription Service') and you access the Subscription Service through
- an institution-sponsored subscription, your personal information and 
-certain usage data gathered through the Subscription Service, such as 
-the number of items you downloaded, any non-subscribed items you 
-accessed, and test scores, may be shared with your institution for the 
-purposes of usage analysis, subscription management, course management 
-and testing and remediation. If your institution is a corporation or 
-other business entity, additional usage data, such as the types of 
-records you viewed and the number of searches you ran, also may be 
+ an institution-sponsored subscription, your personal information and
+certain usage data gathered through the Subscription Service, such as
+the number of items you downloaded, any non-subscribed items you
+accessed, and test scores, may be shared with your institution for the
+purposes of usage analysis, subscription management, course management
+and testing and remediation. If your institution is a corporation or
+other business entity, additional usage data, such as the types of
+records you viewed and the number of searches you ran, also may be
 shared for the purposes of cost attribution and departmental budgeting.<br>
 We also may need to disclose your personal information:<br>
  - to respond to or comply with any law, regulation, subpoena, court order or other legal obligation;<br>
@@ -4113,36 +4169,36 @@ We also may need to disclose your personal information:<br>
  - to protect the rights, property or safety of our users, employees or others; and<br>
  - if CPRS Formatter, the Service or a related asset or line of business
  is acquired by, transferred to or merged with another company.<br>
-The Service may let you post and share personal information, comments, 
-materials and other content. Any information you disclose publicly may 
+The Service may let you post and share personal information, comments,
+materials and other content. Any information you disclose publicly may
 be collected and used by others, may be indexable by search engines, and
- might not be able to be removed. Please be careful when disclosing 
+ might not be able to be removed. Please be careful when disclosing
 personal information in these public areas.<br><br>
 <b>E) YOUR CHOICES AND COMMUNICATIONS PREFERENCES</b><br>
-You can manage your communications preferences when you register with 
-the Service, by updating your account preferences, by using the 
-'opt-out' or unsubscribe mechanism or other means provided within the 
-communications that you receive from us or by contacting us. We reserve 
-the right to notify you of changes or updates to the Service whenever 
+You can manage your communications preferences when you register with
+the Service, by updating your account preferences, by using the
+'opt-out' or unsubscribe mechanism or other means provided within the
+communications that you receive from us or by contacting us. We reserve
+the right to notify you of changes or updates to the Service whenever
 necessary.<br><br>
 <b>F) ACCESS AND ACCURACY OF YOUR INFORMATION</b><br>
-The Service may allow registered users to access their account 
+The Service may allow registered users to access their account
 information and make corrections or updates upon log in at any time. The
- accuracy of such information is solely the responsibility of the user. 
+ accuracy of such information is solely the responsibility of the user.
 You may also request access to other personal information about you that
- may be held in the Service. If you request to deactivate your account 
-or delete your personal information, we will endeavor to fulfill your 
+ may be held in the Service. If you request to deactivate your account
+or delete your personal information, we will endeavor to fulfill your
 request but some personal information may persist in backup copies for a
- certain period of time and may be retained as necessary for legitimate 
+ certain period of time and may be retained as necessary for legitimate
 business purposes or to comply with our legal obligations.<br><br>
 <b>G) DATA SECURITY</b><br>
-CPRS Formatter takes precautions to safeguard your personal information 
-against loss, theft and misuse and unauthorized access, disclosure, 
-alteration and destruction through the use of appropriate 
+CPRS Formatter takes precautions to safeguard your personal information
+against loss, theft and misuse and unauthorized access, disclosure,
+alteration and destruction through the use of appropriate
 administrative, physical and technical security measures.<br><br>
 <b>H) CROSS-BORDER TRANSFER OF YOUR INFORMATION</b><br>
-Your personal information may be transferred to other countries for 
-processing. By using the Service you consent to the transfer of 
+Your personal information may be transferred to other countries for
+processing. By using the Service you consent to the transfer of
 information to countries outside of your country of residence, which may
  have different personal data protection rules than in your country.<br><br>
 <b>I) CHANGES TO OUR PRIVACY POLICY</b><br>
@@ -4177,8 +4233,8 @@ We may change this privacy policy from time to time. Any changes will be posted 
    <a href="https://web.archive.org/web/20230117075429/http://www-personal.umich.edu/~fmhoward/CPRS%20Lab%20Formatter.pdf">Instructions</a><br>
 <div style="text-decoration: underline; color:blue" onclick="document.getElementById(&#39;popupform&#39;).style.display = &#39;block&#39;;">Terms and Conditions</div>
 <br>Review the <a href="https://web.archive.org/web/20230117075429/https://www.va.gov/TRM/ToolPage.asp?tid=9660">VA TRM listing</a> for this application before use.<br><br>
-v1.0.1 - fixed bug with ABG calculations, correct Na for glucose, 
-display degree of hemolysis for K, calculate albumin corrected AG, 
+v1.0.1 - fixed bug with ABG calculations, correct Na for glucose,
+display degree of hemolysis for K, calculate albumin corrected AG,
 calculate SAAG. <br>
 
 v1.0.2 - fixed bug with Micro data display, fixed bug with AG calculations.<br>
