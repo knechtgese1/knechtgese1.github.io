@@ -2903,6 +2903,7 @@ function fr()
 				}
 			}
 			chemistryData += bmp0 + "\n" + bmp1 + "\n" + bmp2 + "\n" + bmp3 +"\n" + afterTx + hemo1tx + hemo2tx + albText + bmp4 + "\n" + crText;
+
 			cexclude += "SODIUM||POTASSIUM||UREA NITROGEN||CHLORIDE||CO2||Creatinine||Glucose||GLU POC||eGFR(IDMS)||eGFR(DC'D 4-16-10)||ANION GAP||ANION GAP(POC)||";
 		}
 	}
@@ -3239,6 +3240,7 @@ function fr()
 	pexclude += "||RBC||Nucleated cells||PMN||Lymph||Mono||Macrophages||Mesothelial cells||";
 	cexclude += "PERIPHERAL BLOOD SMEAR||";
 	otherData = "";
+	chemistryData2 = "";
 	var mL = 0;
 	for(var prop in listVals)
 	{
@@ -3254,8 +3256,9 @@ function fr()
 			var bloodOnly = false;
 			if(prop.substr(0,3).toLowerCase() == "crp")
 				bloodOnly = true;
-			if(!bloodOnly)
-				chemistryData += printData(prop, "||SERUM||PLASMA||VENOUS BLOOD||ARTERIAL BLOOD||MIXED VENOUS BLOOD||");
+			if(!bloodOnly) {
+				chemistryData2 += printData(prop, "||SERUM||PLASMA||VENOUS BLOOD||ARTERIAL BLOOD||MIXED VENOUS BLOOD||");
+			}
 			if(!bloodOnly)
 				cbcData += printData(prop, "||BLOOD||");
 			if(bloodOnly)
@@ -3297,9 +3300,9 @@ function fr()
 		}
     }
 	if(cbcData != "")
-		cbcData = "HEMATOLOGY:" + "\n" + cbcData + "\n\n";
+		cbcData = "\n" + "HEMATOLOGY:" + "\n" + cbcData + "\n\n";
 	if(chemistryData != "")
-		chemistryData = "CHEMISTRY:" + "\n" + chemistryData + "\n\n";
+		chemistryData = "CHEMISTRY:" + "\n" + chemistryData;
 	if(urineData != "")
 		urineData = "URINE STUDIES:" + "\n" + urineData + "\n\n";
 	if(csfData != "")
@@ -3409,10 +3412,13 @@ function ff()
 		trendData += generateTrendText(listTrends[i]);
 	}
 	if(trendData != "")
-		trendData = "TREND DATA:" + "\n" + trendData + "\n\n";
+		trendData = "TREND DATA:" + "\n" + trendData + "\n";
 	if(changeData != "")
 		changeData = "SIGNIFICANT CHANGES:" + "\n" + changeData + "\n\n";
-	var tmpStr = trendData + changeData + chemistryData + cbcData + urineData + pleuralData + peritonealData + csfData + otherData; // ETK - moved trendData to front of string 5/28
+	if(chemistryData2 != "" && !chemistryData2.includes("OTHER"))
+		chemistryData2 = "OTHER CHEMISTRY:" + "\n" + chemistryData2 + "\n";
+	var tmpStr = chemistryData + trendData + chemistryData2 + cbcData + urineData + pleuralData + peritonealData + csfData + otherData + changeData; // ETK - moved trendData to front of string 5/28
+
 	var micro = "";
 
 
@@ -3878,10 +3884,10 @@ Our collection has grown to the point of having sub-collections for the type of 
     </div>
   </div></div></div><link rel="stylesheet" type="text/css" href="./CPRS Lab Formatter_files/banner-styles.css"><link rel="stylesheet" type="text/css" href="./CPRS Lab Formatter_files/iconochive.css"><div class="wb-autocomplete-suggestions "></div></template>
 </div><div id="wm-ipp-print">The Wayback Machine - https://web.archive.org/web/20230117075429/http://www-personal.umich.edu/~fmhoward/formatter.html</div>
-<script type="text/javascript">//<![CDATA[
+<!-- <script type="text/javascript">//<![CDATA[
 __wm.bt(725,27,25,2,"web","http://www-personal.umich.edu/~fmhoward/formatter.html","20230117075429",1996,"https://web-static.archive.org/_static/",["https://web-static.archive.org/_static/css/banner-styles.css?v=S1zqJCYt","https://web-static.archive.org/_static/css/iconochive.css?v=qtvMKcIJ"], false);
   __wm.rw(1);
-//]]></script>
+//]]></script> -->
 <!-- END WAYBACK TOOLBAR INSERT -->
 
 <!-- Intro Section   ================================================== -->
