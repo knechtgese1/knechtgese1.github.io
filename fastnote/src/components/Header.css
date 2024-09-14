@@ -1,0 +1,27 @@
+
+header h1 {
+  margin: 0;
+}
+
+header nav {
+  display: flex;
+  padding: 1em 2em;
+  gap: 1em;
+}
+
+header button {
+  padding: 1em;
+  border: none;
+  border-radius: 100vw;
+  width: 100%;
+  font-size: 1em;
+  font-weight: 900;
+}
+
+header .edit {
+  background-color: #a0ffa0;
+}
+
+header .define {
+  background-color: #87dddd;
+}
