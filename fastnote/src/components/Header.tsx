@@ -1,15 +1,20 @@
+import { AppMode } from '../types/types';
 import './Header.css';
 
-function Header() {
+interface HeaderProps {
+  handleModeChange: (mode: AppMode) => void;
+};
+
+function Header({handleModeChange}: HeaderProps) {
 
   return (
     <header>
       <h1>FastNote v1.0</h1>
       <nav>
-        <button className="edit">
+        <button className="edit" onClick={() => handleModeChange('edit')}>
           NEW NOTE
         </button>
-        <button className="define">
+        <button className="define" onClick={() => handleModeChange('define')}>
           EDIT DEFS
         </button>
       </nav>

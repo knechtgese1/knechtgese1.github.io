@@ -1,0 +1,16 @@
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.button-group button {
+  border-radius: 100vw;
+  border: 1px solid black;
+  padding: 0.5rem;
+  background: palegoldenrod;
+}
+
+.button-group button:active {
+  filter: invert(1);
+}
