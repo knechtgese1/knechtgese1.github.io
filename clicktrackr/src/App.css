@@ -1,11 +1,28 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 1rem;
+  --c-purple: rgb(127, 100, 127);
+}
+
+h1 {
+  font-size: 2rem;
   text-align: center;
+  margin: 0;
 }
 
 .notes {
-  font-family: "Rhythm";
-  font-size: 3em;
+  font-family: var(--font-rhythm);
+  font-size: 2rem;
+  border: 1px var(--c-purple) solid;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  height: 20rem;
+}
+
+@media (min-width: 768px) {
+  .notes {
+    font-size: 2rem;
+    height: 30rem;
+  }
 }

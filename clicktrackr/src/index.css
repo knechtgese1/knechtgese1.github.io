@@ -1,5 +1,5 @@
 :root {
-  font-family: "Red Hat Display", sans-serif;
+  font-family: var(--font-text);
   font-optical-sizing: auto;
   line-height: 1.5;
   font-weight: 400;
@@ -13,6 +13,9 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --font-text: "Red Hat Display", sans-serif;
+  --font-rhythm: "Rhythm";
 }
 
 @font-face {
