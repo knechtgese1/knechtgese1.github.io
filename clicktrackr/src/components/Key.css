@@ -17,6 +17,10 @@ button:has(.keytext) {
   align-items: center;
 }
 
+button:active {
+  filter: invert();
+}
+
 .keystroke {
   font-family: var(--font-text);
   font-size: 1rem;
@@ -40,4 +44,57 @@ button:has(.keytext) {
 
 .keytext {
   font-family: var(--font-text);
+}
+
+dialog {
+  border-radius: 1rem;
+  position: relative;
+  padding: 1rem;
+  flex-direction: column;
+}
+
+dialog[open] {
+  display: flex;
+}
+
+dialog button {
+  font-family: var(--font-text);
+  font-size: 1rem;
+  display: block;
+  padding: 0;
+  border: none;
+  background: transparent;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+dialog h2 {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+dialog h2 span {
+  font-family: var(--font-rhythm);
+  font-size: 2rem;
+}
+
+dialog input {
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  background: black;
+  color: white;
+  border: 1px solid white;
+}
+
+dialog::backdrop {
+  background-image: linear-gradient(
+    45deg,
+    darkmagenta,
+    rebeccapurple,
+    darkblue,
+    darkgreen
+  );
+  opacity: 0.8;
 }

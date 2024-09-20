@@ -1,5 +1,7 @@
 import { Meter } from "../types/types";
 
+export const HOLD_DURATION = 1000;
+
 export const meters: Meter[] = [
   {
     key: '1',
