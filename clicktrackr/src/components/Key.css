@@ -51,13 +51,22 @@ dialog {
   position: relative;
   padding: 1rem;
   flex-direction: column;
+  gap: 1rem;
 }
 
 dialog[open] {
   display: flex;
 }
 
-dialog button {
+dialog .submit {
+  font-family: var(--font-text);
+  padding: 0.5rem;
+  font-size: 1rem;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+dialog .close {
   font-family: var(--font-text);
   font-size: 1rem;
   display: block;
@@ -70,9 +79,11 @@ dialog button {
 }
 
 dialog h2 {
+  margin: 1rem 0 0 0.4rem;
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  justify-content: center;
 }
 
 dialog h2 span {
@@ -83,6 +94,7 @@ dialog h2 span {
 dialog input {
   padding: 0.25rem;
   border-radius: 0.25rem;
+  font-size: 1rem;
   background: black;
   color: white;
   border: 1px solid white;

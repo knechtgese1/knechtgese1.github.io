@@ -16,6 +16,7 @@ function Key({keystroke, display, subdiv, text, handleKeySelect}: KeyProps) {
   const [showModal, setShowModal] = useState(false);
   const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleDown = (e: React.TouchEvent<HTMLButtonElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -45,6 +46,17 @@ function Key({keystroke, display, subdiv, text, handleKeySelect}: KeyProps) {
     setShowModal(false);
   };
 
+  const handleSubmit = () => {
+    const value = inputRef.current?.value;
+    const num = value ? Number(value) : 0; // Convert to number
+    console.log('entered', num);
+
+    if (Number.isInteger(num) && num > 0) {
+      handleKeySelect(keystroke, num);
+      closeModal();
+    }
+  };
+
   useEffect(() => {
     if (showModal && dialogRef.current) {
       dialogRef.current.showModal();
@@ -69,8 +81,9 @@ function Key({keystroke, display, subdiv, text, handleKeySelect}: KeyProps) {
       {showModal && (
         <dialog ref={dialogRef}>
           <h2>Measures of <span>{display}</span></h2>
-          <input type="text" placeholder="Enter something" />
-          <button onClick={closeModal}>X</button>
+          <input ref={inputRef} type="number" min={0} step={1} placeholder="Enter something" />
+          <button className="submit" type="submit" onClick={handleSubmit}>Submit</button>
+          <button className="close" type="button" onClick={closeModal}>X</button>
         </dialog>
       )}
     </>
