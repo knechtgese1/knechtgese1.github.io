@@ -1,7 +1,8 @@
 import { Wordcloud } from '@visx/wordcloud';
 import { Text } from '@visx/text';
 import './App.css'
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Matrix from './Matrix';
 
 function App() {
 
@@ -24,7 +25,24 @@ function App() {
     }
   ];
 
+  const [size, setSize] = useState({ width: 100, height: 500 });
   const [words, setWords] = useState(fakeWords);
+  const cloudRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateSize = () => {
+      if (cloudRef.current) {
+        const rect = cloudRef.current.getBoundingClientRect();
+        setSize({
+          width: rect.width,
+          height: 500,
+        });
+      }
+    };
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
 
   const handleClick = (text: string) => {
     console.log('clicked', text);
@@ -34,10 +52,11 @@ function App() {
   return (
     <>
       <h1>WordCloud</h1>
-      <div id="wordcloud">
+      <Matrix />
+      <div id="wordcloud" ref={cloudRef}>
         <Wordcloud
-          width={400}
-          height={400}
+          width={size.width}
+          height={size.height}
           words={words}
           font="Work Sans"
           rotate={0}
@@ -46,7 +65,7 @@ function App() {
             cloudWords.map((w) => (
               <Text
                 key={w.text}
-                fill={'lightgreen'}
+                fill={'lightblue'}
                 textAnchor={'middle'}
                 transform={`translate(${w.x}, ${w.y}) rotate(${w.rotate})`}
                 fontSize={w.size}
