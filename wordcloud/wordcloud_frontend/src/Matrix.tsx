@@ -1,25 +1,32 @@
 import { useEffect, useRef } from "react";
 
-function Matrix() {
+type MatrixProps = {
+  words: string[];
+}
 
+function Matrix({words}: MatrixProps) {
   const c = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
+
+  const startMatrix = () => {
+    let interval: number;
+    let resizeTimeout: number;
+
     if (c.current) {
       const ctx = c.current!.getContext("2d");
       c.current!.height = window.innerHeight;
       c.current!.width = window.innerWidth;
-
-
-      const matrixString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
-      const matrix = matrixString.split('');
       const fontSize = 10;
-      const columns = c.current.width / fontSize;
-      const drops: number[] = Array(Math.floor(columns)).fill(1); // Initialize all drops to 1
+      const columns = Math.floor(c.current!.width / fontSize);
 
-      // Drawing function
+      const drops: { wordIndex: number; letterIndex: number; screenIndex: number }[] = Array(columns).fill(null).map(() => ({
+        wordIndex: Math.floor(Math.random() * words.length),
+        letterIndex: 0,
+        screenIndex: 0,
+      }));
+
       const draw = () => {
         if (ctx) {
-          // Slight transparent background to create trailing effect
+          // Slight transparent background to create a fading effect
           ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
           ctx.fillRect(0, 0, c.current!.width, c.current!.height);
 
@@ -27,30 +34,51 @@ function Matrix() {
           ctx.fillStyle = '#42f442';
           ctx.font = fontSize + "px Work Sans";
 
-          // Draw each character in the column
+          // Draw each character in the matrix
           for (let i = 0; i < drops.length; i++) {
-            const text = matrix[Math.floor(Math.random() * matrix.length)];
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-            // If drop is out of screen, randomly reset it
-            if (drops[i] * fontSize > c.current!.height && Math.random() > 0.975) {
-              drops[i] = 0;
+            const drop = drops[i];
+            const word = words[drop.wordIndex];
+            const char = word[drop.letterIndex];
+
+            ctx.fillText(char, i * fontSize, drop.screenIndex * fontSize);
+            drop.letterIndex++;
+            drop.screenIndex++;
+
+            // Reset letterIndex and screenIndex for the drops
+            if (drop.letterIndex >= word.length) {
+              drop.letterIndex = 0;
+              drop.wordIndex = Math.floor(Math.random() * words.length);
             }
-            drops[i]++;
+            if (drop.screenIndex * fontSize > c.current!.height && Math.random() > 0.975) {
+              drop.screenIndex = 0;
+            }
           }
         }
       };
 
-      // Set one interval for the animation
-      const interval = setInterval(draw, 35);
+      interval = setInterval(draw, 35);
 
-      // Cleanup the interval on unmount
-      return () => clearInterval(interval);
+      const handleResize = () => {
+        clearInterval(interval);
+        ctx?.clearRect(0, 0, c.current!.width, c.current!.height);
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+        resizeTimeout = window.setTimeout(startMatrix, 250); // Restart the matrix after resizing, debounced
+      };
+
+      // Attach the resize event listener
+      window.addEventListener('resize', handleResize);
+
+      // Clean up the interval and event listener on unmount
+      return () => {
+        clearInterval(interval);
+        window.removeEventListener('resize', handleResize);
+      };
     }
-  }, [])
+  };
 
-  return (
-    <canvas ref={c}></canvas>
-  )
-};
+  useEffect(startMatrix, []);
+
+  return <canvas ref={c}></canvas>;
+}
 
 export default Matrix;
