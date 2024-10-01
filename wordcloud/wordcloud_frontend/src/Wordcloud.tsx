@@ -33,9 +33,13 @@ function WordCloud({words, handleClick, handleSubmit}: WordCloudProps) {
 
   return (
     <>
-      <form onSubmit={(e) => handleSubmit(e, inputRef.current!.value)}>
+      <form className="word-add" onSubmit={(e) => {
+        handleSubmit(e, inputRef.current!.value);
+        inputRef.current!.value = '';
+      }}>
         <label htmlFor="word">Add a new word</label>
         <input id="word" ref={inputRef}/>
+        <button>Submit</button>
       </form>
       <div id="wordcloud" ref={cloudRef}>
         <Wordcloud

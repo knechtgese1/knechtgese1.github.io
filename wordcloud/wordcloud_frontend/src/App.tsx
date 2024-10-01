@@ -2,6 +2,8 @@ import './App.css'
 import { useState } from 'react';
 import Matrix from './Matrix';
 import WordCloud from './Wordcloud';
+import PillToggle from './PillToggle';
+import Dictionary from './Dictionary';
 
 function App() {
 
@@ -20,19 +22,23 @@ function App() {
     },
     {
       text: 'transmogrification',
-      value: 1000,
+      value: 500,
     }
   ];
 
-  const addedWords = ['glomerulonephritis', 'anuric', 'hyperphosphatemia'];
+  const addedWords = ['glomerulonephritis', 'anuric', 'hyperphosphatemia', 'hyponatremia'];
 
   type Display = 'wordcloud' | 'dictionary';
-  const [display] = useState<Display>('wordcloud');
+  const [display, setDisplay] = useState<Display>('wordcloud');
   const [words, setWords] = useState(fakeWords);
+
+  const handleDisplayChange = (value: Display) => {
+    console.log('change to', value);
+    setDisplay(value);
+  }
 
   const handleWordCloudClick = (text: string) => {
     console.log('clicked', text);
-    setWords(fakeWords.filter(word => word.text.length > 4));
   }
 
   const handleWordCloudSubmit = (e: React.FormEvent<HTMLFormElement>, value: string) => {
@@ -45,11 +51,16 @@ function App() {
     <>
       <h1>WordCloud</h1>
       <Matrix words={addedWords} />
+      <PillToggle
+        selected={display}
+        handleClick={handleDisplayChange}
+      />
       {display === 'wordcloud' && <WordCloud
         words={words}
         handleClick={handleWordCloudClick}
         handleSubmit={handleWordCloudSubmit}
       />}
+      {display === 'dictionary' && <Dictionary words={addedWords} />}
     </>
   )
 }
