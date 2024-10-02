@@ -67,6 +67,7 @@ function App() {
       <PillToggle
         options={['Word Cloud', 'Dictionary']}
         selected={display}
+        selectedColor="var(--c-green)"
         handleClick={handleDisplayChange}
       />
       {display === 'Word Cloud' && <WordCloud

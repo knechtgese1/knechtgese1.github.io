@@ -6,6 +6,8 @@
   --c-white: white;
   --c-red: red;
   --c-gray: #ccc;
+  --c-green: green;
+  --c-selected: var(--c-green);
 }
 
 /* WordCloud */
@@ -82,7 +84,7 @@ input#word {
 }
 
 .pill-toggle input[type="radio"]:checked + label {
-  background-color: green;
+  background-color: var(--c-selected);
   color: white;
 }
 

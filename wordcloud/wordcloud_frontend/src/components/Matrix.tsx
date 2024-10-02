@@ -76,6 +76,7 @@ function Matrix({words}: MatrixProps) {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(startMatrix, []);
 
   return <canvas ref={c}></canvas>;
