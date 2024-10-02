@@ -7,6 +7,7 @@ import Dictionary from './Dictionary';
 
 function App() {
 
+  //TODO: move these to state and database fetches
   const fakeWords = [
     {
       text: 'Sample',
@@ -28,12 +29,11 @@ function App() {
 
   const addedWords = ['glomerulonephritis', 'anuric', 'hyperphosphatemia', 'hyponatremia'];
 
-  type Display = 'wordcloud' | 'dictionary';
-  const [display, setDisplay] = useState<Display>('wordcloud');
+  const [display, setDisplay] = useState('Word Cloud');
   const [words, setWords] = useState(fakeWords);
   const [wordCloudInputError, setWordCloudInputError] = useState('');
 
-  const handleDisplayChange = (value: Display) => {
+  const handleDisplayChange = (value: string) => {
     console.log('change to', value);
     setDisplay(value);
   }
@@ -65,17 +65,18 @@ function App() {
       <h1>WordCloud</h1>
       <Matrix words={addedWords} />
       <PillToggle
+        options={['Word Cloud', 'Dictionary']}
         selected={display}
         handleClick={handleDisplayChange}
       />
-      {display === 'wordcloud' && <WordCloud
+      {display === 'Word Cloud' && <WordCloud
         words={words}
         error={wordCloudInputError}
         handleClick={handleWordCloudClick}
         handleInput={handleWordCloudInput}
         handleSubmit={handleWordCloudSubmit}
       />}
-      {display === 'dictionary' && <Dictionary words={addedWords} />}
+      {display === 'Dictionary' && <Dictionary words={addedWords} />}
     </>
   )
 }
