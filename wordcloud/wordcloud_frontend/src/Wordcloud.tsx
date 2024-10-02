@@ -7,11 +7,13 @@ type WordCloudProps = {
     text: string;
     value: number;
   }[]
+  error: string;
   handleClick: (text: string) => void;
+  handleInput: () => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>, value: string) => void;
 }
 
-function WordCloud({words, handleClick, handleSubmit}: WordCloudProps) {
+function WordCloud({words, error, handleClick, handleInput,handleSubmit}: WordCloudProps) {
 
   const [size, setSize] = useState({ width: 100, height: 500 });
   const inputRef = useRef<HTMLInputElement>(null);
@@ -36,11 +38,20 @@ function WordCloud({words, handleClick, handleSubmit}: WordCloudProps) {
       <form className="word-add" onSubmit={(e) => {
         handleSubmit(e, inputRef.current!.value);
         inputRef.current!.value = '';
+        inputRef.current!.focus();
       }}>
         <label htmlFor="word">Add a new word</label>
-        <input id="word" ref={inputRef}/>
+        <input
+          type="text"
+          id="word"
+          ref={inputRef}
+          aria-describedby={error ? "error-message" : undefined}
+          aria-invalid={!!error}
+          onInput={handleInput}
+        />
         <button>Submit</button>
       </form>
+      <div id="error-message" className="error" role="alert">{error || ''}</div>
       <div id="wordcloud" ref={cloudRef}>
         <Wordcloud
           width={size.width}
