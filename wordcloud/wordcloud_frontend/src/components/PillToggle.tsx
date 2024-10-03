@@ -1,4 +1,4 @@
-
+import "./PillToggle.css";
 
 type PillToggleProps = {
   options: string[];
@@ -11,8 +11,8 @@ const PillToggle = ({options, selected, selectedColor, handleClick}: PillToggleP
 
   return (
     <div role="group" aria-label="Word Cloud or Dictionary" className="pill-toggle">
-      {options.map(option =>
-        <>
+      {options.map(option => (
+        <div key={option.replace(/\s+/g, '').toLowerCase()}>
           <input
             type="radio"
             id={`${option.replace(/\s+/g, '').toLowerCase()}-option`}
@@ -25,12 +25,15 @@ const PillToggle = ({options, selected, selectedColor, handleClick}: PillToggleP
             htmlFor={`${option.replace(/\s+/g, '').toLowerCase()}-option`}
             style={{
               backgroundColor: selected === option ? selectedColor : 'var(--c-gray)',
+              color: selected === option ? 'var(--c-white)' : 'var(--c-black)',
             }}
-          >{option}</label>
-        </>
-      )}
+          >
+            {option}
+          </label>
+        </div>
+      ))}
     </div>
   );
-};
+}
 
 export default PillToggle;

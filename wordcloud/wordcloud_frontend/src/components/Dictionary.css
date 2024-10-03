@@ -1,0 +1,15 @@
+.dictionary-list {
+  list-style-type: none;
+  padding: 1rem;
+  text-align: left;
+}
+
+.dictionary-list li {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--c-white);
+  border-bottom: none;
+}
+
+.dictionary-list li:last-child {
+  border-bottom: 1px solid var(--c-white);
+}

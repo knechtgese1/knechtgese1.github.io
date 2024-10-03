@@ -5,4 +5,5 @@
   font-style: normal;
   color: white;
   background: black;
+  box-sizing: border-box;
 }

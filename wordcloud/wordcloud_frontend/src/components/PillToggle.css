@@ -1,0 +1,28 @@
+.pill-toggle {
+  display: inline-flex;
+  border-radius: 50px;
+  overflow: hidden;
+  border: 1px solid var(--c-gray);
+  color: black;
+}
+
+.pill-toggle > div {
+  display: contents;
+}
+
+.pill-toggle input[type="radio"] {
+  display: none; /* Hide the default radio buttons */
+}
+
+.pill-toggle label {
+  padding: 0.25rem 1rem;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  transition: background-color 0.3s;
+  border-right: 1px solid #ccc;
+  white-space: nowrap;
+}
+
+.pill-toggle label:last-child {
+  border-right: none;
+}

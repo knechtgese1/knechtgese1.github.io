@@ -1,6 +1,7 @@
 import { Wordcloud } from '@visx/wordcloud';
 import { Text } from '@visx/text';
 import { useEffect, useRef, useState } from 'react';
+import "./Wordcloud.css";
 
 type WordCloudProps = {
   words: {

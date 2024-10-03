@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import "./Matrix.css";
 
 type MatrixProps = {
   words: string[];

@@ -1,0 +1,33 @@
+.word-add {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.word-add input {
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+}
+
+.word-add button {
+  max-width: fit-content;
+  margin: 0 auto;
+  padding: 0.25rem 0.5rem;
+  border-radius: 50rem;
+}
+
+.error {
+  color: var(--c-red);
+  height: 1rem;
+  margin: 0.25rem;
+}
+
+#wordcloud text {
+  transition: transform 0.5s ease-in-out;
+}
+
+input#word {
+  background: var(--c-white);
+  border: 1px var(--c-gray) solid;
+}

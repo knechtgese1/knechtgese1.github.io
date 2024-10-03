@@ -1,3 +1,5 @@
+import "./Dictionary.css";
+
 type DictionaryProps = {
   words: string[];
 }
