@@ -1,0 +1,36 @@
+.modal {
+  background: rgb(0, 0, 35);
+  color: var(--c-white);
+  border: 1px solid var(--c-gray);
+  border-radius: 1rem;
+  margin: auto 1rem;
+  position: relative;
+}
+
+.modal::backdrop {
+  background-image: linear-gradient(
+    45deg,
+    darkmagenta,
+    rebeccapurple,
+    darkblue,
+    darkgreen
+  );
+  opacity: 0.6;
+}
+
+.close {
+  background: transparent;
+  border: none;
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 0.25rem;
+}
+
+.close img {
+  width: 1rem;
+}

@@ -1,9 +1,10 @@
 .pill-toggle {
-  display: inline-flex;
+  display: flex;
   border-radius: 50px;
   overflow: hidden;
   border: 1px solid var(--c-gray);
   color: black;
+  width: 100%;
 }
 
 .pill-toggle > div {
@@ -21,6 +22,7 @@
   transition: background-color 0.3s;
   border-right: 1px solid #ccc;
   white-space: nowrap;
+  flex: 1;
 }
 
 .pill-toggle label:last-child {

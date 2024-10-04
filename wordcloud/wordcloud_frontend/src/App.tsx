@@ -5,35 +5,60 @@ import WordCloud from './components/Wordcloud';
 import PillToggle from './components/PillToggle';
 import Dictionary from './components/Dictionary';
 import { vibrate } from './utils/utils';
+import ValidateModal from './ValidateModal';
 
 function App() {
 
+  type User = {
+    id: number;
+    handle: string;
+    firstName: string;
+    lastName: string;
+  };
+  type Word = {
+    text: string;
+    value: number;
+    user: number;
+  }
+  //TODO: add to database and fix User ID
   //TODO: move these to state and database fetches
-  const fakeWords = [
+  const fakeWords: Word[] = [
     {
       text: 'Sample',
       value: 500,
+      user: 1,
     },
     {
-      text: 'Word',
+      text: 'word',
       value: 300,
+      user: 2,
     },
     {
       text: 'Cloud',
       value: 250,
+      user: 1,
     },
     {
       text: 'transmogrification',
       value: 500,
+      user: 2,
     }
   ];
 
   const addedWords = ['glomerulonephritis', 'anuric', 'hyperphosphatemia', 'hyponatremia'];
 
   const [display, setDisplay] = useState('Word Cloud');
+  const [currentUser, setCurrentUser] = useState<User>({
+    id: 1,
+    handle: 'user',
+    firstName: 'Sam',
+    lastName: 'Smith',
+  });
   const [mode, setMode] = useState('User');
   const [words, setWords] = useState(fakeWords);
   const [wordCloudInputError, setWordCloudInputError] = useState('');
+  const [isValidateModalOpen, setIsValidateModalOpen] = useState(false);
+  const [validatedWord, setValidatedWord] = useState<Word | null>(null);
 
   const handleDisplayChange = (value: string) => {
     console.log('change to', value);
@@ -43,10 +68,15 @@ function App() {
 
   const handleModeChange = (value: string) => {
     setMode(value);
+    // TODO: Fix the hardcoded id values here -- Admin is 2, User is 1
+    setCurrentUser(user => {return {...user, id: value === 'Admin' ? 2 : 1}})
   }
 
   const handleWordCloudClick = (text: string) => {
     console.log('clicked', text);
+    const word = words.find(word => word.text === text);
+    if (mode === 'Admin' && word) validateWord(word);
+    if (mode === 'User' && word && word.user !== currentUser.id) toggleUpvote(word);
     vibrate(50);
   }
 
@@ -63,11 +93,34 @@ function App() {
       setWordCloudInputError('Use only alphanumeric characters');
       return;
     }
-    if (words.find(word => word.text === value) || addedWords.includes(value)) {
+    if (wordExists(value)) {
       setWordCloudInputError('Word already added');
       return;
     }
-    setWords(prev => [...prev, {text: value, value: 200}].sort((a, b) => a.text.localeCompare(b.text)));
+    //TODO: send to the API endpoint
+    setWords(prev => [...prev, {text: value, value: 200, user: currentUser.id}].sort((a, b) => a.text.localeCompare(b.text)));
+  }
+
+  const validateWord = (word: Word) => {
+    setValidatedWord(word);
+    setIsValidateModalOpen(true);
+  }
+
+  const wordExists = (value: string): boolean => !!words.find(word => word.text.toLocaleLowerCase() === value.toLocaleLowerCase()) || addedWords.includes(value);
+
+  const handleApprove = (valWord: Word) => {
+    // TODO: PATCH to approve word
+    addedWords.push(valWord.text);
+    setWords(prev => prev.filter(word => word.text !== valWord.text));
+  }
+
+  const handleReject = (valWord: Word) => {
+    // TODO: DELETE to remove word
+    setWords(prev => prev.filter(word => word.text !== valWord.text));
+  }
+
+  const toggleUpvote = (word: Word) => {
+    console.log('upvote', word.text);
   }
 
   return (
@@ -94,6 +147,12 @@ function App() {
         handleSubmit={handleWordCloudSubmit}
       />}
       {display === 'Dictionary' && <Dictionary words={addedWords} />}
+      {isValidateModalOpen && validatedWord && <ValidateModal
+        word={validatedWord.text}
+        onClose={() => setIsValidateModalOpen(false)}
+        onApprove={() => handleApprove(validatedWord)}
+        onReject={() => handleReject(validatedWord)}
+      />}
     </>
   )
 }
