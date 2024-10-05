@@ -5,6 +5,7 @@
   border-radius: 1rem;
   margin: auto auto;
   position: relative;
+  min-width: 10rem;
 }
 
 .modal::backdrop {
