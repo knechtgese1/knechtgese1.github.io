@@ -10,10 +10,10 @@ type RemoveModalProps = {
 }
 
 function RemoveModal({word, onClose, onNo, onYes}: RemoveModalProps) {
-  const approveButton = useRef<HTMLButtonElement>(null);
+  const yesButton = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    approveButton.current?.focus();
+    yesButton.current?.focus();
   }, [])
 
   return (
@@ -23,7 +23,7 @@ function RemoveModal({word, onClose, onNo, onYes}: RemoveModalProps) {
         <p> "{word}"?</p>
       </div>
       <div className="buttons">
-        <button className="yes" ref={approveButton} onClick={onYes}>Yes</button>
+        <button className="yes" ref={yesButton} onClick={onYes}>Yes</button>
         <button className="no" onClick={onNo}>No</button>
       </div>
     </Modal>
