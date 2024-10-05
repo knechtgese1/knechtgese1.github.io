@@ -5,8 +5,11 @@
   text-align: center;
   --c-white: white;
   --c-red: red;
+  --c-lightred: rgba(255, 94, 120, 1);
   --c-gray: #ccc;
   --c-green: green;
+  --c-lightgreen: lightgreen;
+  --c-lightblue: lightblue;
   --c-blue: rgb(0, 123, 255);
   --c-selected: var(--c-green);
 }

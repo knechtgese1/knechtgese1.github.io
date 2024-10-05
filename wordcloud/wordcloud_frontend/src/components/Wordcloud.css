@@ -23,8 +23,25 @@
   margin: 0.25rem;
 }
 
+#wordcloud:hover {
+  cursor: pointer;
+}
+
 #wordcloud text {
   transition: transform 0.5s ease-in-out;
+}
+
+#wordcloud g svg {
+  border-radius: 1rem;
+}
+
+#wordcloud g svg:hover {
+  outline: 1px solid var(--c-lightblue);
+  outline-offset: 0.25rem;
+}
+
+#wordcloud g svg:active {
+  filter: invert();
 }
 
 input#word {

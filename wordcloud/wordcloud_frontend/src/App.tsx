@@ -5,7 +5,7 @@ import WordCloud from './components/Wordcloud';
 import PillToggle from './components/PillToggle';
 import Dictionary from './components/Dictionary';
 import { vibrate } from './utils/utils';
-import ValidateModal from './ValidateModal';
+import ValidateModal from './components/ValidateModal';
 
 function App() {
 
@@ -45,7 +45,7 @@ function App() {
     }
   ];
 
-  const addedWords = ['glomerulonephritis', 'anuric', 'hyperphosphatemia', 'hyponatremia'];
+  const addedFakeWords = ['glomerulonephritis', 'anuric', 'hyperphosphatemia', 'hyponatremia'];
 
   const [display, setDisplay] = useState('Word Cloud');
   const [currentUser, setCurrentUser] = useState<User>({
@@ -56,6 +56,7 @@ function App() {
   });
   const [mode, setMode] = useState('User');
   const [words, setWords] = useState(fakeWords);
+  const [addedWords, setAddedWords] = useState(addedFakeWords);
   const [wordCloudInputError, setWordCloudInputError] = useState('');
   const [isValidateModalOpen, setIsValidateModalOpen] = useState(false);
   const [validatedWord, setValidatedWord] = useState<Word | null>(null);
@@ -110,13 +111,15 @@ function App() {
 
   const handleApprove = (valWord: Word) => {
     // TODO: PATCH to approve word
-    addedWords.push(valWord.text);
+    setAddedWords(prev => [...prev, valWord.text]);
     setWords(prev => prev.filter(word => word.text !== valWord.text));
+    setIsValidateModalOpen(false);
   }
 
   const handleReject = (valWord: Word) => {
     // TODO: DELETE to remove word
     setWords(prev => prev.filter(word => word.text !== valWord.text));
+    setIsValidateModalOpen(false);
   }
 
   const toggleUpvote = (word: Word) => {
@@ -140,6 +143,7 @@ function App() {
         handleClick={handleDisplayChange}
       />
       {display === 'Word Cloud' && <WordCloud
+        currentUser={currentUser.id}
         words={words}
         error={wordCloudInputError}
         handleClick={handleWordCloudClick}

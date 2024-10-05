@@ -9,7 +9,7 @@ function Dictionary({words}: DictionaryProps) {
     <>
       <input className="dictionary-search" />
       <ul className="dictionary-list">
-        {words.sort().map(word => <li key={word}>{word}</li>)}
+        {words.sort((a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase())).map(word => <li key={word}>{word}</li>)}
       </ul>
     </>
   );

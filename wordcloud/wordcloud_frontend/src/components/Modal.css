@@ -3,7 +3,7 @@
   color: var(--c-white);
   border: 1px solid var(--c-gray);
   border-radius: 1rem;
-  margin: auto 1rem;
+  margin: auto auto;
   position: relative;
 }
 

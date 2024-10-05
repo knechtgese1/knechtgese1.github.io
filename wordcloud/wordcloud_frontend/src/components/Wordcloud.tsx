@@ -4,9 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import "./Wordcloud.css";
 
 type WordCloudProps = {
+  currentUser: number;
   words: {
     text: string;
     value: number;
+    user: number;
   }[]
   error: string;
   handleClick: (text: string) => void;
@@ -14,7 +16,7 @@ type WordCloudProps = {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>, value: string) => void;
 }
 
-function WordCloud({words, error, handleClick, handleInput,handleSubmit}: WordCloudProps) {
+function WordCloud({currentUser, words, error, handleClick, handleInput,handleSubmit}: WordCloudProps) {
 
   const [size, setSize] = useState({ width: 100, height: 500 });
   const inputRef = useRef<HTMLInputElement>(null);
@@ -62,19 +64,22 @@ function WordCloud({words, error, handleClick, handleInput,handleSubmit}: WordCl
           rotate={0}
         >
           {(cloudWords) =>
-            cloudWords.map((w) => (
-              <Text
-                key={w.text}
-                fill={'lightblue'}
-                textAnchor={'middle'}
-                transform={`translate(${w.x}, ${w.y}) rotate(${w.rotate})`}
-                fontSize={w.size}
-                fontFamily={w.font}
-                onClick={() => handleClick(w.text!)}
-              >
-                {w.text}
-              </Text>
-            ))
+            cloudWords.map((w) => {
+              const wordWithUser = w as typeof w & { user: number };
+              return (
+                <Text
+                  key={w.text}
+                  fill={wordWithUser.user === currentUser ? 'var(--c-blue)' : 'var(--c-lightblue)'}
+                  textAnchor={'middle'}
+                  transform={`translate(${w.x}, ${w.y}) rotate(${w.rotate})`}
+                  fontSize={w.size}
+                  fontFamily={w.font}
+                  onClick={() => handleClick(w.text!)}
+                >
+                  {w.text}
+                </Text>
+              )
+            })
           }
         </Wordcloud>
       </div>

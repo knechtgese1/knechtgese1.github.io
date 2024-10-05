@@ -1,0 +1,37 @@
+.text {
+  margin: 1.5rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.text p {
+  margin: 0;
+}
+
+.buttons {
+  margin: 0.5rem auto;
+  display: flex;
+  gap: 1rem;
+}
+
+.buttons > * {
+  flex: 1;
+  width: 100%;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  border: none;
+}
+
+.buttons > *:focus-visible {
+  outline: 2px solid lightblue;
+  outline-offset: 2px;
+}
+
+.approve {
+  background-color: var(--c-lightgreen);
+}
+
+.reject {
+  background-color: var(--c-lightred);
+}
