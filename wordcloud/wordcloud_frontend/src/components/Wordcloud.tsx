@@ -1,22 +1,20 @@
 import { Wordcloud } from '@visx/wordcloud';
 import { Text } from '@visx/text';
 import { useEffect, useRef, useState } from 'react';
+import { Upvote, Word } from '../types/types';
 import "./Wordcloud.css";
 
 type WordCloudProps = {
   currentUser: number;
-  words: {
-    text: string;
-    value: number;
-    user: number;
-  }[]
   error: string;
+  upvotes: Upvote[];
+  words: Word[];
   handleClick: (text: string) => void;
   handleInput: () => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>, value: string) => void;
 }
 
-function WordCloud({currentUser, words, error, handleClick, handleInput,handleSubmit}: WordCloudProps) {
+function WordCloud({currentUser, error, upvotes, words, handleClick, handleInput,handleSubmit}: WordCloudProps) {
 
   const [size, setSize] = useState({ width: 100, height: 500 });
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,6 +33,8 @@ function WordCloud({currentUser, words, error, handleClick, handleInput,handleSu
     window.addEventListener('resize', updateSize);
     return () => window.removeEventListener('resize', updateSize);
   }, []);
+
+  const isUpvoted = (wordId: number) => upvotes.some(upvote => upvote.wordId === wordId && upvote.userId === currentUser);
 
   return (
     <>
@@ -65,18 +65,19 @@ function WordCloud({currentUser, words, error, handleClick, handleInput,handleSu
         >
           {(cloudWords) =>
             cloudWords.map((w) => {
-              const wordWithUser = w as typeof w & { user: number };
+              const wordExtended = w as typeof w & { user: number, id: number };
               return (
                 <Text
                   key={w.text}
-                  fill={wordWithUser.user === currentUser ? 'var(--c-blue)' : 'var(--c-lightblue)'}
+                  className={isUpvoted(wordExtended.id) ? 'upvote' : ''}
+                  fill={wordExtended.user === currentUser ? 'var(--c-blue)' : 'var(--c-lightblue)'}
                   textAnchor={'middle'}
                   transform={`translate(${w.x}, ${w.y}) rotate(${w.rotate})`}
                   fontSize={w.size}
                   fontFamily={w.font}
                   onClick={() => handleClick(w.text!)}
                 >
-                  {w.text}
+                  {wordExtended.text + (isUpvoted(wordExtended.id) ? '👍' : '')}
                 </Text>
               )
             })

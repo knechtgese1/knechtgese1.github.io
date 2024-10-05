@@ -6,44 +6,44 @@ import PillToggle from './components/PillToggle';
 import Dictionary from './components/Dictionary';
 import { vibrate } from './utils/utils';
 import ValidateModal from './components/ValidateModal';
+import { Word, User, Upvote } from './types/types';
 
 function App() {
 
-  type User = {
-    id: number;
-    handle: string;
-    firstName: string;
-    lastName: string;
-  };
-  type Word = {
-    text: string;
-    value: number;
-    user: number;
-  }
   //TODO: add to database and fix User ID
   //TODO: move these to state and database fetches
   const fakeWords: Word[] = [
     {
+      id: 1,
       text: 'Sample',
       value: 500,
       user: 1,
     },
     {
+      id: 2,
       text: 'word',
       value: 300,
       user: 2,
     },
     {
+      id: 3,
       text: 'Cloud',
       value: 250,
       user: 1,
     },
     {
+      id: 4,
       text: 'transmogrification',
       value: 500,
       user: 2,
-    }
+    },
   ];
+
+  //TODO: replace this with a UUID generator
+  const getNextHighestId = () => {
+    const highestId = Math.max(...words.map(word => word.id));
+    return highestId + 1;
+  };
 
   const addedFakeWords = ['glomerulonephritis', 'anuric', 'hyperphosphatemia', 'hyponatremia'];
 
@@ -55,8 +55,9 @@ function App() {
     lastName: 'Smith',
   });
   const [mode, setMode] = useState('User');
-  const [words, setWords] = useState(fakeWords);
+  const [words, setWords] = useState<Word[]>(fakeWords);
   const [addedWords, setAddedWords] = useState(addedFakeWords);
+  const [upvotes, setUpvotes] = useState<Upvote[]>([]);
   const [wordCloudInputError, setWordCloudInputError] = useState('');
   const [isValidateModalOpen, setIsValidateModalOpen] = useState(false);
   const [validatedWord, setValidatedWord] = useState<Word | null>(null);
@@ -99,7 +100,7 @@ function App() {
       return;
     }
     //TODO: send to the API endpoint
-    setWords(prev => [...prev, {text: value, value: 200, user: currentUser.id}].sort((a, b) => a.text.localeCompare(b.text)));
+    setWords(prev => [...prev, {id: getNextHighestId(), text: value, value: 200, user: currentUser.id}].sort((a, b) => a.text.localeCompare(b.text)));
   }
 
   const validateWord = (word: Word) => {
@@ -124,6 +125,11 @@ function App() {
 
   const toggleUpvote = (word: Word) => {
     console.log('upvote', word.text);
+    if (upvotes.some(upvote => upvote.wordId === word.id)) {
+      setUpvotes(prev => prev.filter(w => w.wordId !== word.id));
+      return;
+    }
+    setUpvotes(prev => [...prev, {userId: currentUser.id, wordId: word.id}])
   }
 
   return (
@@ -144,6 +150,7 @@ function App() {
       />
       {display === 'Word Cloud' && <WordCloud
         currentUser={currentUser.id}
+        upvotes={upvotes}
         words={words}
         error={wordCloudInputError}
         handleClick={handleWordCloudClick}
