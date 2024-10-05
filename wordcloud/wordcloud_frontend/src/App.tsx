@@ -7,6 +7,7 @@ import Dictionary from './components/Dictionary';
 import { vibrate } from './utils/utils';
 import ValidateModal from './components/ValidateModal';
 import { Word, User, Upvote } from './types/types';
+import RemoveModal from './components/RemoveModal';
 
 function App() {
 
@@ -60,7 +61,9 @@ function App() {
   const [upvotes, setUpvotes] = useState<Upvote[]>([]);
   const [wordCloudInputError, setWordCloudInputError] = useState('');
   const [isValidateModalOpen, setIsValidateModalOpen] = useState(false);
+  const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const [validatedWord, setValidatedWord] = useState<Word | null>(null);
+  const [removedWord, setRemovedWord] = useState<Word | null>(null);
 
   const handleDisplayChange = (value: string) => {
     console.log('change to', value);
@@ -75,11 +78,17 @@ function App() {
   }
 
   const handleWordCloudClick = (text: string) => {
-    console.log('clicked', text);
-    const word = words.find(word => word.text === text);
-    if (mode === 'Admin' && word) validateWord(word);
-    if (mode === 'User' && word && word.user !== currentUser.id) toggleUpvote(word);
     vibrate(50);
+    const word = words.find(word => word.text === text);
+    if (mode === 'Admin' && word) {
+      validateWord(word);
+      return;
+    }
+    if (mode === 'User' && word && word.user !== currentUser.id) {
+      toggleUpvote(word);
+      return;
+    }
+    handleRemoveClick(word!);
   }
 
   const handleWordCloudInput = () => {
@@ -121,7 +130,7 @@ function App() {
     // TODO: DELETE to remove word
     setWords(prev => prev.filter(word => word.text !== valWord.text));
     setIsValidateModalOpen(false);
-  }
+  };
 
   const toggleUpvote = (word: Word) => {
     console.log('upvote', word.text);
@@ -130,7 +139,17 @@ function App() {
       return;
     }
     setUpvotes(prev => [...prev, {userId: currentUser.id, wordId: word.id}])
-  }
+  };
+
+  const handleRemoveClick = (word: Word) => {
+    setRemovedWord(word);
+    setIsRemoveModalOpen(true);
+  };
+
+  const handleRemove = (word: Word) => {
+    setWords(prev => prev.filter(w => w.id !== word.id));
+    setIsRemoveModalOpen(false);
+  };
 
   return (
     <>
@@ -163,6 +182,12 @@ function App() {
         onClose={() => setIsValidateModalOpen(false)}
         onApprove={() => handleApprove(validatedWord)}
         onReject={() => handleReject(validatedWord)}
+      />}
+      {isRemoveModalOpen && removedWord && <RemoveModal
+        word={removedWord.text}
+        onClose={() => setIsRemoveModalOpen(false)}
+        onYes={() => handleRemove(removedWord)}
+        onNo={() => setIsRemoveModalOpen(false)}
       />}
     </>
   )
