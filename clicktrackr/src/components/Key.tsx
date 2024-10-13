@@ -18,8 +18,8 @@ function Key({keystroke, display, subdiv, text, handleKeySelect}: KeyProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleDown = (e: React.TouchEvent<HTMLButtonElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
+  const handleDown = (e?: React.TouchEvent<HTMLButtonElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (e) e.preventDefault();
     // keypress event
     console.log('pressing', keystroke);
     holdTimerRef.current = setTimeout(() => {

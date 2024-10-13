@@ -8,7 +8,9 @@ type KeypadProps = {
 
 function Keypad({handleKeySelect}: KeypadProps) {
   return (
-    <div className="keypad">
+    <div
+      className="keypad"
+    >
       {meters.map(meter =>
         <Key
           key={meter.display + meter.subdiv || ''}

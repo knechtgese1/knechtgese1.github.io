@@ -5,4 +5,10 @@ export type Meter = {
   num?: number;
   den?: number;
   subdiv?: number[];
+  defaultFill?: string;
+}
+
+export type Measure = {
+  meter: string;
+  fill: string;
 }
