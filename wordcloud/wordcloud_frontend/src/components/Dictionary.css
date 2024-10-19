@@ -1,7 +1,19 @@
+.dictionary-wrapper {
+  margin-top: 2rem;
+}
+
+.dictionary-search {
+  margin-left: 0.5rem;
+  padding: 0.25rem;
+}
+
 .dictionary-list {
   list-style-type: none;
   padding: 1rem;
   text-align: left;
+  width: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
 }
 
 .dictionary-list li {

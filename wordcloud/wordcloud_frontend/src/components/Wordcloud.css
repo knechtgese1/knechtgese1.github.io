@@ -52,4 +52,7 @@
 input#word {
   background: var(--c-white);
   border: 1px var(--c-gray) solid;
+  width: 100%;
+  max-width: 20rem;
+  margin: 0 auto;
 }

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "./Dictionary.css";
 
 type DictionaryProps = {
@@ -5,13 +6,25 @@ type DictionaryProps = {
 }
 
 function Dictionary({words}: DictionaryProps) {
+  const [searchValue, setSearchValue] = useState('');
+  const [sortedWords, setSortedWords] = useState(words);
+  const handleInput = (e: InputEvent) => {
+    //TODO: type this properly
+    setSearchValue(e.target!.value);
+  }
+
+useEffect(() => {
+  setSortedWords(words.sort((a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase())).filter(word => word.includes(searchValue)));
+}, [words, searchValue]);
+
   return (
-    <>
-      <input className="dictionary-search" />
+    <div className="dictionary-wrapper">
+      <label htmlFor="dictionary-search">Search</label>
+      <input id="dictionary-search" className="dictionary-search" onInput={handleInput} />
       <ul className="dictionary-list">
-        {words.sort((a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase())).map(word => <li key={word}>{word}</li>)}
+        {sortedWords.map(word => <li key={word}>{word}</li>)}
       </ul>
-    </>
+    </div>
   );
 }
 
