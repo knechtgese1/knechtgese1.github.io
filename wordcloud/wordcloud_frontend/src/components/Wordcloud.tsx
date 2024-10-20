@@ -77,7 +77,7 @@ function WordCloud({currentUser, error, upvotes, words, handleClick, handleInput
                   fontFamily={w.font}
                   onClick={() => handleClick(w.text!)}
                 >
-                  {wordExtended.text + (isUpvoted(wordExtended.id) ? '👍' : '')}
+                  {wordExtended.text + (isUpvoted(wordExtended.id) ? ' 👍' : '')}
                 </Text>
               )
             })
