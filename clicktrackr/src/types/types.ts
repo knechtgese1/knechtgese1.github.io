@@ -1,6 +1,7 @@
 export type Meter = {
   key: string;
-  display: string;
+  display?: string;
+  alt?: string;
   text?: boolean;
   num?: number;
   den?: number;

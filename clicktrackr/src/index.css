@@ -16,11 +16,20 @@
 
   --font-text: "Red Hat Display", sans-serif;
   --font-rhythm: "Rhythm";
+  --font-meter: "Meter";
 }
 
 @font-face {
   font-family: "Rhythm";
-  src: url("./fonts/Rhyth.otf") format("opentype");
+  src: url("./fonts/Rhythm/Rhyth.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-kerning: normal;
+}
+
+@font-face {
+  font-family: "Meter";
+  src: url("./fonts/FinaleMaestro.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
   font-kerning: normal;

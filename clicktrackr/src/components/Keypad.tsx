@@ -11,9 +11,9 @@ function Keypad({handleKeySelect}: KeypadProps) {
     <div
       className="keypad"
     >
-      {meters.map(meter =>
+      {meters.map((meter, i) =>
         <Key
-          key={meter.display + meter.subdiv || ''}
+          key={i}
           keystroke={meter.key}
           display={meter.display}
           subdiv={meter.subdiv}

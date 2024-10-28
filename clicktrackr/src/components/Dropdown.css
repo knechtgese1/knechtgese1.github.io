@@ -1,0 +1,36 @@
+.custom-dropdown {
+  width: 2rem;
+  font-family: var(--font-rhythm);
+  font-size: 2rem;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.dropdown-header {
+  width: 2rem;
+  padding-left: 0.5rem;
+  border: 1px solid white;
+  border-radius: 0.25rem;
+}
+
+.dropdown-options {
+  width: 2.5rem;
+  margin: 0;
+  padding: 0;
+  border: 1px solid white;
+  border-radius: 0.25rem;
+  background: black;
+  position: absolute;
+  z-index: 1;
+}
+
+.dropdown-options li {
+  list-style-type: none;
+  margin: 0;
+  padding-left: 0.5rem;
+}
+
+.dropdown-options :hover {
+  background: var(--c-purple);
+}

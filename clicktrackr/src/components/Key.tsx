@@ -4,7 +4,7 @@ import { HOLD_DURATION } from '../constants/constants';
 
 type KeyProps = {
   keystroke: string;
-  display: string;
+  display?: string;
   subdiv?: number[];
   text?: boolean;
   handleKeySelect: (key: string, num: number) => void;
@@ -21,11 +21,12 @@ function Key({keystroke, display, subdiv, text, handleKeySelect}: KeyProps) {
   const handleDown = (e?: React.TouchEvent<HTMLButtonElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (e) e.preventDefault();
     // keypress event
-    console.log('pressing', keystroke);
     holdTimerRef.current = setTimeout(() => {
       // hold event
-      setIsHolding(true);
-      setShowModal(true);
+      if (keystroke !== 'n') {
+        setIsHolding(true);
+        setShowModal(true);
+      }
     }, HOLD_DURATION);
   };
   const handleUp = () => {
@@ -73,7 +74,9 @@ function Key({keystroke, display, subdiv, text, handleKeySelect}: KeyProps) {
         onTouchEnd={handleUp}
       >
         <span className="keystroke">{keystroke}</span>
-        {!text && <span>{display}</span>}
+        {!text && <span>
+          {display}
+          </span>}
         {text && <span className="keytext">{display}</span>}
         {subdiv && <span className="subdiv">{subdiv.join(' + ')}</span>}
       </button>

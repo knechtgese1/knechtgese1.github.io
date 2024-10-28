@@ -1,109 +1,111 @@
 import { Meter } from "../types/types";
 
+// 0 1 2 3 4 5 6 7 8 9 c C
+export const maestroChars = '';
+
 export const HOLD_DURATION = 1000;
+
+export const convertToMaestro = (num: number) => {
+  let result = '';
+  if (!num) return maestroChars[0];
+  while (num > 0) {
+    result = maestroChars[num % 10] + result;
+    num = Math.floor(num / 10);
+  }
+  return result;
+}
 
 export const meters: Meter[] = [
   {
     key: '1',
-    display: 'c',
+    display: '',
+    alt: 'common time',
     num: 4,
     den: 4,
     defaultFill: 'qqqq',
   },
   {
     key: '2',
-    display: '@4',
     num: 2,
     den: 4,
     defaultFill: 'qq',
   },
   {
     key: '3',
-    display: '#4',
     num: 3,
     den: 4,
     defaultFill: 'qqq',
   },
   {
     key: '4',
-    display: '$4',
     num: 4,
     den: 4,
     defaultFill: 'qqqq',
   },
   {
     key: '5',
-    display: '%4',
     num: 5,
     den: 4,
     defaultFill: 'qqqqq',
   },
   {
     key: '6',
-    display: '^4',
     num: 6,
     den: 4,
     defaultFill: 'qqqqqq',
   },
   {
     key: 'q',
-    display: 'C',
+    display: '',
+    alt: 'cut time',
     num: 2,
     den: 2,
     defaultFill: 'hh',
   },
   {
     key: 'w',
-    display: '^8',
     num: 6,
     den: 8,
     defaultFill: 'q.q.',
   },
   {
     key: 'e',
-    display: '98',
     num: 9,
     den: 8,
     defaultFill: 'q.q.q.',
   },
   {
     key: 'r',
-    display: '~8',
     num: 12,
     den: 8,
     defaultFill: 'q.q.q.q.',
   },
   {
     key: 't',
-    display: '@2',
     num: 2,
     den: 2,
     defaultFill: 'hh',
   },
   {
     key: 'y',
-    display: '#2',
     num: 3,
     den: 2,
     defaultFill: 'hhh',
   },
   {
     key: 'a',
-    display: '@8',
     num: 2,
     den: 8,
     defaultFill: 'ry',
   },
   {
     key: 's',
-    display: '#8',
     num: 3,
     den: 8,
     defaultFill: 'rty',
   },
   {
     key: 'd',
-    display: '%8',
     num: 5,
     den: 8,
     subdiv: [2, 3],
@@ -111,7 +113,6 @@ export const meters: Meter[] = [
   },
   {
     key: 'f',
-    display: '%8',
     num: 5,
     den: 8,
     subdiv: [3, 2],
@@ -119,7 +120,6 @@ export const meters: Meter[] = [
   },
   {
     key: 'g',
-    display: '&8',
     num: 7,
     den: 8,
     subdiv: [2, 2, 3],
@@ -127,7 +127,6 @@ export const meters: Meter[] = [
   },
   {
     key: 'h',
-    display: '&8',
     num: 7,
     den: 8,
     subdiv: [3, 2, 2],
@@ -135,28 +134,24 @@ export const meters: Meter[] = [
   },
   {
     key: 'z',
-    display: '#6',
     num: 3,
     den: 16,
     defaultFill: 'e.',
   },
   {
     key: 'x',
-    display: '^6',
     num: 6,
     den: 16,
     defaultFill: 'r.y.',
   },
   {
     key: 'c',
-    display: '96',
     num: 9,
     den: 16,
     defaultFill: 'r.t.y.',
   },
   {
     key: 'v',
-    display: '~6',
     num: 12,
     den: 16,
     defaultFill: 'r.t.t.y.'
@@ -171,3 +166,8 @@ export const meters: Meter[] = [
     text: true,
   }
 ];
+
+export const subdivisions = ['w', 'h', 'q', 'e', 's', 'z'];
+
+export const meterNumeratorMap = '!@#$%^&*90 ~';
+export const meterDenominatorMap = '12486';
