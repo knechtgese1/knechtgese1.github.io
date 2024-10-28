@@ -1531,7 +1531,7 @@ function fs()
 	medListOutpatient = false;
 	for (i = 0; i < vals.length; i++)
 	{
-		var labCode = / \[([0-9]{3,4})\]/;
+		var labCode = / \[([0-9]{3,5})\]/;
 		var includeList = false;
 		var vvv = labCode.exec(vals[i].replace("].","."));
 		if(vvv != null)
