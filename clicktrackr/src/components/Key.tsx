@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import './Key.css';
 import { HOLD_DURATION } from '../constants/constants';
 
 type KeyProps = {
   keystroke: string;
-  display?: string;
   subdiv?: number[];
   text?: boolean;
   handleKeySelect: (key: string, num: number) => void;
+  children: ReactNode;
 }
 
 
-function Key({keystroke, display, subdiv, text, handleKeySelect}: KeyProps) {
+function Key({keystroke, subdiv, text, handleKeySelect, children}: KeyProps) {
   const [isHolding, setIsHolding] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -74,16 +74,16 @@ function Key({keystroke, display, subdiv, text, handleKeySelect}: KeyProps) {
         onTouchEnd={handleUp}
       >
         <span className="keystroke">{keystroke}</span>
-        {!text && <span>
-          {display}
-          </span>}
-        {text && <span className="keytext">{display}</span>}
+        {!text && <>
+          {children}
+          </>}
+        {text && <span className="keytext">{children}</span>}
         {subdiv && <span className="subdiv">{subdiv.join(' + ')}</span>}
       </button>
 
       {showModal && (
         <dialog ref={dialogRef}>
-          <h2>Measures of <span>{display}</span></h2>
+          <h2>Measures of <span>{children}</span></h2>
           <input ref={inputRef} type="number" min={0} step={1} placeholder="Enter something" />
           <button className="submit" type="submit" onClick={handleSubmit}>Submit</button>
           <button className="close" type="button" onClick={closeModal}>X</button>

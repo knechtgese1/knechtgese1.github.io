@@ -1,0 +1,10 @@
+.time-sig {
+  font-family: var(--font-meter);
+  font-size: 2rem;
+  width: fit-content;
+  margin: auto;
+}
+
+.num, .den {
+  line-height: 1rem;
+}

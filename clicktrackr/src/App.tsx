@@ -4,6 +4,7 @@ import Keypad from './components/Keypad';
 import { meters } from './constants/constants';
 import { Measure } from './types/types';
 import CustomMeter from './components/CustomMeter';
+import TimeSig from './components/TimeSig';
 
 function App() {
   //TODO: get rid of this placeholder
