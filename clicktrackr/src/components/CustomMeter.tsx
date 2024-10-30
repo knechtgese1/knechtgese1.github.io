@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState, useId } from "react";
+import { useEffect, useRef, useState } from "react";
+import {v4 as uuid} from 'uuid';
 import { subdivisions } from "../constants/constants";
 import Dropdown from "./Dropdown";
 import "./CustomMeter.css";
 import TimeSig from "./TimeSig";
 
 type CustomMeterProps = {
-  handleCustomMeter: () => void;
+  setCustomMeter: () => void;
   handleCloseModal: () => void;
 }
 
@@ -15,28 +16,27 @@ type AdditiveMeter = {
   denominator: number;
 }
 
-function CustomMeter({handleCustomMeter, handleCloseModal}: CustomMeterProps) {
+function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
   const dialog = useRef<HTMLDialogElement>(null);
 
   const [additiveMeters, setAdditiveMeters] = useState<AdditiveMeter[]>([
     {
-      id: useId(),
+      id: uuid(),
       numerator: '',
       denominator: 8,
     },
     {
-      id: useId(),
+      id: uuid(),
       numerator: '',
       denominator: 8,
     }
   ]);
 
   const [compositeMeter, setCompositeMeter] = useState<AdditiveMeter>({
-    id: useId(),
+    id: uuid(),
     numerator: '',
     denominator: 8,
   });
-
 
   useEffect(() => {
     if (dialog.current) {
@@ -83,11 +83,28 @@ function CustomMeter({handleCustomMeter, handleCloseModal}: CustomMeterProps) {
     setAdditiveMeters(currentMeters);
   };
 
+  const handleAddMeter = (i: number) => {
+    const largestDenominator = Math.max(...additiveMeters.map(meter => meter.denominator));
+    setAdditiveMeters(prev => {
+      const tmp = [...prev];
+      tmp.splice(i + 1, 0, {
+        id: uuid(),
+        numerator: '',
+        denominator: largestDenominator,
+      });
+      return tmp;
+    });
+  };
+
+  const handleRemoveMeter = (id: string) => {
+    setAdditiveMeters(prev => [...prev].filter(meter => meter.id !== id));
+  };
+
   return (
     <dialog id="custom-meter-modal" ref={dialog} onClick={handleClick}>
       <form onSubmit={(e) => {
         e.preventDefault();
-        handleCustomMeter();
+        setCustomMeter(compositeMeter.numerator, compositeMeter.denominator);
       }}>
         <h2>Custom Meter</h2>
         <div className="meter-display">
@@ -102,14 +119,18 @@ function CustomMeter({handleCustomMeter, handleCloseModal}: CustomMeterProps) {
         </div>
         <div className="meter-input">
           {additiveMeters.map((meter, i) => (
-            <div className="meter" key={meter.id || `meter-${i}`}>
-              <input type="number" min="1" placeholder="?" value={meter.numerator} onInput={(e) => handleNumeratorChange(e, i)}/>
-              <hr />
-              <Dropdown options={subdivisions} onChange={(value) => handleDenominatorChange(value, i)}/>
+            <div key={meter.id}>
+              <div className="meter">
+                <input type="number" min="1" placeholder="?" value={meter.numerator} onInput={(e) => handleNumeratorChange(e, i)}/>
+                <hr />
+                <Dropdown options={subdivisions} onChange={(value) => handleDenominatorChange(value, i)}/>
+                {additiveMeters.length > 1 && <button className="remove-meter" onClick={() => handleRemoveMeter(meter.id!)}>-</button>}
+              </div>
+              <button className="add-meter" onClick={() => handleAddMeter(i)}>+</button>
             </div>
           ))}
         </div>
-        <button>OK</button>
+        <button className="submit" disabled={!compositeMeter.numerator}>OK</button>
       </form>
     </dialog>
   );

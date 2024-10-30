@@ -49,6 +49,16 @@ function App() {
 
   const handleCloseModal = () => {
     setShowCustomModal(false);
+  };
+
+  const setCustomMeter = (num: number, den: number) => {
+    setNoteMap(prev => [...prev, {
+      meter: <TimeSig num={num} den={den} />,
+      num,
+      den,
+      fill: '',
+    }]);
+    setShowCustomModal(false);
   }
 
   const isSameMeter = (curr: Measure, prev: Measure) => {
@@ -63,7 +73,7 @@ function App() {
       <h1>ClickTrackr</h1>
       <div className="notes">{noteMap.map(((measure, i) => <div className="measure" key={i}>{!isSameMeter(measure, noteMap[i - 1]) ? measure.meter : ''}{measure.fill}{i === noteMap.length - 1 ? '\\|' : '\\'} </div>))}</div>
       <Keypad handleKeySelect={handleKeySelect} />
-      {showCustomModal && <CustomMeter handleCustomMeter={handleCustomMeter} handleCloseModal={handleCloseModal} />}
+      {showCustomModal && <CustomMeter setCustomMeter={setCustomMeter} handleCloseModal={handleCloseModal} />}
     </>
   )
 }

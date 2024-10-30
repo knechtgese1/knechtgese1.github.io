@@ -7,7 +7,7 @@
   position: relative;
 }
 
-#custom-meter-modal button {
+#custom-meter-modal .submit {
   font-family: var(--font-text);
   width: 100%;
   position: absolute;
@@ -16,7 +16,14 @@
 
 .meter-input {
   display: flex;
-  gap: 1rem;
+  gap: 0.25rem;
+  overflow-x: auto;
+  padding-bottom: 2rem;
+  position: relative;
+}
+
+.meter-input > * {
+  display: contents;
 }
 
 .meter-input input {
@@ -44,11 +51,29 @@
 .meter-display .meter {
   font-family: 'Meter';
   font-size: 3rem;
-  padding-left: 1rem;
   text-align: center;
 }
 
 .meter-display .shift-left {
   position: relative;
   right: 0.35rem;
+}
+
+.remove-meter {
+  width: 100%;
+  margin-top: 0.5rem;
+  font-family: var(--font-text);
+  font-size: 1rem;
+}
+
+.add-meter {
+  font-family: var(--font-text);
+  font-size: 1rem;
+  height: 1.75rem;
+  margin: auto 0;
+}
+
+.submit:disabled{
+  color: black;
+  opacity: 0.5;
 }

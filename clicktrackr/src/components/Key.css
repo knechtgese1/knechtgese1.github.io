@@ -3,7 +3,6 @@ button {
   font-size: 2.5rem;
   background: var(--c-purple);
   border: 1px solid white;
-  padding: 0 0.5rem 0 1rem;
   border-radius: 0.5rem;
   margin: 0;
   text-align: center;
@@ -79,7 +78,7 @@ dialog .close {
 }
 
 dialog h2 {
-  margin: 1rem 0 0 0.4rem;
+  margin: 1rem 0 0 0;
   display: flex;
   gap: 0.5rem;
   align-items: center;
