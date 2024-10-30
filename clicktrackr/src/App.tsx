@@ -10,10 +10,14 @@ function App() {
   //TODO: get rid of this placeholder
   const [noteMap, setNoteMap] = useState<Measure[]>([
     {
-      meter: '$4',
+      meter: <TimeSig num={4} den={4} />,
+      num: 4,
+      den: 4,
       fill: 'qqqq'
     },
-    { meter: '$4',
+    { meter: <TimeSig num={4} den={4} />,
+      num: 4,
+      den: 4,
       fill: 'qqqq',
     }
   ])
@@ -29,7 +33,9 @@ function App() {
     const addedMeters: Measure[] = [];
     for (let i = 0; i < num; i++) {
       addedMeters.push({
-        meter: chosenMeter!.display,
+        meter: chosenMeter!.display || <TimeSig num={chosenMeter!.num!} den={chosenMeter!.den!} />,
+        num: chosenMeter!.num!,
+        den: chosenMeter!.den!,
         fill: chosenMeter!.defaultFill!
       });
     }
@@ -44,10 +50,17 @@ function App() {
     setShowCustomModal(false);
   }
 
+  const isSameMeter = (curr: Measure, prev: Measure) => {
+    if (!prev) return false;
+    if (curr.meter === prev.meter) return true;
+    if (curr.num === prev.num && curr.den === prev.den) return true;
+    return false;
+  };
+
   return (
     <>
       <h1>ClickTrackr</h1>
-      <div className="notes">{noteMap.map(((measure, i) => <span key={i}>{measure.meter !== noteMap[i - 1]?.meter ? measure.meter : ''}{measure.fill}{i === noteMap.length - 1 ? '\\|' : '\\'} </span>))}</div>
+      <div className="notes">{noteMap.map(((measure, i) => <div className="measure" key={i}>{!isSameMeter(measure, noteMap[i - 1]) ? measure.meter : ''}{measure.fill}{i === noteMap.length - 1 ? '\\|' : '\\'} </div>))}</div>
       <Keypad handleKeySelect={handleKeySelect} />
       {showCustomModal && <CustomMeter handleCustomMeter={handleCustomMeter} handleCloseModal={handleCloseModal} />}
     </>

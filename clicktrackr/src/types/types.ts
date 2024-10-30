@@ -10,6 +10,8 @@ export type Meter = {
 }
 
 export type Measure = {
-  meter: string;
+  meter: string | JSX.Element;
+  num?: number;
+  den?: number;
   fill: string;
 }

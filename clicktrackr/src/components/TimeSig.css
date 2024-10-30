@@ -1,8 +1,11 @@
 .time-sig {
   font-family: var(--font-meter);
   font-size: 2rem;
-  width: fit-content;
+  line-height: 2rem;
   margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .num, .den {
