@@ -42,7 +42,7 @@ button:active {
   word-spacing: -0.25rem;
 }
 
-.keypad-key .keytext {
+.keypad-key .keytext .time-sig {
   font-family: var(--font-text);
 }
 
