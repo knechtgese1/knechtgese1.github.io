@@ -33,6 +33,14 @@
   font-family: 'Rhythm';
 }
 
+.meter-display {
+  height: 100px;
+}
+
+.meter-display h3 {
+  text-align: center;
+}
+
 .meter-display .meter {
   font-family: 'Meter';
   font-size: 3rem;

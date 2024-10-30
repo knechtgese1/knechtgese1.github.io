@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useId } from "react";
 import { subdivisions } from "../constants/constants";
 import Dropdown from "./Dropdown";
 import "./CustomMeter.css";
@@ -10,6 +10,7 @@ type CustomMeterProps = {
 }
 
 type AdditiveMeter = {
+  id?: string;
   numerator: number | '';
   denominator: number;
 }
@@ -19,16 +20,19 @@ function CustomMeter({handleCustomMeter, handleCloseModal}: CustomMeterProps) {
 
   const [additiveMeters, setAdditiveMeters] = useState<AdditiveMeter[]>([
     {
+      id: useId(),
       numerator: '',
       denominator: 8,
     },
     {
+      id: useId(),
       numerator: '',
       denominator: 8,
     }
   ]);
 
   const [compositeMeter, setCompositeMeter] = useState<AdditiveMeter>({
+    id: useId(),
     numerator: '',
     denominator: 8,
   });
@@ -98,7 +102,7 @@ function CustomMeter({handleCustomMeter, handleCloseModal}: CustomMeterProps) {
         </div>
         <div className="meter-input">
           {additiveMeters.map((meter, i) => (
-            <div className="meter" key={`meter-${i}`}>
+            <div className="meter" key={meter.id || `meter-${i}`}>
               <input type="number" min="1" placeholder="?" value={meter.numerator} onInput={(e) => handleNumeratorChange(e, i)}/>
               <hr />
               <Dropdown options={subdivisions} onChange={(value) => handleDenominatorChange(value, i)}/>

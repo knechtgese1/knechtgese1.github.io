@@ -25,8 +25,8 @@ button:active {
   font-family: var(--font-text);
   font-size: 1rem;
   position: absolute;
-  left: 0.5rem;
-  top: 0.25rem;
+  left: 0.25rem;
+  top: 0;
 }
 
 .subdiv {
