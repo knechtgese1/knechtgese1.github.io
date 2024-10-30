@@ -6,7 +6,7 @@ import "./CustomMeter.css";
 import TimeSig from "./TimeSig";
 
 type CustomMeterProps = {
-  setCustomMeter: () => void;
+  setCustomMeter: (num: number, den: number) => void;
   handleCloseModal: () => void;
 }
 
@@ -104,7 +104,7 @@ function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
     <dialog id="custom-meter-modal" ref={dialog} onClick={handleClick}>
       <form onSubmit={(e) => {
         e.preventDefault();
-        setCustomMeter(compositeMeter.numerator, compositeMeter.denominator);
+        setCustomMeter(compositeMeter.numerator as number, compositeMeter.denominator);
       }}>
         <h2>Custom Meter</h2>
         <div className="meter-display">
