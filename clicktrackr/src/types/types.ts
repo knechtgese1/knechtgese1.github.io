@@ -11,6 +11,7 @@ export type Meter = {
 
 export type Measure = {
   meter: string | JSX.Element;
+  display?: string;
   num?: number;
   den?: number;
   fill: string;

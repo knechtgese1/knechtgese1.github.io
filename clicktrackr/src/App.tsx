@@ -33,7 +33,8 @@ function App() {
     const addedMeters: Measure[] = [];
     for (let i = 0; i < num; i++) {
       addedMeters.push({
-        meter: chosenMeter!.display || <TimeSig num={chosenMeter!.num!} den={chosenMeter!.den!} />,
+        meter: chosenMeter!.display ? <TimeSig display={chosenMeter!.display} alt={chosenMeter!.alt} /> : <TimeSig num={chosenMeter!.num!} den={chosenMeter!.den!} />,
+        display: chosenMeter!.display,
         num: chosenMeter!.num!,
         den: chosenMeter!.den!,
         fill: chosenMeter!.defaultFill!
@@ -52,8 +53,8 @@ function App() {
 
   const isSameMeter = (curr: Measure, prev: Measure) => {
     if (!prev) return false;
-    if (curr.meter === prev.meter) return true;
-    if (curr.num === prev.num && curr.den === prev.den) return true;
+    if (curr.display && prev.display && curr.display === prev.display) return true;
+    if (curr.num === prev.num && curr.den === prev.den && !curr.display && !prev.display) return true;
     return false;
   };
 

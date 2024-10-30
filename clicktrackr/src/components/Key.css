@@ -42,7 +42,7 @@ button:active {
   word-spacing: -0.25rem;
 }
 
-.keytext {
+.keypad-key .keytext {
   font-family: var(--font-text);
 }
 
