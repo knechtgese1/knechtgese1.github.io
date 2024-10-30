@@ -168,6 +168,3 @@ export const meters: Meter[] = [
 ];
 
 export const subdivisions = ['w', 'h', 'q', 'e', 's', 'z'];
-
-export const meterNumeratorMap = '!@#$%^&*90 ~';
-export const meterDenominatorMap = '12486';

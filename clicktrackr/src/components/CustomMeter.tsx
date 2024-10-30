@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { subdivisions, meterNumeratorMap, meterDenominatorMap } from "../constants/constants";
+import { subdivisions } from "../constants/constants";
 import Dropdown from "./Dropdown";
 import "./CustomMeter.css";
+import TimeSig from "./TimeSig";
 
 type CustomMeterProps = {
   handleCustomMeter: () => void;
@@ -78,50 +79,33 @@ function CustomMeter({handleCustomMeter, handleCloseModal}: CustomMeterProps) {
     setAdditiveMeters(currentMeters);
   };
 
-  const getMeterDisplay = (meter: AdditiveMeter) => {
-    let numeratorDisplay = '';
-    let shiftDenominator = false;
-    const num = meter.numerator as number;
-    if (num < 11 || num === 12) {
-      numeratorDisplay += meterNumeratorMap[num - 1];
-    } else {
-      numeratorDisplay += meterNumeratorMap[Math.floor(num / 10) - 1] + ' ' + meterNumeratorMap[num % 10 - 1];
-      shiftDenominator = true;
-    }
-    const denominatorDisplay = meterDenominatorMap[Math.log2(compositeMeter.denominator)];
-    return (
-      <>
-        <span className="numerator">{numeratorDisplay}</span>
-        <span className={`denominator ${shiftDenominator ? 'shift-left' : ''}`}>{denominatorDisplay}</span>
-      </>
-    );
-  }
-
   return (
     <dialog id="custom-meter-modal" ref={dialog} onClick={handleClick}>
-      <form>
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        handleCustomMeter();
+      }}>
         <h2>Custom Meter</h2>
         <div className="meter-display">
           {compositeMeter.numerator &&
             <>
               <h3>Display Meter</h3>
-              <div className="meter">{getMeterDisplay(compositeMeter)}</div>
+              <div className="meter">
+                <TimeSig num={compositeMeter.numerator} den={compositeMeter.denominator!} />
+              </div>
             </>
           }
         </div>
         <div className="meter-input">
           {additiveMeters.map((meter, i) => (
-            <>
             <div className="meter" key={`meter-${i}`}>
               <input type="number" min="1" placeholder="?" value={meter.numerator} onInput={(e) => handleNumeratorChange(e, i)}/>
               <hr />
               <Dropdown options={subdivisions} onChange={(value) => handleDenominatorChange(value, i)}/>
             </div>
-            <button>+</button>
-            </>
           ))}
         </div>
-        <button onClick={handleCustomMeter}>OK</button>
+        <button>OK</button>
       </form>
     </dialog>
   );
