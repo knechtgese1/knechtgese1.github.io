@@ -17,9 +17,7 @@
 .meter-input {
   display: flex;
   gap: 0.25rem;
-  overflow-x: auto;
   padding-bottom: 2rem;
-  position: relative;
 }
 
 .meter-input > * {
@@ -73,7 +71,18 @@
   margin: auto 0;
 }
 
-.submit:disabled{
+.submit:disabled {
   color: black;
   opacity: 0.5;
+}
+
+.subdivide {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.subdivide input {
+  width: 2rem;
+  height: 2rem;
 }

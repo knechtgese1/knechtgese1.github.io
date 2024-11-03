@@ -5,7 +5,7 @@ import { meters } from './constants/constants';
 import { AdditiveMeter, Measure } from './types/types';
 import CustomMeter from './components/CustomMeter';
 import TimeSig from './components/TimeSig';
-import { isSameMeter } from './utils/utils';
+import { getFill, isSameMeter } from './utils/utils';
 
 function App() {
   //TODO: get rid of this placeholder
@@ -52,12 +52,12 @@ function App() {
     setShowCustomModal(false);
   };
 
-  const setCustomMeter = (num: number, den: number, additiveMeters: AdditiveMeter[]) => {
+  const setCustomMeter = (num: number, den: number, additiveMeters: AdditiveMeter[], subdivideAll: boolean) => {
     setNoteMap(prev => [...prev, {
       meter: <TimeSig num={num} den={den} />,
       num,
       den,
-      fill: '', //TODO: need a helper function to fix this
+      fill: getFill(additiveMeters, subdivideAll),
     }]);
     setShowCustomModal(false);
   }

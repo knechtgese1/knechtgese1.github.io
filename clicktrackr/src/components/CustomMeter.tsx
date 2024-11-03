@@ -7,12 +7,13 @@ import TimeSig from "./TimeSig";
 import { AdditiveMeter } from '../types/types';
 
 type CustomMeterProps = {
-  setCustomMeter: (num: number, den: number, meters: AdditiveMeter[]) => void;
+  setCustomMeter: (num: number, den: number, meters: AdditiveMeter[], subdivide: boolean) => void;
   handleCloseModal: () => void;
 }
 
 function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const subdivide = useRef<HTMLInputElement>(null);
 
   const ACTIONS = {
     SET_NUMERATOR: 'set-numerator',
@@ -118,7 +119,7 @@ function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
     <dialog id="custom-meter-modal" ref={dialog} onClick={handleClick}>
       <form onSubmit={(e) => {
         e.preventDefault();
-        setCustomMeter(compositeMeter.numerator as number, compositeMeter.denominator, additiveMeters);
+        setCustomMeter(compositeMeter.numerator as number, compositeMeter.denominator, additiveMeters, subdivide.current?.checked || false);
       }}>
         <h2>Custom Meter</h2>
         <div className="meter-display">
@@ -131,6 +132,9 @@ function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
             </>
           }
         </div>
+        <label className="subdivide">
+            Subdivide all clicks<input ref={subdivide} name="subdivide" type="checkbox" />
+        </label>
         <div className="meter-input">
           {additiveMeters.map((meter, i) => (
             <div key={meter.id}>

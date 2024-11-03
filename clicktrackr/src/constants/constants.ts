@@ -168,3 +168,12 @@ export const meters: Meter[] = [
 ];
 
 export const subdivisions = ['w', 'h', 'q', 'e', 's', 'z'];
+
+export const beamingMap = new Map(
+  [
+    ['ee', 'ry'],
+    ['eee', 'rty'],
+    ['ss', 'dg'],
+    ['sss', 'dfg'],
+  ],
+);
