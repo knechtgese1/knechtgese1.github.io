@@ -27,23 +27,26 @@ function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
   | { type: 'add-meter'; payload: { i: number } }
   | { type: 'delete-meter'; payload: { id: string}};
 
-  const additiveMeterReducer = (state: AdditiveMeter[], action: AdditiveMeterAction) => {
-    switch (action.type) {
+  const additiveMeterReducer = (state: AdditiveMeter[], {type, payload}: AdditiveMeterAction) => {
+    switch (type) {
       case ACTIONS.SET_NUMERATOR: {
-        const input = action.payload.e.target as HTMLInputElement;
+        const {e, i} = payload;
+        const input = e.target as HTMLInputElement;
         const currentMeters = [...state];
-        currentMeters[action.payload.i].numerator = parseInt(input.value) || '';
+        currentMeters[i].numerator = parseInt(input.value) || '';
         return currentMeters;
       }
       case ACTIONS.SET_DENOMINATOR: {
+        const {i, value} = payload;
         const currentMeters = [...state];
-        currentMeters[action.payload.i].denominator = action.payload.value;
+        currentMeters[i].denominator = value;
         return currentMeters;
       }
       case ACTIONS.ADD_METER: {
+        const {i} = payload;
         const largestDenominator = Math.max(...state.map(meter => meter.denominator));
         const currentMeters = [...state];
-        currentMeters.splice(action.payload.i + 1, 0, {
+        currentMeters.splice(i + 1, 0, {
           id: uuid(),
           numerator: '',
           denominator: largestDenominator,
@@ -51,7 +54,8 @@ function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
         return currentMeters;
       }
       case ACTIONS.DELETE_METER: {
-        return [...state].filter(meter => meter.id !== action.payload.id);
+        const {id} = payload;
+        return [...state].filter(meter => meter.id !== id);
       }
       default: {
         return state;
