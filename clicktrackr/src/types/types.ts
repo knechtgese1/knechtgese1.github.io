@@ -16,3 +16,9 @@ export type Measure = {
   den?: number;
   fill: string;
 }
+
+export type AdditiveMeter = {
+  id?: string;
+  numerator: number | '';
+  denominator: number;
+}

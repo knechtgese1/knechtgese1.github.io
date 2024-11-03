@@ -4,16 +4,11 @@ import { subdivisions } from "../constants/constants";
 import Dropdown from "./Dropdown";
 import "./CustomMeter.css";
 import TimeSig from "./TimeSig";
+import { AdditiveMeter } from '../types/types';
 
 type CustomMeterProps = {
-  setCustomMeter: (num: number, den: number) => void;
+  setCustomMeter: (num: number, den: number, meters: AdditiveMeter[]) => void;
   handleCloseModal: () => void;
-}
-
-type AdditiveMeter = {
-  id?: string;
-  numerator: number | '';
-  denominator: number;
 }
 
 function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
@@ -104,7 +99,7 @@ function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
     <dialog id="custom-meter-modal" ref={dialog} onClick={handleClick}>
       <form onSubmit={(e) => {
         e.preventDefault();
-        setCustomMeter(compositeMeter.numerator as number, compositeMeter.denominator);
+        setCustomMeter(compositeMeter.numerator as number, compositeMeter.denominator, additiveMeters);
       }}>
         <h2>Custom Meter</h2>
         <div className="meter-display">
@@ -121,7 +116,7 @@ function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
           {additiveMeters.map((meter, i) => (
             <div key={meter.id}>
               <div className="meter">
-                <input type="number" min="1" placeholder="?" value={meter.numerator} onInput={(e) => handleNumeratorChange(e, i)}/>
+                <input type="number" min="1" max="3" placeholder="?" value={meter.numerator} onInput={(e) => handleNumeratorChange(e, i)}/>
                 <hr />
                 <Dropdown options={subdivisions} onChange={(value) => handleDenominatorChange(value, i)}/>
                 {additiveMeters.length > 1 && <button className="remove-meter" onClick={() => handleRemoveMeter(meter.id!)}>-</button>}

@@ -2,9 +2,10 @@ import { useState } from 'react';
 import './App.css';
 import Keypad from './components/Keypad';
 import { meters } from './constants/constants';
-import { Measure } from './types/types';
+import { AdditiveMeter, Measure } from './types/types';
 import CustomMeter from './components/CustomMeter';
 import TimeSig from './components/TimeSig';
+import { isSameMeter } from './utils/utils';
 
 function App() {
   //TODO: get rid of this placeholder
@@ -51,22 +52,15 @@ function App() {
     setShowCustomModal(false);
   };
 
-  const setCustomMeter = (num: number, den: number) => {
+  const setCustomMeter = (num: number, den: number, additiveMeters: AdditiveMeter[]) => {
     setNoteMap(prev => [...prev, {
       meter: <TimeSig num={num} den={den} />,
       num,
       den,
-      fill: '',
+      fill: '', //TODO: need a helper function to fix this
     }]);
     setShowCustomModal(false);
   }
-
-  const isSameMeter = (curr: Measure, prev: Measure) => {
-    if (!prev) return false;
-    if (curr.display && prev.display && curr.display === prev.display) return true;
-    if (curr.num === prev.num && curr.den === prev.den && !curr.display && !prev.display) return true;
-    return false;
-  };
 
   return (
     <>

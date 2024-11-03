@@ -66,10 +66,10 @@ const Dropdown = ({options, onChange}: DropdownProps) => {
           {options.map((option, i) => (
             <li
               key={i}
-              id={`option-${i}`} // Assign an ID for active descendant
+              id={`option-${i}`}
               onClick={() => handleOptionClick(option, Math.pow(2, i))}
-              role="option" // Indicate that this is an option
-              tabIndex={0} // Make each option focusable
+              role="option"
+              tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   handleOptionClick(option, Math.pow(2, i));
