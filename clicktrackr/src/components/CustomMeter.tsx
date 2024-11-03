@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import {v4 as uuid} from 'uuid';
 import { subdivisions } from "../constants/constants";
 import Dropdown from "./Dropdown";
@@ -14,7 +14,52 @@ type CustomMeterProps = {
 function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
   const dialog = useRef<HTMLDialogElement>(null);
 
-  const [additiveMeters, setAdditiveMeters] = useState<AdditiveMeter[]>([
+  const ACTIONS = {
+    SET_NUMERATOR: 'set-numerator',
+    SET_DENOMINATOR: 'set-denominator',
+    ADD_METER: 'add-meter',
+    DELETE_METER: 'delete-meter',
+  } as const;
+
+  type AdditiveMeterAction =
+  | { type: 'set-numerator'; payload: { e: React.FormEvent<HTMLInputElement>, i: number } }
+  | { type: 'set-denominator'; payload: { i: number, value: number } }
+  | { type: 'add-meter'; payload: { i: number } }
+  | { type: 'delete-meter'; payload: { id: string}};
+
+  const additiveMeterReducer = (state: AdditiveMeter[], action: AdditiveMeterAction) => {
+    switch (action.type) {
+      case ACTIONS.SET_NUMERATOR: {
+        const input = action.payload.e.target as HTMLInputElement;
+        const currentMeters = [...state];
+        currentMeters[action.payload.i].numerator = parseInt(input.value) || '';
+        return currentMeters;
+      }
+      case ACTIONS.SET_DENOMINATOR: {
+        const currentMeters = [...state];
+        currentMeters[action.payload.i].denominator = action.payload.value;
+        return currentMeters;
+      }
+      case ACTIONS.ADD_METER: {
+        const largestDenominator = Math.max(...state.map(meter => meter.denominator));
+        const currentMeters = [...state];
+        currentMeters.splice(action.payload.i + 1, 0, {
+          id: uuid(),
+          numerator: '',
+          denominator: largestDenominator,
+        });
+        return currentMeters;
+      }
+      case ACTIONS.DELETE_METER: {
+        return [...state].filter(meter => meter.id !== action.payload.id);
+      }
+      default: {
+        return state;
+      }
+    }
+  }
+
+  const [additiveMeters, dispatchAdditiveMeters] = useReducer(additiveMeterReducer, [
     {
       id: uuid(),
       numerator: '',
@@ -65,36 +110,6 @@ function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
     }
   };
 
-  const handleNumeratorChange = (e: React.FormEvent<HTMLInputElement>, i: number) => {
-    const input = e.target as HTMLInputElement;
-    const currentMeters = [...additiveMeters];
-    currentMeters[i].numerator = parseInt(input.value) || '';
-    setAdditiveMeters(currentMeters);
-  };
-
-  const handleDenominatorChange = (value: number, i: number) => {
-    const currentMeters = [...additiveMeters];
-    currentMeters[i].denominator = value;
-    setAdditiveMeters(currentMeters);
-  };
-
-  const handleAddMeter = (i: number) => {
-    const largestDenominator = Math.max(...additiveMeters.map(meter => meter.denominator));
-    setAdditiveMeters(prev => {
-      const tmp = [...prev];
-      tmp.splice(i + 1, 0, {
-        id: uuid(),
-        numerator: '',
-        denominator: largestDenominator,
-      });
-      return tmp;
-    });
-  };
-
-  const handleRemoveMeter = (id: string) => {
-    setAdditiveMeters(prev => [...prev].filter(meter => meter.id !== id));
-  };
-
   return (
     <dialog id="custom-meter-modal" ref={dialog} onClick={handleClick}>
       <form onSubmit={(e) => {
@@ -116,16 +131,16 @@ function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
           {additiveMeters.map((meter, i) => (
             <div key={meter.id}>
               <div className="meter">
-                <input type="number" min="1" max="3" placeholder="?" value={meter.numerator} onInput={(e) => handleNumeratorChange(e, i)}/>
+                <input type="number" min="1" max="3" placeholder="?" value={meter.numerator} onInput={(e) => dispatchAdditiveMeters({type: ACTIONS.SET_NUMERATOR, payload: {e, i}})}/>
                 <hr />
-                <Dropdown options={subdivisions} onChange={(value) => handleDenominatorChange(value, i)}/>
-                {additiveMeters.length > 1 && <button className="remove-meter" onClick={() => handleRemoveMeter(meter.id!)}>-</button>}
+                <Dropdown options={subdivisions} onChange={(value) => dispatchAdditiveMeters({type: ACTIONS.SET_DENOMINATOR, payload: {value, i}})}/>
+                {additiveMeters.length > 1 && <button className="remove-meter" onClick={() => dispatchAdditiveMeters({type: ACTIONS.DELETE_METER, payload: {id: meter.id!}})}>-</button>}
               </div>
-              <button className="add-meter" onClick={() => handleAddMeter(i)}>+</button>
+              <button className="add-meter" type="button" onClick={() => dispatchAdditiveMeters({type: ACTIONS.ADD_METER, payload: {i}})}>+</button>
             </div>
           ))}
         </div>
-        <button className="submit" disabled={!compositeMeter.numerator}>OK</button>
+        <button type="submit" className="submit" disabled={!compositeMeter.numerator}>OK</button>
       </form>
     </dialog>
   );
