@@ -2695,6 +2695,7 @@ function fr()
 			}
 		}
 		cbcData += cbc0 + "\n" + cbc1 + "\n" + cbc2 + "\n" + cbc3 + "\n\n" + cbcDiff + cbcExtras + anemiaText + wbcText + hgbText + pltText;
+		console.log(cbcData);
 		cexclude += "RBC||MCV||RDW||MCHC||MCH||MPV||";
 	}
     if("Creatinine" in listVals)
@@ -4228,7 +4229,100 @@ We may change this privacy policy from time to time. Any changes will be posted 
 <div style="border-radius: 5px; border-width: 1px 2px 2px 1px; border-style: solid; border-color: rgb(221, 221, 221) rgb(153, 153, 153) rgb(153, 153, 153) rgb(221, 221, 221); margin: 5px auto; width: 870px; height: 464px; background-color: rgb(240, 240, 240);"><section id="intro">
 <header style="border-radius: 5px 5px 0px 0px; border-width: 0px 0px 1px 0px; border-style: solid; border-color: white; margin: 0px 0px 5px; width: 861px; height: 21px; color: black; padding-left: 10px; line-height: 20px; font-family: Segoe UI; background-color: rgb(19, 47, 121); border-image: none;  background: linear-gradient(rgb(152,180,208),rgb(185,209,234)); font-weight: bold; font-size: 11px;" class="row">CPRS Lab Formatter v1.0.5</header><!-- Header End -->
 <div style="float:left; font-family: Segoe UI; font-size: 11px; height:400px; width: 140px; margin-left: 5px; ">
-<table id="trendTable" style="font-family: Segoe UI; font-size: 11px; "><tbody><tr><td>Trend:</td><td>Single</td><td>Week</td><td>&nbsp;All</td></tr><tr><td>CBC</td><td><input title="Single CBC" onclick="ff()" type="radio" id="CBCsingle" name="CBC" checked=""></td><td><input title="Week CBC" onclick="ff()" type="radio" id="CBCweek" name="CBC"></td><td><input title="All CBC" onclick="ff()" type="radio" id="CBCall" name="CBC"></td></tr><tr><td>Diff</td><td><input title="Single Diff" onclick="ff()" type="radio" id="Diffsingle" name="Diff" checked=""></td><td><input title="Week Diff" onclick="ff()" type="radio" id="Diffweek" name="Diff"></td><td><input title="All Diff" onclick="ff()" type="radio" id="Diffall" name="Diff"></td></tr><tr><td>Smear</td><td><input title="Single Smear" onclick="ff()" type="radio" id="Smearsingle" name="Smear" checked=""></td><td><input title="Week Smear" onclick="ff()" type="radio" id="Smearweek" name="Smear"></td><td><input title="All Smear" onclick="ff()" type="radio" id="Smearall" name="Smear"></td></tr><tr><td>Chem</td><td><input title="Single Chem" onclick="ff()" type="radio" id="Chemsingle" name="Chem" checked=""></td><td><input title="Week Chem" onclick="ff()" type="radio" id="Chemweek" name="Chem"></td><td><input title="All Chem" onclick="ff()" type="radio" id="Chemall" name="Chem"></td></tr><tr><td>Cardiac</td><td><input title="Single Cardiac" onclick="ff()" type="radio" id="Cardiacsingle" name="Cardiac" checked=""></td><td><input title="Week Cardiac" onclick="ff()" type="radio" id="Cardiacweek" name="Cardiac"></td><td><input title="All Cardiac" onclick="ff()" type="radio" id="Cardiacall" name="Cardiac"></td></tr><tr><td>Iron</td><td><input title="Single Iron" onclick="ff()" type="radio" id="Ironsingle" name="Iron" checked=""></td><td><input title="Week Iron" onclick="ff()" type="radio" id="Ironweek" name="Iron"></td><td><input title="All Iron" onclick="ff()" type="radio" id="Ironall" name="Iron"></td></tr><tr><td>Liver</td><td><input title="Single Liver" onclick="ff()" type="radio" id="Liversingle" name="Liver" checked=""></td><td><input title="Week Liver" onclick="ff()" type="radio" id="Liverweek" name="Liver"></td><td><input title="All Liver" onclick="ff()" type="radio" id="Liverall" name="Liver"></td></tr><tr><td>Coags</td><td><input title="Single Coags" onclick="ff()" type="radio" id="Coagssingle" name="Coags" checked=""></td><td><input title="Week Coags" onclick="ff()" type="radio" id="Coagsweek" name="Coags"></td><td><input title="All Coags" onclick="ff()" type="radio" id="Coagsall" name="Coags"></td></tr><tr><td>Lipid-a1c</td><td><input title="Single Lipid-a1c" onclick="ff()" type="radio" id="Lipid-a1csingle" name="Lipid-a1c" checked=""></td><td><input title="Week Lipid-a1c" onclick="ff()" type="radio" id="Lipid-a1cweek" name="Lipid-a1c"></td><td><input title="All Lipid-a1c" onclick="ff()" type="radio" id="Lipid-a1call" name="Lipid-a1c"></td></tr><tr><td>Glucose</td><td><input title="Single Glucose" onclick="ff()" type="radio" id="Glucosesingle" name="Glucose" checked=""></td><td><input title="Week Glucose" onclick="ff()" type="radio" id="Glucoseweek" name="Glucose"></td><td><input title="All Glucose" onclick="ff()" type="radio" id="Glucoseall" name="Glucose"></td></tr><tr><td>UA</td><td><input title="Single UA" onclick="ff()" type="radio" id="UAsingle" name="UA" checked=""></td><td><input title="Week UA" onclick="ff()" type="radio" id="UAweek" name="UA"></td><td><input title="All UA" onclick="ff()" type="radio" id="UAall" name="UA"></td></tr><tr><td>UDS</td><td><input title="Single UDS" onclick="ff()" type="radio" id="UDSsingle" name="UDS" checked=""></td><td><input title="Week UDS" onclick="ff()" type="radio" id="UDSweek" name="UDS"></td><td><input title="All UDS" onclick="ff()" type="radio" id="UDSall" name="UDS"></td></tr><tr><td>ABG</td><td><input title="Single ABG" onclick="ff()" type="radio" id="ABGsingle" name="ABG" checked=""></td><td><input title="Week ABG" onclick="ff()" type="radio" id="ABGweek" name="ABG"></td><td><input title="All ABG" onclick="ff()" type="radio" id="ABGall" name="ABG"></td></tr><tr><td>Changes</td><td><input onclick="ff()" type="radio" id="viewchangessingle" name="viewchange" checked=""></td><td><input onclick="ff()" type="radio" id="viewchangesweek" name="viewchange"></td><td><input onclick="ff()" type="radio" id="viewchangesall" name="viewchange"></td></tr></tbody></table>
+<table id="trendTable" style="font-family: Segoe UI; font-size: 11px; ">
+	<tbody>
+		<tr>
+			<td>Trend:</td>
+			<td>Single</td>
+			<td>Week</td>
+			<td>&nbsp;All</td>
+		</tr>
+		<tr>
+			<td>CBC</td>
+			<td><input title="Single CBC" onclick="ff()" type="radio" id="CBCsingle" name="CBC"></td>
+			<td><input title="Week CBC" onclick="ff()" type="radio" id="CBCweek" name="CBC"></td>
+			<td><input title="All CBC" onclick="ff()" type="radio" id="CBCall" name="CBC" checked=""></td>
+		</tr>
+		<tr>
+			<td>Diff</td>
+			<td><input title="Single Diff" onclick="ff()" type="radio" id="Diffsingle" name="Diff"></td>
+			<td><input title="Week Diff" onclick="ff()" type="radio" id="Diffweek" name="Diff"></td>
+			<td><input title="All Diff" onclick="ff()" type="radio" id="Diffall" name="Diff" checked=""></td>
+		</tr>
+		<tr>
+			<td>Smear</td>
+			<td><input title="Single Smear" onclick="ff()" type="radio" id="Smearsingle" name="Smear"></td>
+			<td><input title="Week Smear" onclick="ff()" type="radio" id="Smearweek" name="Smear"></td>
+			<td><input title="All Smear" onclick="ff()" type="radio" id="Smearall" name="Smear" checked=""></td>
+		</tr>
+		<tr>
+			<td>Chem</td>
+			<td><input title="Single Chem" onclick="ff()" type="radio" id="Chemsingle" name="Chem"></td>
+			<td><input title="Week Chem" onclick="ff()" type="radio" id="Chemweek" name="Chem"></td>
+			<td><input title="All Chem" onclick="ff()" type="radio" id="Chemall" name="Chem" checked=""></td>
+		</tr>
+		<tr>
+			<td>Cardiac</td>
+			<td><input title="Single Cardiac" onclick="ff()" type="radio" id="Cardiacsingle" name="Cardiac"></td>
+			<td><input title="Week Cardiac" onclick="ff()" type="radio" id="Cardiacweek" name="Cardiac"></td>
+			<td><input title="All Cardiac" onclick="ff()" type="radio" id="Cardiacall" name="Cardiac" checked=""></td>
+		</tr>
+		<tr>
+			<td>Iron</td>
+			<td><input title="Single Iron" onclick="ff()" type="radio" id="Ironsingle" name="Iron"></td>
+			<td><input title="Week Iron" onclick="ff()" type="radio" id="Ironweek" name="Iron"></td>
+			<td><input title="All Iron" onclick="ff()" type="radio" id="Ironall" name="Iron" checked=""></td>
+		</tr>
+		<tr>
+			<td>Liver</td>
+			<td><input title="Single Liver" onclick="ff()" type="radio" id="Liversingle" name="Liver"></td>
+			<td><input title="Week Liver" onclick="ff()" type="radio" id="Liverweek" name="Liver"></td>
+			<td><input title="All Liver" onclick="ff()" type="radio" id="Liverall" name="Liver" checked=""></td>
+		</tr>
+		<tr>
+			<td>Coags</td>
+			<td><input title="Single Coags" onclick="ff()" type="radio" id="Coagssingle" name="Coags"></td>
+			<td><input title="Week Coags" onclick="ff()" type="radio" id="Coagsweek" name="Coags"></td>
+			<td><input title="All Coags" onclick="ff()" type="radio" id="Coagsall" name="Coags" checked=""></td>
+		</tr>
+		<tr>
+			<td>Lipid-a1c</td>
+			<td><input title="Single Lipid-a1c" onclick="ff()" type="radio" id="Lipid-a1csingle" name="Lipid-a1c"></td>
+			<td><input title="Week Lipid-a1c" onclick="ff()" type="radio" id="Lipid-a1cweek" name="Lipid-a1c"></td>
+			<td><input title="All Lipid-a1c" onclick="ff()" type="radio" id="Lipid-a1call" name="Lipid-a1c" checked=""></td>
+		</tr>
+		<tr>
+			<td>Glucose</td>
+			<td><input title="Single Glucose" onclick="ff()" type="radio" id="Glucosesingle" name="Glucose"></td>
+			<td><input title="Week Glucose" onclick="ff()" type="radio" id="Glucoseweek" name="Glucose"></td>
+			<td><input title="All Glucose" onclick="ff()" type="radio" id="Glucoseall" name="Glucose" checked=""></td>
+		</tr>
+		<tr>
+			<td>UA</td>
+			<td><input title="Single UA" onclick="ff()" type="radio" id="UAsingle" name="UA"></td>
+			<td><input title="Week UA" onclick="ff()" type="radio" id="UAweek" name="UA"></td>
+			<td><input title="All UA" onclick="ff()" type="radio" id="UAall" name="UA" checked=""></td>
+		</tr>
+		<tr>
+			<td>UDS</td>
+			<td><input title="Single UDS" onclick="ff()" type="radio" id="UDSsingle" name="UDS"></td>
+			<td><input title="Week UDS" onclick="ff()" type="radio" id="UDSweek" name="UDS"></td>
+			<td><input title="All UDS" onclick="ff()" type="radio" id="UDSall" name="UDS" checked=""></td>
+		</tr>
+		<tr>
+			<td>ABG</td>
+			<td><input title="Single ABG" onclick="ff()" type="radio" id="ABGsingle" name="ABG"></td>
+			<td><input title="Week ABG" onclick="ff()" type="radio" id="ABGweek" name="ABG"></td>
+			<td><input title="All ABG" onclick="ff()" type="radio" id="ABGall" name="ABG" checked=""></td>
+		</tr>
+		<tr>
+			<td>Changes</td>
+			<td><input onclick="ff()" type="radio" id="viewchangessingle" name="viewchange"></td>
+			<td><input onclick="ff()" type="radio" id="viewchangesweek" name="viewchange"></td>
+			<td><input onclick="ff()" type="radio" id="viewchangesall" name="viewchange" checked=""></td>
+		</tr>
+	</tbody>
+</table>
 </div>
 <div id="main" class="row" style="float:right;">
 <div class="twelve columns">
