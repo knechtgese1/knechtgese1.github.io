@@ -774,10 +774,10 @@ replaceArray["ANION GAP(POC)"] = "ANION GAP";
 
 
 var listTrends = [
+	"Chem",
 	"CBC",
 	"Diff",
 	"Smear",
-	"Chem",
 	"Cardiac",
 	"Iron",
 	"Liver",
@@ -789,10 +789,10 @@ var listTrends = [
 	"ABG"
 ];
 var listElements = [
+	["Creatinine","SODIUM","POTASSIUM","CHLORIDE","CO2",/*"ANION GAP",*/"UREA NITROGEN","Calcium","Mag","Phos"],
 	["WBC","HGB","HCT","PLT","MCV"],
 	["PMN", "Lymph", "Mono", "Eos", "Baso","Bands","Promyelocytes","Myelocytes","Metamyelocytes","Blasts"],
 	["SMEAR"],
-	["Creatinine","SODIUM","POTASSIUM","CHLORIDE","CO2",/*"ANION GAP",*/"UREA NITROGEN","Calcium","Mag","Phos"],
 	["Trop I","CK-MB","CK","BNP"],
 	["Iron","TIBC","Iron sat","Ferritin"],
 	["AST","ALT","ALK","TBil","DBil","Albumin","Protein","Ammonia"],
@@ -803,10 +803,10 @@ var listElements = [
 	["AMPHETAMINES SCREEN","BARBITURATES SCREEN","BENZODIAZEPI SCREEN","CANNABINOIDS SCREEN","COCAINE SCREEN","OPIATES SCREEN","METHADONE SCREEN","OXYCODONE SCREEN","BUPRENORPHINE SCREEN","FENTANYL SCREEN","Ethyl Glucuronide"],
 	["ABG"]];
 var listNames = [
+	["Cr","Na","K","Cl","CO2",/*"AG",*/"BUN","Ca","Mg","PO4"],
 	["WBC","HGB","HCT","PLT","MCV"],
 	["PMN", "Lymph", "Mono", "Eos", "Baso","Bands","Promy","Myelo","Metam","Blast"],
 	["SMEAR"],
-	["Cr","Na","K","Cl","CO2",/*"AG",*/"BUN","Ca","Mg","PO4"],
 	["Troponin I","CK-MB","CPK","BNP"],
 	["Iron","TIBC","TSat","Ferritin"],
 	["AST","ALT","AlkP","TBil","DBil","Alb","Prtn","NH4"],
@@ -818,10 +818,10 @@ var listNames = [
 	["ABG"]
 ];
 var listTrendSpecimens = [
-	"||BLOOD||",
-	"||BLOOD||",
-	"||BLOOD||",
 	"||SERUM||PLASMA||",
+	"||BLOOD||",
+	"||BLOOD||",
+	"||BLOOD||",
 	"||SERUM||PLASMA||BLOOD||",
 	"||SERUM||PLASMA||BLOOD||",
 	"||SERUM||PLASMA||BLOOD||",
@@ -844,14 +844,14 @@ function loadFunction()
 	{
 		ttHTML += "<tr>";
 		ttHTML += "<td>" + listTrends[i] + "</td><td>";
-		ttHTML += "<input title ='Single " + listTrends[i] + "' onclick='ff()' type='radio' id='" + listTrends[i] + "single' name='" + listTrends[i] + "' checked></td><td>";
+		ttHTML += "<input title ='Single " + listTrends[i] + "' onclick='ff()' type='radio' id='" + listTrends[i] + "single' name='" + listTrends[i] + "'></td><td>";
 		ttHTML += "<input title ='Week " + listTrends[i] + "' onclick='ff()' type='radio' id='" + listTrends[i] + "week' name='" + listTrends[i] + "'></td><td>"
-		ttHTML += "<input title ='All " + listTrends[i] + "' onclick='ff()' type='radio' id='" + listTrends[i] + "all'  name='" + listTrends[i] + "'></td>";
+		ttHTML += "<input title ='All " + listTrends[i] + "' onclick='ff()' type='radio' id='" + listTrends[i] + "all'  name='" + listTrends[i] + "'checked></td>";
 		ttHTML += "</tr>";
 	}
-	ttHTML += "<tr><td>Changes</td><td><input onclick ='ff()' type='radio' id='viewchangessingle' name='viewchange' checked></td><td>";
+	ttHTML += "<tr><td>Changes</td><td><input onclick ='ff()' type='radio' id='viewchangessingle' name='viewchange'></td><td>";
 	ttHTML += "<input onclick ='ff()' type='radio' id='viewchangesweek' name='viewchange' ></td><td>";
-	ttHTML += "<input onclick ='ff()' type='radio' id='viewchangesall' name='viewchange'></td>";
+	ttHTML += "<input onclick ='ff()' type='radio' id='viewchangesall' name='viewchange' checked></td>";
 	ttHTML += "</tr>";
 	trendTable.innerHTML = ttHTML;
 }
@@ -3420,7 +3420,7 @@ function ff()
 		trendData += generateTrendText(listTrends[i]);
 	}
 	if(trendData != "")
-		trendData = "TREND DATA:" + "\n" + trendData + "\n";
+		trendData = "TREND DATA:" + trendData + "\n";
 	if(changeData != "")
 		changeData = "SIGNIFICANT CHANGES:" + "\n" + changeData + "\n\n";
 	if(chemistryData2 != "" && !chemistryData2.includes("OTHER"))
