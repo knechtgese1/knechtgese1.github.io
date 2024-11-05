@@ -15,7 +15,7 @@ function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
   const dialog = useRef<HTMLDialogElement>(null);
   const subdivide = useRef<HTMLInputElement>(null);
 
-  const ACTIONS = {
+  const ADDITIVE_ACTIONS = {
     SET_NUMERATOR: 'set-numerator',
     SET_DENOMINATOR: 'set-denominator',
     ADD_METER: 'add-meter',
@@ -30,20 +30,20 @@ function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
 
   const additiveMeterReducer = (state: AdditiveMeter[], {type, payload}: AdditiveMeterAction) => {
     switch (type) {
-      case ACTIONS.SET_NUMERATOR: {
+      case ADDITIVE_ACTIONS.SET_NUMERATOR: {
         const {e, i} = payload;
         const input = e.target as HTMLInputElement;
         const currentMeters = [...state];
         currentMeters[i].numerator = parseInt(input.value) || '';
         return currentMeters;
       }
-      case ACTIONS.SET_DENOMINATOR: {
+      case ADDITIVE_ACTIONS.SET_DENOMINATOR: {
         const {i, value} = payload;
         const currentMeters = [...state];
         currentMeters[i].denominator = value;
         return currentMeters;
       }
-      case ACTIONS.ADD_METER: {
+      case ADDITIVE_ACTIONS.ADD_METER: {
         const {i} = payload;
         const largestDenominator = Math.max(...state.map(meter => meter.denominator));
         const currentMeters = [...state];
@@ -54,7 +54,7 @@ function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
         });
         return currentMeters;
       }
-      case ACTIONS.DELETE_METER: {
+      case ADDITIVE_ACTIONS.DELETE_METER: {
         const {id} = payload;
         return [...state].filter(meter => meter.id !== id);
       }
@@ -139,12 +139,12 @@ function CustomMeter({setCustomMeter, handleCloseModal}: CustomMeterProps) {
           {additiveMeters.map((meter, i) => (
             <div key={meter.id}>
               <div className="meter">
-                <input type="number" min="1" max="3" placeholder="?" value={meter.numerator} onInput={(e) => dispatchAdditiveMeters({type: ACTIONS.SET_NUMERATOR, payload: {e, i}})}/>
+                <input type="number" min="1" max="3" placeholder="?" value={meter.numerator} onInput={(e) => dispatchAdditiveMeters({type: ADDITIVE_ACTIONS.SET_NUMERATOR, payload: {e, i}})}/>
                 <hr />
-                <Dropdown options={subdivisions} onChange={(value) => dispatchAdditiveMeters({type: ACTIONS.SET_DENOMINATOR, payload: {value, i}})}/>
-                {additiveMeters.length > 1 && <button className="remove-meter" onClick={() => dispatchAdditiveMeters({type: ACTIONS.DELETE_METER, payload: {id: meter.id!}})}>-</button>}
+                <Dropdown options={subdivisions} onChange={(value) => dispatchAdditiveMeters({type: ADDITIVE_ACTIONS.SET_DENOMINATOR, payload: {value, i}})}/>
+                {additiveMeters.length > 1 && <button className="remove-meter" onClick={() => dispatchAdditiveMeters({type: ADDITIVE_ACTIONS.DELETE_METER, payload: {id: meter.id!}})}>-</button>}
               </div>
-              <button className="add-meter" type="button" onClick={() => dispatchAdditiveMeters({type: ACTIONS.ADD_METER, payload: {i}})}>+</button>
+              <button className="add-meter" type="button" onClick={() => dispatchAdditiveMeters({type: ADDITIVE_ACTIONS.ADD_METER, payload: {i}})}>+</button>
             </div>
           ))}
         </div>

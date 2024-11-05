@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import Keypad from './components/Keypad';
 import { meters } from './constants/constants';
@@ -24,6 +24,20 @@ function App() {
   ])
 
   const [showCustomModal, setShowCustomModal] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!showCustomModal)
+    };
+
+    // Add event listener
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Clean up event listener on component unmount
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   const handleKeySelect = (key: string, num: number) => {
     if (key === 'n') {
