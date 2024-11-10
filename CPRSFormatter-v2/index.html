@@ -243,6 +243,7 @@ replaceArray["MAGNESIUM,RANDOM UR"] = "Magnesium";
 replaceArray["CREATININE,RANDOM UR"] = "Creatinine";
 replaceArray["CREATININE (URINE,RANDOM)"] = "Creatinine";
 replaceArray["AM PHOSPHATE CRYSTALS"] = "Phosphate Crystals"
+replaceArray["MICROALB/CREAT RATIO"] = "UACR";
 
 //Liver
 replaceArray["GAMMA GLUTAMYLTRANSFERASE"] = "GGT";
@@ -774,6 +775,7 @@ replaceArray["ANION GAP(POC)"] = "ANION GAP";
 
 var listTrends = [
 	"Chem",
+	"UACR",
 	"CBC",
 	"Diff",
 	"Smear",
@@ -785,10 +787,11 @@ var listTrends = [
 	"Glucose",
 	"UA",
 	"UDS",
-	"ABG"
+	"ABG",
 ];
 var listElements = [
 	["Creatinine","SODIUM","POTASSIUM","CHLORIDE","CO2",/*"ANION GAP",*/"UREA NITROGEN","Calcium","Mag","Phos"],
+	["UACR"],
 	["WBC","HGB","HCT","PLT","MCV"],
 	["PMN", "Lymph", "Mono", "Eos", "Baso","Bands","Promyelocytes","Myelocytes","Metamyelocytes","Blasts"],
 	["SMEAR"],
@@ -800,9 +803,11 @@ var listElements = [
 	["Glucose"],
 	["SPECIFIC GRAVITY","URINE pH","URINE BLOOD","LEUKOCYTE ESTERASE","NITRITE, URINE","URINE PROTEIN","URINE GLUCOSE","URINE KETONES","URINE BILIRUBIN", "UROBILINOGEN"],
 	["AMPHETAMINES SCREEN","BARBITURATES SCREEN","BENZODIAZEPI SCREEN","CANNABINOIDS SCREEN","COCAINE SCREEN","OPIATES SCREEN","METHADONE SCREEN","OXYCODONE SCREEN","BUPRENORPHINE SCREEN","FENTANYL SCREEN","Ethyl Glucuronide"],
-	["ABG"]];
+	["ABG"],
+];
 var listNames = [
 	["Cr","Na","K","Cl","CO2",/*"AG",*/"BUN","Ca","Mg","PO4"],
+	["UACR"],
 	["WBC","HGB","HCT","PLT","MCV"],
 	["PMN", "Lymph", "Mono", "Eos", "Baso","Bands","Promy","Myelo","Metam","Blast"],
 	["SMEAR"],
@@ -814,10 +819,11 @@ var listNames = [
 	["Glucose"],
 	["SG","pH","Blood","LE","Nitr","Prtn","Gluc","Keto","Bili", "Urobi"],
 	["AMP","BAR","BZD","CBD","COC","OPI","MTD","OXY","BUP","FEN","ETG"],
-	["ABG"]
+	["ABG"],
 ];
 var listTrendSpecimens = [
 	"||SERUM||PLASMA||",
+	"||URINE||",
 	"||BLOOD||",
 	"||BLOOD||",
 	"||BLOOD||",
@@ -829,7 +835,7 @@ var listTrendSpecimens = [
 	"||SERUM||PLASMA||BLOOD||",
 	"||URINE||",
 	"||URINE||",
-	"||ARTERIAL BLOOD||"
+	"||ARTERIAL BLOOD||",
 ];
 
 var listMedID = new Array();
@@ -2694,7 +2700,6 @@ function fr()
 			}
 		}
 		cbcData += cbc0 + "\n" + cbc1 + "\n" + cbc2 + "\n" + cbc3 + "\n\n" + cbcDiff + cbcExtras + anemiaText + wbcText + hgbText + pltText;
-		console.log(cbcData);
 		cexclude += "RBC||MCV||RDW||MCHC||MCH||MPV||";
 	}
     if("Creatinine" in listVals)
@@ -4313,6 +4318,12 @@ We may change this privacy policy from time to time. Any changes will be posted 
 			<td><input title="Single ABG" onclick="ff()" type="radio" id="ABGsingle" name="ABG"></td>
 			<td><input title="Week ABG" onclick="ff()" type="radio" id="ABGweek" name="ABG"></td>
 			<td><input title="All ABG" onclick="ff()" type="radio" id="ABGall" name="ABG" checked=""></td>
+		</tr>
+		<tr>
+			<td>Spot UACR</td>
+			<td><input title="Single UACR" onclick="ff()" type="radio" id="UACRsingle" name="UACR"></td>
+			<td><input title="Week UACR" onclick="ff()" type="radio" id="UACRweek" name="UACR"></td>
+			<td><input title="All UACR" onclick="ff()" type="radio" id="UACRall" name="UACR" checked=""></td>
 		</tr>
 		<tr>
 			<td>Changes</td>
