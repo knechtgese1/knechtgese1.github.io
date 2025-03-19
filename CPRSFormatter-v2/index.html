@@ -1135,10 +1135,7 @@ function timeToDate(curTime)
 function getMaxima(lab, date, range)
 {
 	var maxIndex = 0;
-	if (!listVals[lab]) {
-		console.log("LAB ", lab);
-		return maxIndex;
-	}
+	if (!listVals[lab]) return maxIndex;
 	for(var i = 0; i < listVals[lab].length; i++)
 	{
 		if(inRange(date, timeToDate(listTime[lab][i]), range))
@@ -1387,7 +1384,6 @@ function timeFormat(s)
 
 function valueCritRed(val, inList, name)
 {
-	if(!listCrit[name]) console.log('NAME ', name);
 	if(listCrit[name] && listCrit[name][inList[name]] != "N")
 	{
 		return "<span style='color: red; font-weight: bold'>" + val + "</span>";
