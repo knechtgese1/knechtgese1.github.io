@@ -1518,6 +1518,9 @@ function fs()
 		}
 	}
     var str1 = clipb.value;
+		// Temporary fix for Wilmington VA
+		str1 = str1.replace(/,  SERUM/g, "        ");
+		str1 = str1.replace(/, SERUM/g, "       ");
     edtData.innerText = "";
     vals = str1.split("\n");
     listVals = {};
