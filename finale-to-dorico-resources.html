@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta
+      charset="UTF-8"
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Finale to Dorico Resources</title>
+  </head>
+
+  <body>
+    <main>
+      <h1>
+        Resources for the <br />
+        Finale-to-Dorico transition:
+      </h1>
+      <ul></ul>
+    </main>
+  </body>
+  <script>
+    const links = {
+      "Dorico Facebook Group":
+        "https://www.facebook.com/groups/1725110804433331",
+      "Learning Dorico for Finale Refugees (Facebook group)":
+        "https://www.facebook.com/groups/402121012988103",
+      "Finale to Dorico - Conquering the Transition":
+        "https://www.youtube.com/watch?v=ZrwTExSuvNY",
+      "Dorico Tutorials": "https://www.steinberg.net/dorico/learn/",
+      "Udemy course on Dorico":
+        "https://www.udemy.com/course/dorico-complete-music-notation-course/",
+      "Dorico Cheat Sheet":
+        "https://blog.dorico.com/wp-content/uploads/2019/06/Dorico-Quick-Reference-Card.pdf",
+      "Buy Dorico through your MakeMusic account":
+        "https://www.steinberg.net/dorico/finale-crossgrade/faq/",
+    };
+    const ul = document.querySelector("ul");
+    for (link in links) {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = links[link];
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = link;
+      li.appendChild(a);
+      ul.appendChild(li);
+    }
+  </script>
+  <style>
+    body {
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, #0d1117, #1a1a1a);
+      color: #e6e6e6;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    main {
+      max-width: 700px;
+      width: 90%;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      color: #9edfff;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.5px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      margin: 20px 0;
+    }
+
+    a {
+      display: inline-block;
+      text-decoration: none;
+      color: #00aaff;
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 12px 24px;
+      border: 2px solid #00aaff;
+      border-radius: 8px;
+      transition: all 0.25s ease;
+    }
+
+    a:hover {
+      background: #00aaff;
+      color: #0d1117;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 170, 255, 0.4);
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 24px;
+        border-radius: 12px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      a {
+        font-size: 1rem;
+        padding: 10px 18px;
+      }
+
+      li {
+        margin: 16px 0;
+      }
+    }
+  </style>
+</html>
