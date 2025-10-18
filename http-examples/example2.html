@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aurora Health — Connected Care Carousel Demo</title>
+<style>
+  :root{
+    --bg:#ffffff; --ink:#263447; --muted:#6b7b8d;
+    --line:#e6edf7; --card:#f7f9fc; --link:#2f6bed;
+    --brand:#2c7be5; --brand-2:#47b5c6; --brand-3:#6dd5ed;
+  }
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  }
+  a{color:var(--link)}
+  .container{max-width:1100px;margin:0 auto;padding:0 20px}
+  header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:5}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+  .logo{width:34px;height:34px;border-radius:9px;
+        background: radial-gradient(120% 120% at 20% 10%, #8bb7ff 0%, #2c7be5 45%, #47b5c6 100%);
+        box-shadow:0 3px 10px rgba(47,107,237,.25)}
+  nav ul{display:flex;gap:18px;list-style:none;margin:0;padding:0}
+  nav a{text-decoration:none;color:var(--ink);font-weight:600}
+  nav a:hover{color:var(--link)}
+  .hero{
+    background: linear-gradient(120deg, #eef6ff, #f4fffd);
+    border-bottom:1px solid var(--line);
+  }
+  .hero .wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:center;padding:36px 0}
+  .hero img{width:100%;height:280px;object-fit:cover;border-radius:16px}
+  .hero h1{margin:0 0 8px;font-size:clamp(26px,4.5vw,40px)}
+  .hero p{margin:0;color:var(--muted);max-width:65ch}
+
+  /* === Carousel card === */
+  .carousel{
+    background:var(--card); border:1px solid var(--line); border-radius:16px; overflow:hidden;
+  }
+  .carousel-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px; border-bottom:1px solid var(--line);
+    background:linear-gradient(90deg,#f7fbff,#f9feff);
+  }
+  .carousel-viewport{
+    position:relative; height:360px; background:#fff;
+  }
+  .slide{
+    position:absolute; inset:0; display:grid; grid-template-columns:1fr 1fr;
+    align-items:stretch; gap:0; opacity:0; pointer-events:none; transition:opacity .35s ease;
+  }
+  .slide[aria-hidden="false"]{ opacity:1; pointer-events:auto; }
+  .slide img{width:100%;height:100%;object-fit:cover}
+  .slide .caption{
+    padding:22px; display:flex; flex-direction:column; justify-content:center;
+    background:#ffffff;
+  }
+  .slide h3{margin:0 0 6px; font-size:22px}
+  .slide p{margin:0; color:var(--muted)}
+  .dots{display:flex; gap:8px; align-items:center}
+  .dot{
+    width:8px;height:8px;border-radius:999px;background:#ced9ee;border:0;cursor:pointer
+  }
+  .dot[aria-current="true"]{background:var(--brand)}
+  .controls{display:flex; gap:8px; align-items:center}
+  .btn{
+    all:unset; cursor:pointer; padding:8px 12px; border-radius:10px;
+    background:#e8f0ff; color:#0b2a66; font-weight:800;
+  }
+  .btn.secondary{background:#bbdcff}
+  .btn.warn{background:#ffd166;color:#3b2600}
+  .btn.ghost{background:#f1f5ff}
+  .btn[hidden]{display:none!important}
+
+  /* Accessibility control bar at bottom (demo controls) */
+  .a11y-legend{
+    position:fixed; left:16px; right:16px; bottom:16px; z-index:50;
+    display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:center;
+    padding:10px 14px; border-radius:14px;
+    background:rgba(17,24,39,.95); color:#fff; font-weight:600;
+    box-shadow:0 6px 24px rgba(0,0,0,.25);
+  }
+  .a11y-legend .row{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
+
+  /* Pause/Play overlay controls (hidden until FIX) */
+  .carousel-user-controls{
+    display:flex; gap:8px; align-items:center;
+  }
+  .carousel-user-controls[hidden]{display:none!important}
+
+  /* Reduce motion respect */
+  @media (prefers-reduced-motion: reduce){
+    .slide{transition:none}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div class="brand"><div class="logo" aria-hidden="true"></div>Aurora&nbsp;Health</div>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="#">Solutions</a></li>
+        <li><a href="#">Clinicians</a></li>
+        <li><a href="#">Patients</a></li>
+        <li><a href="#">Resources</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container wrap">
+    <div>
+      <h1>Coordinated care that meets patients where they are</h1>
+      <p>Our platform connects care teams, patients, and families with proactive insights—on any device.</p>
+    </div>
+    <img src="https://picsum.photos/seed/clinic-team/900/600" alt="Care team having a planning huddle in a clinic hallway">
+  </div>
+</section>
+
+<main class="container" style="padding:40px 0 120px">
+  <section class="carousel"
+    role="region"
+    aria-roledescription="carousel"
+    aria-label="Aurora Health success stories">
+    <div class="carousel-header">
+      <strong>Success stories</strong>
+      <div class="controls">
+        <!-- user controls appear only after FIX -->
+        <div class="carousel-user-controls" id="userControls" hidden>
+          <button class="btn ghost" id="prevBtn" aria-label="Previous slide">Prev</button>
+          <button class="btn" id="playPauseBtn" aria-pressed="false" aria-label="Pause carousel">Pause</button>
+          <button class="btn ghost" id="nextBtn" aria-label="Next slide">Next</button>
+        </div>
+        <div class="dots" id="dots" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="carousel-viewport" id="viewport" aria-live="off" aria-atomic="false">
+      <!-- Slide 1 -->
+      <article class="slide" data-index="0" role="group" aria-roledescription="slide" aria-label="1 of 4" aria-hidden="false">
+        <img src="https://picsum.photos/seed/telehealth/900/600" alt="Clinician on a video call with a patient">
+        <div class="caption">
+          <h3>Telehealth follow-ups</h3>
+          <p>Average no-show rate down 34% after introducing one-tap reminders and virtual check-ins.</p>
+        </div>
+      </article>
+      <!-- Slide 2 -->
+      <article class="slide" data-index="1" role="group" aria-roledescription="slide" aria-label="2 of 4" aria-hidden="true">
+        <img src="https://picsum.photos/seed/meds/900/600" alt="Organized pill box and a reminder app">
+        <div class="caption">
+          <h3>Medication adherence</h3>
+          <p>Personalized nudges helped high-risk patients improve adherence by 18% in three months.</p>
+        </div>
+      </article>
+      <!-- Slide 3 -->
+      <article class="slide" data-index="2" role="group" aria-roledescription="slide" aria-label="3 of 4" aria-hidden="true">
+        <img src="https://picsum.photos/seed/wearables/900/600" alt="Person wearing a smartwatch with health metrics">
+        <div class="caption">
+          <h3>Remote monitoring</h3>
+          <p>Device data flags early warning signs so care teams can intervene days sooner.</p>
+        </div>
+      </article>
+      <!-- Slide 4 -->
+      <article class="slide" data-index="3" role="group" aria-roledescription="slide" aria-label="4 of 4" aria-hidden="true">
+        <img src="https://picsum.photos/seed/community/900/600" alt="Community health worker visiting a patient at home">
+        <div class="caption">
+          <h3>Community care</h3>
+          <p>Home visits + mobile workflows reduce readmissions and improve patient satisfaction.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<!-- Demo Controls (Show Problem / Fix) -->
+<div class="a11y-legend" role="region" aria-label="Demo controls">
+  <div class="row">
+    <button id="showBtn" class="btn secondary">Show Problem</button>
+    <button id="fixBtn" class="btn">Fix</button>
+  </div>
+</div>
+
+<script>
+  // ===== Carousel logic =====
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsWrap = document.getElementById('dots');
+  const viewport = document.getElementById('viewport');
+
+  let idx = 0;
+  let NORMAL_MS = 5000;     // reasonable default
+  let FAST_MS = 1000;        // "unreasonable" speed for demo
+  let tickMs = NORMAL_MS;
+  let timer = null;
+  let playing = true;
+  let problemShown = false;
+  let controlsShown = false;
+
+  // Create dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot';
+    d.setAttribute('aria-label', `Go to slide ${i+1}`);
+    d.addEventListener('click', ()=>goTo(i,true));
+    dotsWrap.appendChild(d);
+  });
+
+  function render() {
+    slides.forEach((s, i) => {
+      const active = i === idx;
+      s.setAttribute('aria-hidden', String(!active));
+      // remove focusable elements from hidden slides
+      s.querySelectorAll('a,button').forEach(el=> el.tabIndex = active ? 0 : -1);
+    });
+    const dots = dotsWrap.querySelectorAll('.dot');
+    dots.forEach((d,i)=> d.setAttribute('aria-current', i===idx ? 'true' : 'false'));
+  }
+
+  function goTo(i, user=false) {
+    idx = (i + slides.length) % slides.length;
+    render();
+    if (user && playing) { // keep cycling; reset timer on manual nav
+      restartTimer();
+    }
+  }
+
+  function next(){ goTo(idx+1); }
+  function prev(){ goTo(idx-1); }
+
+  function startTimer() {
+    stopTimer();
+    timer = setInterval(next, tickMs);
+  }
+  function stopTimer() {
+    if (timer) clearInterval(timer);
+    timer = null;
+  }
+  function restartTimer(){
+    if (playing) startTimer();
+  }
+
+  // Init
+  render();
+  startTimer();
+
+  // ===== Demo buttons =====
+  const showBtn = document.getElementById('showBtn');
+  const fixBtn  = document.getElementById('fixBtn');
+
+  // User controls (hidden until Fix)
+  const userControls = document.getElementById('userControls');
+  const prevBtn = document.getElementById('prevBtn');
+  const playPauseBtn = document.getElementById('playPauseBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  prevBtn.addEventListener('click', ()=>{ prev(); });
+  nextBtn.addEventListener('click', ()=>{ next(); });
+
+  playPauseBtn.addEventListener('click', ()=>{
+    playing = !playing;
+    playPauseBtn.textContent = playing ? 'Pause' : 'Play';
+    playPauseBtn.setAttribute('aria-pressed', String(!playing));
+    if (playing) { startTimer(); } else { stopTimer(); }
+  });
+
+  // Show Problem: crank speed up (toggle)
+  showBtn.addEventListener('click', ()=>{
+    problemShown = !problemShown;
+    if (problemShown){
+      tickMs = FAST_MS; startTimer();
+      showBtn.textContent = 'Hide Problem';
+      // If Fix controls are visible, keep them; this still demonstrates that
+      // speed can be unreasonable even when a carousel exists.
+    } else {
+      tickMs = NORMAL_MS; startTimer();
+      showBtn.textContent = 'Show Problem';
+    }
+  });
+
+  // Fix: reveal accessible controls (toggle) and reset to sane timing
+  fixBtn.addEventListener('click', ()=>{
+    controlsShown = !controlsShown;
+    userControls.hidden = !controlsShown;
+
+    if (controlsShown){
+      // put the user back in control: normal speed and "Pause" visible
+      tickMs = NORMAL_MS; startTimer();
+      playing = true;
+      playPauseBtn.textContent = 'Pause';
+      playPauseBtn.setAttribute('aria-pressed', 'false');
+      fixBtn.textContent = 'Unfix';
+      // expose dots for additional navigation aid when fixed
+      dotsWrap.setAttribute('aria-hidden','false');
+    } else {
+      // hide controls; keep normal speed
+      userControls.hidden = true;
+      fixBtn.textContent = 'Fix';
+      dotsWrap.setAttribute('aria-hidden','true');
+    }
+  });
+
+  // Pause on hover/focus when controls are visible (a11y-friendly pattern)
+  viewport.addEventListener('mouseenter', ()=>{ if (controlsShown){ playing=false; stopTimer(); playPauseBtn.textContent='Play'; playPauseBtn.setAttribute('aria-pressed','true'); }});
+  viewport.addEventListener('mouseleave', ()=>{ if (controlsShown){ playing=true; startTimer(); playPauseBtn.textContent='Pause'; playPauseBtn.setAttribute('aria-pressed','false'); }});
+  viewport.addEventListener('focusin',   ()=>{ if (controlsShown){ playing=false; stopTimer(); playPauseBtn.textContent='Play'; playPauseBtn.setAttribute('aria-pressed','true'); }});
+  viewport.addEventListener('focusout',  ()=>{ if (controlsShown){ playing=true; startTimer(); playPauseBtn.textContent='Pause'; playPauseBtn.setAttribute('aria-pressed','false'); }});
+</script>
+</body>
+</html>
