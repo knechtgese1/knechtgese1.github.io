@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nebula Health — Care that meets you</title>
+  <style>
+    :root{
+      /* Intentionally near/failing contrasts */
+      --bg: #ffffff;
+      --ink: #79879c;       /* ~4.2:1 on white (near-fail) */
+      --ink-muted: #90a3bd; /* ~3.2:1 (fail) */
+      --link: #3b6fd9;
+      --cta-bg: #eaf1ff;
+      --cta-ink: #5a7fd6;   /* ~4.1:1 on cta-bg (near-fail) */
+      --card-bg: #f7f9fc;
+      --line: #e6edf7;
+      --hero-grad: linear-gradient(180deg, rgba(245,248,255,.6) 0%, rgba(245,248,255,.9) 60%, rgba(245,248,255,1) 100%);
+      --success: #15803d;
+      --hero-text: #f5f8ff; /* light over light image (can dip below) */
+    }
+
+    /* Accessible palette when FIX is on */
+    body.a11y-fixed{
+      --ink: #4b5563;          /* ~8.6:1 */
+      --ink-muted: #5f6b7a;    /* ~5.4:1 */
+      --cta-ink: #294ea8;      /* ~6.0:1 on #eaf1ff */
+      --hero-text: #10243d;    /* dark enough on overlay */
+    }
+
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+    a{ color: var(--link); text-underline-offset: 2px; }
+    .container{ max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    header{
+      border-bottom: 1px solid var(--line);
+      background: var(--bg);
+      position: sticky; top:0; z-index: 10;
+    }
+    .nav{ display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.2px; }
+    .brand-logo{
+      width:36px; height:36px; border-radius:10px;
+      background: radial-gradient(120% 120% at 20% 10%, #8bb7ff 0%, #5a7fd6 40%, #4f86c6 100%);
+      box-shadow: 0 3px 10px rgba(59,111,217,0.25);
+    }
+    nav ul{ list-style:none; display:flex; gap:18px; padding:0; margin:0; }
+    nav a{ text-decoration:none; color: var(--ink); font-weight:600; }
+    nav a:hover{ color: var(--link); }
+
+    .hero{
+      position: relative; overflow:hidden;
+      border-bottom:1px solid var(--line);
+      background: #eef4ff;
+    }
+    .hero-img{ width:100%; height: 340px; object-fit: cover; display:block; filter: saturate(105%); }
+    .hero-overlay{
+      position:absolute; inset:0; background: var(--hero-grad);
+      display:flex; align-items:flex-end;
+    }
+    .hero-copy{ padding: 28px 0 30px; }
+    .hero h1{
+      margin:0 0 8px 0;
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 800;
+      color: var(--hero-text);
+      text-shadow: 0 1px 0 rgba(0,0,0,.05);
+    }
+    .hero p{ margin:0; max-width: 65ch; color: var(--hero-text); }
+
+    .section{ padding: 48px 0; }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .card{
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .card img{ width:100%; height:160px; object-fit:cover; border-radius:10px; }
+    h2{ margin:0 0 10px 0; font-size: clamp(20px, 2.5vw, 28px); color: #1f2937; }
+    h3{ margin:8px 0; font-size: 18px; color: #253043; }
+    .muted{ color: var(--ink-muted); } /* intentionally fails until FIX */
+    .btn{
+      align-self: flex-start;
+      background: var(--cta-bg);
+      color: var(--cta-ink);     /* near-fail until FIX */
+      border: 1px solid #d9e6ff;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      text-decoration: none;
+      display:inline-flex; gap:8px; align-items:center;
+      transition: transform .06s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .cta{
+      margin-top: 8px;
+      background: linear-gradient(90deg, #f1f6ff, #f8fbff);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px 18px;
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+    }
+    .pill{
+      font-size: 12px; font-weight: 700; letter-spacing:.4px; text-transform: uppercase;
+      color: var(--success); background: #ecfdf5; border: 1px solid #d1fae5; border-radius: 999px; padding: 6px 10px;
+    }
+    footer{
+      border-top:1px solid var(--line);
+      padding: 24px 0 90px; /* leave room for controls */
+      color: var(--ink-muted);   /* fails until FIX */
+      font-size: 14px;
+    }
+    .footer-grid{
+      display: grid; gap: 18px;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+    }
+    .social a{ margin-left:12px; color: var(--ink-muted); text-decoration:none; }
+    .social a:hover{ color: var(--link); }
+
+    /* ===== Contrast Debug visuals (no layout shift) ===== */
+    .a11y-contrast-fail{
+      outline: 2px solid #ef4444 !important; /* red-500 */
+      /* no outline-offset; no position: relative */
+    }
+    .a11y-legend{
+      position: fixed; left: 16px; right: 16px; bottom: 16px;
+      display: flex; gap: 12px; align-items:center; justify-content:center;
+      padding: 10px 14px; flex-wrap: wrap;
+      border-radius: 14px; background: rgba(17,24,39,.95); color: #fff;
+      font: 600 14px/1.3 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      box-shadow: 0 6px 24px rgba(0,0,0,.25); z-index: 9999;
+    }
+    .a11y-legend button{
+      all: unset; background: #22c55e; color:#052e12;
+      padding: 8px 12px; border-radius: 10px; font-weight: 800; cursor: pointer;
+    }
+    .a11y-legend button.secondary{ background: #60a5fa; color:#0a2540; }
+    .a11y-legend .hint{ opacity:.85; font-weight:500; }
+  </style>
+</head>
+<body>
+  <header role="banner">
+    <div class="container nav" aria-label="Primary">
+      <div class="brand" aria-label="Nebula Health">
+        <div class="brand-logo" aria-hidden="true"></div>
+        <span>Nebula&nbsp;Health</span>
+      </div>
+      <nav aria-label="Main">
+        <ul>
+          <li><a href="#">Solutions</a></li>
+          <li><a href="#">Platform</a></li>
+          <li><a href="#">Customers</a></li>
+          <li><a href="#">Resources</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <img class="hero-img" src="https://picsum.photos/seed/clinic/1600/600" alt="Smiling care team collaborating in a clinic" />
+    <div class="hero-overlay">
+      <div class="container hero-copy">
+        <h1>Care that meets you where you are</h1>
+        <p>Our connected platform helps patients, clinicians, and families coordinate care seamlessly—with empathy at every step.</p>
+      </div>
+    </div>
+  </section>
+
+  <main class="container" role="main">
+    <section class="section">
+      <h2>What we do</h2>
+      <div class="grid">
+        <article class="card">
+          <img src="https://picsum.photos/seed/analytics/800/400" alt="Dashboard with charts showing care outcomes" />
+          <h3>Insights you can act on</h3>
+          <p>Turn scattered data into proactive care decisions with predictive analytics and configurable alerts.</p>
+          <a class="btn" href="#">
+            Learn more
+            <span aria-hidden="true">→</span>
+          </a>
+        </article>
+
+        <article class="card">
+          <img src="https://picsum.photos/seed/mobile/800/400" alt="Patient using a mobile health app at home" />
+          <h3>Delightful patient journeys</h3>
+          <p class="muted">Personalized nudges and clear tasks help patients stay on track between visits.</p>
+          <a class="btn" href="#">
+            Learn more
+            <span aria-hidden="true">→</span>
+          </a>
+        </article>
+
+        <article class="card">
+          <img src="https://picsum.photos/seed/telemed/800/400" alt="Video consultation between clinician and patient" />
+          <h3>Integrations that just work</h3>
+          <p>Connect EMR, claims, labs, and remote monitoring devices without the plumbing headaches.</p>
+          <div class="cta" role="note" aria-label="Customer proof">
+            <span class="pill">New</span>
+            <span>Now with real-time eligibility checks.</span>
+            <a class="btn" href="#">See how</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <div class="container footer-grid">
+      <div>© 2025 Nebula Health, Inc. All rights reserved. <span class="muted">Privacy · Terms</span></div>
+      <div class="social" aria-label="Social links">
+        <a href="#" aria-label="Follow on LinkedIn">in</a>
+        <a href="#" aria-label="Follow on X">𝕏</a>
+        <a href="#" aria-label="Follow on YouTube">▶</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Controls -->
+  <div class="a11y-legend" role="region" aria-label="Contrast controls">
+    <button id="toggle-outline" class="secondary">Show</button>
+    <button id="toggle-fix">Fix</button>
+  </div>
+
+  <script>
+    // --- Contrast utils ---
+    function parseRGBA(str){
+      const m = (str || '').replace(/\s+/g,'').match(/^rgba?\((\d+),(\d+),(\d+)(?:,([\d.]+))?\)$/i);
+      if(!m) return {r:255,g:255,b:255,a:1};
+      return { r:+m[1], g:+m[2], b:+m[3], a: m[4] === undefined ? 1 : +m[4] };
+    }
+    function s2l(v){ v/=255; return v<=0.04045 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }
+    function luminance({r,g,b}){ return 0.2126*s2l(r)+0.7152*s2l(g)+0.0722*s2l(b); }
+    function contrast(rgb1,rgb2){ const L1=luminance(rgb1),L2=luminance(rgb2); const hi=Math.max(L1,L2), lo=Math.min(L1,L2); return (hi+0.05)/(lo+0.05); }
+
+    // walk up to find solid background color
+    function effectiveBackground(el){
+      let n = el;
+      while(n){
+        const cs = getComputedStyle(n);
+        const bgc = cs.backgroundColor;
+        const c = parseRGBA(bgc);
+        if(c.a === 1) return c; // solid
+        n = n.parentElement;
+      }
+      return {r:255,g:255,b:255,a:1}; // fallback
+    }
+
+    function isVisible(el){
+      const cs = getComputedStyle(el);
+      if(cs.visibility === 'hidden' || cs.display === 'none') return false;
+      const rect = el.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0;
+    }
+    function isLargeText(cs){
+      const size = parseFloat(cs.fontSize) || 16;
+      const weight = parseInt(cs.fontWeight,10) || 400;
+      const bold = weight >= 700;
+      return size >= 24 || (bold && size >= 19);
+    }
+    function hasReadableText(el){
+      const txt = (el.textContent || '').trim();
+      return txt.length > 0;
+    }
+
+    // Only check common text-bearing elements
+    const TEXT_SELECTOR = [
+      'p','span','a','li','h1','h2','h3','h4','h5','h6',
+      'button','label','small','strong','em','dd','dt','figcaption','th','td',
+      '.btn'
+    ].join(',');
+
+    function scanAndMarkFailures(){
+      document.querySelectorAll('.a11y-contrast-fail').forEach(el=>el.classList.remove('a11y-contrast-fail'));
+      let count = 0;
+      document.querySelectorAll(TEXT_SELECTOR).forEach(el=>{
+        if(!isVisible(el)) return;
+        if(!hasReadableText(el)) return;
+        if(el.getAttribute('aria-hidden') === 'true') return;
+
+        const cs = getComputedStyle(el);
+        const fg = parseRGBA(cs.color);
+        if(fg.a === 0) return;
+
+        const bg = effectiveBackground(el);
+        const ratio = contrast(fg,bg);
+        const threshold = isLargeText(cs) ? 3.0 : 4.5;
+
+        if(ratio < threshold){
+          el.classList.add('a11y-contrast-fail');
+          count++;
+        }
+      });
+      return count;
+    }
+
+    function clearFailures(){
+      document.querySelectorAll('.a11y-contrast-fail').forEach(el=>el.classList.remove('a11y-contrast-fail'));
+    }
+
+    // Buttons
+    const btnOutline = document.getElementById('toggle-outline');
+    const btnFix = document.getElementById('toggle-fix');
+
+    let outlinesOn = false;
+    btnOutline.addEventListener('click', ()=>{
+      outlinesOn = !outlinesOn;
+      if(outlinesOn){
+        const n = scanAndMarkFailures();
+        btnOutline.textContent = `Hide (${n})`;
+      }else{
+        clearFailures();
+        btnOutline.textContent = 'Show';
+      }
+    });
+
+    let fixedOn = false;
+    btnFix.addEventListener('click', ()=>{
+      fixedOn = !fixedOn;
+      document.body.classList.toggle('a11y-fixed', fixedOn);
+      btnFix.textContent = fixedOn ? 'Unfix' : 'Fix';
+      if(outlinesOn) scanAndMarkFailures();
+    });
+
+    // Keep accurate on resize
+    window.addEventListener('resize', ()=> { if(outlinesOn) scanAndMarkFailures(); });
+  </script>
+</body>
+</html>
