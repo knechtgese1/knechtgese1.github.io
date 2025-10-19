@@ -81,6 +81,7 @@
     padding:10px 14px; border-radius:14px;
     background:rgba(17,24,39,.95); color:#fff; font-weight:600;
     box-shadow:0 6px 24px rgba(0,0,0,.25);
+    text-align:center;
   }
   .a11y-legend .row{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
 
@@ -89,6 +90,10 @@
     display:flex; gap:8px; align-items:center;
   }
   .carousel-user-controls[hidden]{display:none!important}
+
+  /* Note text (white on dark bar) */
+  #wcag-anim-note[hidden]{display:none!important}
+  #wcag-anim-note span{color:#fff; font-weight:500; opacity:.95; max-width:900px; display:inline-block}
 
   /* Reduce motion respect */
   @media (prefers-reduced-motion: reduce){
@@ -182,6 +187,10 @@
     <button id="showBtn" class="btn secondary">Show Problem</button>
     <button id="fixBtn" class="btn">Fix</button>
   </div>
+  <!-- Note appears once you've clicked Show Problem at least once, then stays visible -->
+  <div id="wcag-anim-note" hidden>
+    <span>It’s important for a visitor to have the ability to pause, stop, or hide animations if need be. This is another guideline outlined in WCAG.</span>
+  </div>
 </div>
 
 <script>
@@ -212,7 +221,6 @@
     slides.forEach((s, i) => {
       const active = i === idx;
       s.setAttribute('aria-hidden', String(!active));
-      // remove focusable elements from hidden slides
       s.querySelectorAll('a,button').forEach(el=> el.tabIndex = active ? 0 : -1);
     });
     const dots = dotsWrap.querySelectorAll('.dot');
@@ -222,9 +230,7 @@
   function goTo(i, user=false) {
     idx = (i + slides.length) % slides.length;
     render();
-    if (user && playing) { // keep cycling; reset timer on manual nav
-      restartTimer();
-    }
+    if (user && playing) { restartTimer(); }
   }
 
   function next(){ goTo(idx+1); }
@@ -258,7 +264,6 @@
 
   prevBtn.addEventListener('click', ()=>{ prev(); });
   nextBtn.addEventListener('click', ()=>{ next(); });
-
   playPauseBtn.addEventListener('click', ()=>{
     playing = !playing;
     playPauseBtn.textContent = playing ? 'Pause' : 'Play';
@@ -266,17 +271,26 @@
     if (playing) { startTimer(); } else { stopTimer(); }
   });
 
+  // Note visibility: show after first "Show Problem" click, then keep visible
+  const animNote = document.getElementById('wcag-anim-note');
+  let noteUnlocked = false;
+
   // Show Problem: crank speed up (toggle)
   showBtn.addEventListener('click', ()=>{
     problemShown = !problemShown;
     if (problemShown){
       tickMs = FAST_MS; startTimer();
       showBtn.textContent = 'Hide Problem';
-      // If Fix controls are visible, keep them; this still demonstrates that
-      // speed can be unreasonable even when a carousel exists.
+
+      // unlock and show the WCAG note
+      noteUnlocked = true;
+      animNote.hidden = false;
     } else {
       tickMs = NORMAL_MS; startTimer();
       showBtn.textContent = 'Show Problem';
+
+      // keep the note visible if it was unlocked
+      if (noteUnlocked) animNote.hidden = false;
     }
   });
 
@@ -286,20 +300,20 @@
     userControls.hidden = !controlsShown;
 
     if (controlsShown){
-      // put the user back in control: normal speed and "Pause" visible
       tickMs = NORMAL_MS; startTimer();
       playing = true;
       playPauseBtn.textContent = 'Pause';
       playPauseBtn.setAttribute('aria-pressed', 'false');
       fixBtn.textContent = 'Unfix';
-      // expose dots for additional navigation aid when fixed
       dotsWrap.setAttribute('aria-hidden','false');
     } else {
-      // hide controls; keep normal speed
       userControls.hidden = true;
       fixBtn.textContent = 'Fix';
       dotsWrap.setAttribute('aria-hidden','true');
     }
+
+    // If the note was unlocked, keep it visible
+    if (noteUnlocked) animNote.hidden = false;
   });
 
   // Pause on hover/focus when controls are visible (a11y-friendly pattern)
