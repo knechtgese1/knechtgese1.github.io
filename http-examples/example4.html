@@ -44,10 +44,11 @@
   .x-accordion .hdr{padding:12px 14px; background:#f8fbff; cursor:pointer; font-weight:700}
   .x-accordion .panel{padding:12px 14px; display:none}
   .x-accordion.open .panel{display:block}
+  /* Accordion focus ring fix: render inside the clipped container */
   .x-accordion .hdr.focus-ring:focus {
-    outline: none;                /* prevent the clipped outside outline */
+    outline: none;
     box-shadow: inset 0 0 0 3px #94c2ff;
-    border-radius: 8px;           /* match the visual style */
+    border-radius: 8px;
   }
 
   .x-select{position:relative; border:1px solid var(--line); border-radius:10px; background:#fff; cursor:pointer}
@@ -74,6 +75,9 @@
   .btn[hidden]{display:none!important}
 
   #problem-note[hidden]{display:none!important}
+  /* Hide footnotes until "Show Problems" */
+  .foot[hidden]{display:none!important}
+
   #problem-note{max-width:900px; color:#fff; font-weight:500; opacity:.95}
   code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; background:#0b1220; color:#c9e2ff; padding:2px 6px; border-radius:6px}
 </style>
@@ -87,8 +91,7 @@
 </header>
 
 <main class="container">
-  <h1>Keyboard Inaccessibility: Custom Controls</h1>
-  <p class="lead">These look nice — but try tabbing. Initially, you can’t reach or operate them with the keyboard.</p>
+  <h1>User Settings</h1>
 
   <div class="grid">
 
@@ -212,13 +215,23 @@
   const showBtn = document.getElementById('showBtn');
   const note = document.getElementById('problem-note');
 
+  // NEW: cache all .foot elements and a helper to toggle visibility together
+  const problemEls = Array.from(document.querySelectorAll('.foot'));
   let fixed = false;
   let problemsShown = false;
 
+  function setProblemsVisible(show){
+    note.hidden = !show;
+    problemEls.forEach(el => el.hidden = !show);
+    showBtn.textContent = show ? 'Hide Problems' : 'Show Problems';
+    problemsShown = show;
+  }
+
+  // Initialize hidden state (note + all .foot)
+  setProblemsVisible(false);
+
   showBtn.addEventListener('click', ()=>{
-    problemsShown = !problemsShown;
-    note.hidden = !problemsShown;
-    showBtn.textContent = problemsShown ? 'Hide Problems' : 'Show Problems';
+    setProblemsVisible(!problemsShown);
   });
 
   fixBtn.addEventListener('click', ()=>{
@@ -227,9 +240,7 @@
     fixed = true;
     fixBtn.hidden = true;
     unfixBtn.hidden = false;
-    note.hidden = false;
-    showBtn.textContent = 'Hide Problems';
-    problemsShown = true;
+    setProblemsVisible(true);
   });
 
   unfixBtn.addEventListener('click', ()=>{
@@ -238,6 +249,7 @@
     fixed = false;
     unfixBtn.hidden = true;
     fixBtn.hidden = false;
+    // keep current problem visibility; do not auto-hide on unfix
   });
 
   /* ========= Apply accessibility fixes ========= */
@@ -361,7 +373,6 @@
     // 3) Accordion — remove enhanced handler, restore basic click handler
     document.querySelectorAll('.x-accordion').forEach(acc=>{
       const hdr = acc.querySelector('.hdr');
-      const panel = acc.querySelector('.panel');
 
       if (hdr._enhancedAccordionClick){
         hdr.removeEventListener('click', hdr._enhancedAccordionClick);
@@ -406,9 +417,25 @@
     if(e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); this.click(); syncSwitchAria(this); }
   }
 
-  function toggleSelect(sel){ sel.classList.toggle('open'); const label=sel.querySelector('.label'); label.setAttribute('aria-expanded', String(sel.classList.contains('open'))); if(sel.classList.contains('open')) focusActiveOption(sel); }
-  function openSelect(sel){ if(!sel.classList.contains('open')) { sel.classList.add('open'); sel.querySelector('.label').setAttribute('aria-expanded','true'); focusActiveOption(sel); } }
-  function closeSelect(sel){ if(sel.classList.contains('open')) { sel.classList.remove('open'); sel.querySelector('.label').setAttribute('aria-expanded','false'); } }
+  function toggleSelect(sel){
+    sel.classList.toggle('open');
+    const label = sel.querySelector('.label');
+    label.setAttribute('aria-expanded', String(sel.classList.contains('open')));
+    if(sel.classList.contains('open')) focusActiveOption(sel);
+  }
+  function openSelect(sel){
+    if(!sel.classList.contains('open')) {
+      sel.classList.add('open');
+      sel.querySelector('.label').setAttribute('aria-expanded','true');
+      focusActiveOption(sel);
+    }
+  }
+  function closeSelect(sel){
+    if(sel.classList.contains('open')) {
+      sel.classList.remove('open');
+      sel.querySelector('.label').setAttribute('aria-expanded','false');
+    }
+  }
   function focusActiveOption(sel){
     const opts = sel.querySelectorAll('.option');
     const active = Array.from(opts).find(o=>o.getAttribute('aria-selected')==='true') || opts[0];

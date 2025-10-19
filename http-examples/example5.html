@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HarborPoint Health — Subtle Bad Headings Demo</title>
+<style>
+  :root{ --bg:#ffffff; --ink:#111827; --muted:#6b7280; --brand:#2563eb; --line:#e5e7eb; }
+  html,body{height:100%}
+  body{margin:0; font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial; color:var(--ink); background:var(--bg)}
+  a{color:var(--brand); text-decoration:none}
+  .container{max-width:1000px; margin:0 auto; padding:0 20px}
+  header{border-bottom:1px solid var(--line); background:#f8fafc}
+  .nav{display:flex; align-items:center; justify-content:space-between; padding:16px 0}
+  .brand{display:flex; gap:12px; align-items:center}
+  .logo{width:34px;height:34px;border-radius:8px;background:radial-gradient(120% 120% at 20% 10%, #93c5fd 0, #2563eb 48%, #38bdf8 100%); box-shadow:0 3px 10px rgba(37,99,235,.25)}
+  .links a{margin-left:16px}
+  .hero{display:grid; grid-template-columns:1.1fr .9fr; gap:24px; padding:26px 0}
+  .card{border:1px solid var(--line); border-radius:14px; padding:16px; background:#fff}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin-top:8px}
+  footer{border-top:1px solid var(--line); padding:18px 0; background:#fafafa; color:var(--muted)}
+
+  /* Control strip */
+  .a11y-legend{
+    position:fixed; left:16px; right:16px; bottom:16px; z-index:50; display:flex; flex-direction:column; gap:8px; align-items:center;
+    padding:10px 14px; border-radius:14px; background:rgba(17,24,39,.95); color:#fff; font-weight:600; text-align:center;
+    box-shadow:0 6px 24px rgba(0,0,0,.25);
+  }
+  .row{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
+  .btn{all:unset; cursor:pointer; padding:8px 12px; border-radius:10px; font-weight:800}
+  .btn.primary{background:#22c55e; color:#052e12}
+  .btn.warn{background:#ffd166; color:#3b2600}
+  .btn.secondary{background:#bbdcff; color:#0b2a66}
+  .btn[hidden]{display:none!important}
+  #note[hidden]{display:none!important}
+  #note{max-width:900px; color:#fff; font-weight:500; opacity:.95}
+  code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; background:#0b1220; color:#c9e2ff; padding:2px 6px; border-radius:6px}
+
+  /* Intentionally do NOT change default h1–h6 sizes/weights */
+</style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <!-- MISUSE #1: Top-level brand as an h1 -->
+        <h1 id="site-brand">HarborPoint Health</h1>
+      </div>
+      <nav class="links" aria-label="Primary">
+        <a href="#">Patients</a>
+        <a href="#">Clinicians</a>
+        <a href="#">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <!-- MISUSE #2: A marketing line jumps straight to h3 before any section structure -->
+        <h3 id="tagline">Your care, coordinated.</h3>
+        <p>Book visits, view results, and message your care team from one place.</p>
+
+        <!-- Mild misuse: using h5 as a small label under the hero (skips levels) -->
+        <h5 id="hero-label">Next available</h5>
+        <p>Primary Care • Tomorrow 9:20 AM</p>
+      </div>
+
+      <aside class="card" aria-label="Announcement">
+        <!-- MISUSE #3: A second h1 inside a sidebar widget (looks fine, outline wrong) -->
+        <h1 id="flu-widget">Flu Shots Now Available</h1>
+        <p>Walk-in clinics across the city. No appointment needed.</p>
+        <p><a href="#">Locations &amp; hours</a></p>
+      </aside>
+    </section>
+
+    <section aria-labelledby="services-heading" class="card" style="margin-top:8px">
+      <!-- Mild ordering issue: h2 comes after earlier h3/h5 -->
+      <h2 id="services-heading">Care Services</h2>
+      <div class="grid">
+        <article class="card">
+          <!-- Using headings as card titles (common visual pattern, semantically noisy) -->
+          <h4>Find a Doctor</h4>
+          <p>Search by specialty, location, or language.</p>
+        </article>
+        <article class="card">
+          <h4>Same-Day Care</h4>
+          <p>Urgent needs handled today at select clinics.</p>
+        </article>
+        <article class="card">
+          <h4>Patient Stories</h4>
+          <p>Real experiences from our community.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:12px">
+      <!-- Another mild skip: small supporting subhead jumps to h6 -->
+      <h6>Quality &amp; Safety</h6>
+      <p>We follow evidence-based protocols across all departments.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <!-- Footer “title” as a heading for visual weight -->
+      <h3>HarborPoint Health</h3>
+      <p>&copy; 2025 HarborPoint Health. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Controls -->
+  <div class="a11y-legend" role="region" aria-label="Demo controls">
+    <div class="row">
+      <button id="fixBtn" class="btn primary">Fix</button>
+      <button id="unfixBtn" class="btn warn" hidden>Unfix</button>
+      <button id="showBtn" class="btn secondary">Show Problem</button>
+    </div>
+    <div id="note" hidden>
+      <span>
+        This page used heading tags for <strong>styling</strong> (multiple <code>&lt;h1&gt;</code>s, skipped levels).
+        <strong>Fix</strong> adds ARIA roles/levels to repair the outline (<code>role="heading"</code>, <code>aria-level</code>) without changing how it looks.
+      </span>
+    </div>
+  </div>
+
+<script>
+  const fixBtn = document.getElementById('fixBtn');
+  const unfixBtn = document.getElementById('unfixBtn');
+  const showBtn = document.getElementById('showBtn');
+  const note = document.getElementById('note');
+
+  let fixed = false;
+  let shown = false;
+
+  showBtn.addEventListener('click', ()=>{
+    shown = !shown;
+    note.hidden = !shown;
+    showBtn.textContent = shown ? 'Hide Problem' : 'Show Problem';
+  });
+
+  fixBtn.addEventListener('click', ()=>{
+    if (fixed) return;
+    applyFixes();
+    fixed = true;
+    fixBtn.hidden = true;
+    unfixBtn.hidden = false;
+    note.hidden = false;
+    showBtn.textContent = 'Hide Problem';
+    shown = true;
+  });
+
+  unfixBtn.addEventListener('click', ()=>{
+    if (!fixed) return;
+    revertFixes();
+    fixed = false;
+    unfixBtn.hidden = true;
+    fixBtn.hidden = false;
+  });
+
+  /* ------- Accessibility repair without changing visual sizes ------- */
+  function applyFixes(){
+    // We won't rewrite the DOM or change tags; instead we correct the outline using ARIA.
+    // 1) Brand h1 becomes aria-level=1 (kept) — treat as the sole document h1.
+    const brandH1 = document.getElementById('site-brand');
+    brandH1.setAttribute('role','heading');
+    brandH1.setAttribute('aria-level','1');
+    brandH1.dataset.fixed = 'true';
+
+    // 2) Sidebar h1 is demoted to level 2 to avoid multiple top-level headings.
+    const widgetH1 = document.getElementById('flu-widget');
+    widgetH1.setAttribute('role','heading');
+    widgetH1.setAttribute('aria-level','2');
+    widgetH1.dataset.fixed = 'true';
+
+    // 3) Tagline h3 should really be the main section heading → promote to level 2.
+    const taglineH3 = document.getElementById('tagline');
+    taglineH3.setAttribute('role','heading');
+    taglineH3.setAttribute('aria-level','2');
+    taglineH3.dataset.fixed = 'true';
+
+    // 4) Hero label h5 acts like a subheading under the tagline → set to level 3.
+    const heroLabelH5 = document.getElementById('hero-label');
+    heroLabelH5.setAttribute('role','heading');
+    heroLabelH5.setAttribute('aria-level','3');
+    heroLabelH5.dataset.fixed = 'true';
+
+    // 5) Card h4s under "Care Services" → treat as level 3 under the h2 section.
+    document.querySelectorAll('section[aria-labelledby="services-heading"] h4').forEach(h=>{
+      h.setAttribute('role','heading');
+      h.setAttribute('aria-level','3');
+      h.dataset.fixed = 'true';
+    });
+
+    // 6) Quality & Safety h6 → raise to a reasonable sublevel (3).
+    document.querySelectorAll('section.card h6').forEach(h=>{
+      h.setAttribute('role','heading');
+      h.setAttribute('aria-level','3');
+      h.dataset.fixed = 'true';
+    });
+  }
+
+  function revertFixes(){
+    // Remove ARIA roles/levels we added.
+    document.querySelectorAll('[data-fixed="true"]').forEach(h=>{
+      h.removeAttribute('role');
+      h.removeAttribute('aria-level');
+      delete h.dataset.fixed;
+    });
+    note.hidden = true;
+    showBtn.textContent = 'Show Problem';
+    shown = false;
+  }
+</script>
+</body>
+</html>
