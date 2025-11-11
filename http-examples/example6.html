@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aurora Health — Color & Typeface Reliance Demo</title>
+<style>
+  :root{
+    --bg:#ffffff; --ink:#1f2a37; --muted:#6b7b8d; --line:#e6edf7;
+    --brand:#2c7be5; --ok:#16a34a; --warn:#f59e0b; --bad:#dc2626; --info:#0369a1;
+  }
+  html,body{height:100%}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+
+  a{color:var(--brand); text-underline-offset:2px}
+  header{border-bottom:1px solid var(--line); background:#f7fbff}
+  .nav{max-width:1100px; margin:0 auto; padding:14px 20px; display:flex; justify-content:space-between; align-items:center}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800}
+  .logo{width:34px;height:34px;border-radius:9px;
+        background: radial-gradient(120% 120% at 20% 10%, #8bb7ff 0%, #2c7be5 45%, #47b5c6 100%);
+        box-shadow:0 3px 10px rgba(47,107,237,.25)}
+
+  .container{max-width:1100px; margin:0 auto; padding:28px 20px 140px}
+  h1{font-size:clamp(26px,4.5vw,40px); margin:0 0 8px}
+  .lead{color:var(--muted); margin:0 0 18px}
+
+  /* Grid: equal by default; becomes 1.2 / 1 / 1 in fixed mode so badges have room */
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px}
+  @media (min-width: 1100px){
+    body.fixed-mode .grid{grid-template-columns:1.2fr 1fr 1fr}
+  }
+
+  .card{border:1px solid var(--line); border-radius:16px; padding:16px; background:#fff}
+  .card h2{margin:.2rem 0 .6rem; font-size:20px}
+  .foot{color:var(--muted); font-size:14px; margin-top:8px}
+
+  table{width:100%; border-collapse:collapse; table-layout:fixed}
+  th,td{padding:8px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:middle}
+  body.fixed-mode col.col-test{width:46%}
+  body.fixed-mode col.col-value{width:34%}
+  body.fixed-mode col.col-range{width:20%}
+
+  /* Intentional problems (before Fix) */
+  .t-good{color:var(--ok)}
+  .t-warn{color:var(--warn)}
+  .t-bad{color:var(--bad)}
+  .as-bold{font-weight:700}
+  .as-italic{font-style:italic}
+
+  /* Badges (added during Fix) */
+  .badge{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:2px 8px; border-radius:999px; font-size:12px; font-weight:700; border:1px solid transparent;
+    margin-left:8px; white-space:nowrap;
+  }
+  .b-good{background:#ecfdf5; border-color:#a7f3d0; color:#065f46}
+  .b-warn{background:#fffbeb; border-color:#fde68a; color:#92400e}
+  .b-bad{background:#fef2f2; border-color:#fecaca; color:#7f1d1d}
+  .b-info{background:#eff6ff; border-color:#bfdbfe; color:#1e40af}
+
+  /* Appointments: nicer alignment in fixed mode */
+  body.fixed-mode .appt-list li{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:2px 0;
+  }
+
+  /* Controls strip */
+  .a11y-legend{
+    position:fixed; left:16px; right:16px; bottom:16px; z-index:50;
+    display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:center;
+    padding:10px 14px; border-radius:14px; background:rgba(17,24,39,.95); color:#fff; font-weight:600; text-align:center;
+    box-shadow:0 6px 24px rgba(0,0,0,.25);
+  }
+  .row{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
+  .btn{all:unset; cursor:pointer; padding:8px 12px; border-radius:10px; font-weight:800}
+  .btn.primary{background:#22c55e; color:#052e12}
+  .btn.warn{background:#ffd166; color:#3b2600}
+  .btn.secondary{background:#bbdcff; color:#0b2a66}
+  .btn[hidden]{display:none!important}
+  #note[hidden]{display:none!important}
+  .foot[hidden]{display:none!important}
+  #note{max-width:900px; color:#fff; font-weight:500; opacity:.95}
+
+  /* --- Simulation styles (Monochrome/Monotype) --- */
+  body.sim-mono{
+    filter: grayscale(100%) contrast(1.05);
+  }
+  /* Neutralize bold/italic cues to simulate “monotype” perception */
+  body.sim-mono .as-bold{font-weight:inherit}
+  body.sim-mono .as-italic{font-style:normal}
+
+  code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; background:#0b1220; color:#c9e2ff; padding:2px 6px; border-radius:6px}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="brand"><div class="logo" aria-hidden="true"></div>Aurora&nbsp;Health</div>
+    <nav aria-label="Primary"><a href="#">Patients</a> · <a href="#">Clinicians</a> · <a href="#">Billing</a></nav>
+  </div>
+</header>
+
+<main class="container">
+  <h1>Dashboard</h1>
+  <p class="lead">Recent labs, upcoming visits, and billing at a glance.</p>
+
+  <div class="grid">
+    <!-- CARD 1: Labs -->
+    <section class="card" aria-labelledby="labs">
+      <h2 id="labs">Latest Lab Results</h2>
+
+      <colgroup>
+        <col class="col-test"><col class="col-value"><col class="col-range">
+      </colgroup>
+      <table>
+        <thead><tr><th>Test</th><th>Value</th><th>Ref. Range</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Hemoglobin A1c</td>
+            <td><span class="t-bad" data-problem="color" data-status="high" aria-live="polite">7.6%</span></td>
+            <td>4.8–5.6%</td>
+          </tr>
+          <tr>
+            <td>LDL Cholesterol</td>
+            <td><span class="t-warn" data-problem="color" data-status="borderline">132 mg/dL</span></td>
+            <td>&lt; 100 mg/dL</td>
+          </tr>
+          <tr>
+            <td>Vitamin D (25-OH)</td>
+            <td><span class="t-good" data-problem="color" data-status="normal">38 ng/mL</span></td>
+            <td>30–50 ng/mL</td>
+          </tr>
+          <tr>
+            <td>TSH</td>
+            <td><span class="t-good">2.1 μIU/mL</span></td>
+            <td>0.4–4.0 μIU/mL</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="foot">Problem: status (normal/high/borderline) is indicated by <em>color only</em> (green/orange/red), no text or symbols.</p>
+    </section>
+
+    <!-- CARD 2: Appointments -->
+    <section class="card" aria-labelledby="appts">
+      <h2 id="appts">Upcoming Appointments</h2>
+      <ul class="appt-list" style="margin:0; padding-left:18px">
+        <li>
+          <span class="as-bold" data-problem="type" data-meaning="confirmed">Primary Care — Tue, Oct 21, 9:20 AM</span>
+        </li>
+        <li>
+          <span class="as-italic" data-problem="type" data-meaning="tentative">Dermatology — Fri, Nov 7, 1:30 PM</span>
+        </li>
+        <li>
+          <span>Physical Therapy — Thu, Nov 20, 8:00 AM</span>
+        </li>
+      </ul>
+      <p class="foot">Problem: confirmation is conveyed by <em>typeface only</em> (bold=confirmed, italic=tentative), with no explicit label.</p>
+    </section>
+
+    <!-- CARD 3: Billing -->
+    <section class="card" aria-labelledby="billing">
+      <h2 id="billing">Billing Summary</h2>
+      <div>
+        <div>Balance: <span class="t-bad" data-problem="color" data-status="due">$185.40</span></div>
+        <div>Last payment: <span class="t-good" data-problem="color" data-status="paid">$100.00</span> on Sep 18</div>
+        <div>Plan: <span>Premium PPO — AutoPay On</span></div>
+      </div>
+      <p class="foot">Problem: account state (“due”, “paid”) is color-only (red/green) without text or icons.</p>
+    </section>
+  </div>
+</main>
+
+<!-- Controls -->
+<div class="a11y-legend" role="region" aria-label="Demo controls">
+  <div class="row">
+    <button id="fixBtn" class="btn primary">Fix</button>
+    <button id="unfixBtn" class="btn warn" hidden>Unfix</button>
+    <button id="showBtn" class="btn secondary">Show Problem</button>
+    <!-- Appears only when "Show Problem" is active -->
+    <button id="monoBtn" class="btn secondary" hidden aria-pressed="false">Enable Monochrome/Monotype</button>
+  </div>
+  <div id="note" hidden>
+    <span>
+      Important meaning is being conveyed <strong>only by color</strong> (e.g., red=bad, green=good) and <strong>only by typeface</strong> (bold/italic).
+      This violates WCAG <code>1.4.1 Use of Color</code>. <strong>Fix</strong> adds icons, text badges, and ARIA so the same info is available without relying on color or typography alone.
+      Use <strong>Monochrome/Monotype</strong> to simulate losing those cues.
+    </span>
+  </div>
+</div>
+
+<script>
+  const fixBtn = document.getElementById('fixBtn');
+  const unfixBtn = document.getElementById('unfixBtn');
+  const showBtn = document.getElementById('showBtn');
+  const monoBtn = document.getElementById('monoBtn');
+  const note = document.getElementById('note');
+  const problemEls = Array.from(document.querySelectorAll('.foot'));
+  let fixed = false;
+  let shown = false;
+
+  function setProblemsVisible(show){
+    note.hidden = !show;
+    problemEls.forEach(el => el.hidden = !show);
+    showBtn.textContent = show ? 'Hide Problem' : 'Show Problem';
+    // Show the Monochrome/Monotype simulator only when problems are visible
+    monoBtn.hidden = !show;
+    shown = show;
+  }
+  setProblemsVisible(false);
+
+  showBtn.addEventListener('click', ()=> setProblemsVisible(!shown));
+
+  // Monochrome/Monotype simulator
+  monoBtn.addEventListener('click', ()=>{
+    const isOn = document.body.classList.toggle('sim-mono');
+    monoBtn.setAttribute('aria-pressed', String(isOn));
+    monoBtn.textContent = isOn ? 'Disable Monochrome/Monotype' : 'Enable Monochrome/Monotype';
+  });
+
+  fixBtn.addEventListener('click', ()=>{
+    if (fixed) return;
+    applyFixes();
+    document.body.classList.add('fixed-mode');   // enable nicer layout
+    fixed = true;
+    fixBtn.hidden = true;
+    unfixBtn.hidden = false;
+    setProblemsVisible(true);
+  });
+
+  unfixBtn.addEventListener('click', ()=>{
+    if (!fixed) return;
+    revertFixes();
+    document.body.classList.remove('fixed-mode');
+    fixed = false;
+    unfixBtn.hidden = true;
+    fixBtn.hidden = false;
+  });
+
+  /* ---------- Apply accessibility fixes (non-color cues + explicit text) ---------- */
+  function applyFixes(){
+    // Color-only → add badges + ARIA
+    document.querySelectorAll('[data-problem="color"]').forEach(node=>{
+      const status = node.getAttribute('data-status');
+      const {label, cls, icon} = statusToDisplay(status);
+      const valText = node.textContent.trim();
+      node.setAttribute('aria-label', `${valText} — ${label}`);
+      node.setAttribute('title', `${label}`);
+
+      const badge = document.createElement('span');
+      badge.className = `badge ${cls} a11y-added`;
+      badge.setAttribute('aria-hidden','true');
+      badge.textContent = `${icon} ${label}`;
+      node.insertAdjacentElement('afterend', badge);
+    });
+
+    // Typeface-only → explicit status badges and aria-labels.
+    document.querySelectorAll('[data-problem="type"]').forEach(node=>{
+      const meaning = node.getAttribute('data-meaning'); // confirmed | tentative | canceled?
+      const map = {
+        confirmed: {label:'Confirmed', cls:'b-good', icon:'✓'},
+        tentative: {label:'Tentative', cls:'b-warn', icon:'•'},
+        canceled:  {label:'Canceled',  cls:'b-bad',  icon:'✖'}
+      };
+      const meta = map[meaning] || {label:'Status', cls:'b-info', icon:'ℹ︎'};
+      node.setAttribute('aria-label', `${node.textContent.trim()} — ${meta.label}`);
+      node.setAttribute('title', meta.label);
+
+      const badge = document.createElement('span');
+      badge.className = `badge ${meta.cls} a11y-added`;
+      badge.setAttribute('aria-hidden','true');
+      badge.textContent = `${meta.icon} ${meta.label}`;
+      node.insertAdjacentElement('afterend', badge);
+    });
+  }
+
+  function revertFixes(){
+    document.querySelectorAll('.a11y-added').forEach(el=>el.remove());
+    document.querySelectorAll('[data-problem]').forEach(node=>{
+      node.removeAttribute('aria-label');
+      node.removeAttribute('title');
+    });
+    // keep current Show/Hide state; also turn off simulation if it was on
+    document.body.classList.remove('sim-mono');
+    monoBtn.setAttribute('aria-pressed','false');
+    monoBtn.textContent = 'Enable Monochrome/Monotype';
+  }
+
+  function statusToDisplay(status){
+    switch(status){
+      case 'high':       return {label:'High',       cls:'b-bad',  icon:'✖'};
+      case 'borderline': return {label:'Borderline', cls:'b-warn', icon:'⚠︎'};
+      case 'normal':     return {label:'Normal',     cls:'b-good', icon:'✓'};
+      case 'due':        return {label:'Amount due', cls:'b-bad',  icon:'✖'};
+      case 'paid':       return {label:'Paid',       cls:'b-good', icon:'✓'};
+      default:           return {label:'Info',       cls:'b-info', icon:'ℹ︎'};
+    }
+  }
+</script>
+</body>
+</html>
