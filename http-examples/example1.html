@@ -85,9 +85,28 @@
     .a11y-legend [hidden]{ display:none !important; }
 
     #wcag-note{ font-weight: 500; opacity: .9; text-align: center; max-width: 900px; }
+
+    .next-button{
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 10000;
+      background: #60a5fa;
+      color: #0a2540;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 800;
+      text-decoration: none;
+      font: 600 14px/1.3 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      box-shadow: 0 4px 12px rgba(0,0,0,.2);
+      cursor: pointer;
+      transition: transform .1s ease;
+    }
+    .next-button:hover{ transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,.25); }
   </style>
 </head>
 <body>
+  <a href="example2.html" class="next-button">Next →</a>
   <div id="app">
     <header role="banner">
       <div class="container nav" aria-label="Primary">
