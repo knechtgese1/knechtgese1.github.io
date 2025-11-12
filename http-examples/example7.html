@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MediTrack — ARIA & Screen Reader Demo</title>
+<style>
+  :root{
+    --bg:#ffffff; --ink:#1f2a37; --muted:#6b7b8d; --line:#e6edf7;
+    --brand:#2c7be5; --ok:#16a34a; --warn:#f59e0b; --bad:#dc2626; --info:#0369a1;
+  }
+  html,body{height:100%}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+
+  a{color:var(--brand); text-underline-offset:2px}
+  header{border-bottom:1px solid var(--line); background:#f7fbff}
+  .nav{max-width:1100px; margin:0 auto; padding:14px 20px; display:flex; justify-content:space-between; align-items:center}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800}
+  .logo{width:34px;height:34px;border-radius:9px;
+        background: radial-gradient(120% 120% at 20% 10%, #8bb7ff 0%, #2c7be5 45%, #47b5c6 100%);
+        box-shadow:0 3px 10px rgba(47,107,237,.25)}
+
+  .container{max-width:1100px; margin:0 auto; padding:28px 20px 140px}
+  h1{font-size:clamp(26px,4.5vw,40px); margin:0 0 8px}
+  .lead{color:var(--muted); margin:0 0 18px}
+
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:18px}
+  .card{border:1px solid var(--line); border-radius:16px; padding:16px; background:#fff}
+  .card h2{margin:.2rem 0 .6rem; font-size:20px}
+  .foot{color:var(--muted); font-size:14px; margin-top:8px}
+
+  /* Icon buttons */
+  .icon-btn{
+    all:unset; cursor:pointer; padding:8px; border-radius:8px;
+    background:#f3f4f6; display:inline-flex; align-items:center; justify-content:center;
+    transition: all .2s; color:#111827;
+  }
+  .icon-btn:hover{background:#e5e7eb}
+  .icon-btn.selected{background:#111827; color:#ffffff}
+  .icon-btn svg{width:20px; height:20px}
+
+  /* Pain slider */
+  .slider-container{margin:16px 0}
+  .slider{width:100%; height:8px; border-radius:4px; background:#e5e7eb; appearance:none; cursor:pointer}
+  .slider::-webkit-slider-thumb{appearance:none; width:20px; height:20px; border-radius:50%; background:var(--brand); cursor:pointer}
+  .slider::-moz-range-thumb{width:20px; height:20px; border-radius:50%; background:var(--brand); cursor:pointer; border:none}
+
+  /* Progress ring */
+  .progress-ring{
+    position:relative; width:80px; height:80px; display:inline-block;
+  }
+  .progress-ring svg{transform:rotate(-90deg)}
+  .progress-circle-bg{fill:none; stroke:#e5e7eb; stroke-width:8}
+  .progress-circle-fg{fill:none; stroke:var(--ok); stroke-width:8; stroke-linecap:round;
+    transition: stroke-dashoffset .3s}
+  .progress-text{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-weight:700; font-size:18px;
+  }
+
+  /* Loading overlay */
+  .loading-overlay{
+    position:fixed; inset:0; z-index:9999;
+    background:rgba(0,0,0,.5); backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .loading-overlay.hidden{display:none}
+  .spinner{
+    width:40px; height:40px; border:4px solid #e5e7eb;
+    border-top-color:var(--brand); border-radius:50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* Status badges */
+  .badge{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:2px 8px; border-radius:999px; font-size:12px; font-weight:700; border:1px solid transparent;
+    margin-left:8px; white-space:nowrap;
+  }
+  .b-good{background:#ecfdf5; border-color:#a7f3d0; color:#065f46}
+  .b-warn{background:#fffbeb; border-color:#fde68a; color:#92400e}
+  .b-bad{background:#fef2f2; border-color:#fecaca; color:#7f1d1d}
+
+  /* Controls strip */
+  .a11y-legend{
+    position:fixed; left:16px; right:16px; bottom:16px; z-index:50;
+    display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:center;
+    padding:10px 14px; border-radius:14px; background:rgba(17,24,39,.95); color:#fff; font-weight:600; text-align:center;
+    box-shadow:0 6px 24px rgba(0,0,0,.25);
+  }
+  .row{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
+  .btn{all:unset; cursor:pointer; padding:8px 12px; border-radius:10px; font-weight:800}
+  .btn.primary{background:#22c55e; color:#052e12}
+  .btn.warn{background:#ffd166; color:#3b2600}
+  .btn.secondary{background:#bbdcff; color:#0b2a66}
+  .btn[hidden]{display:none!important}
+  #note[hidden]{display:none!important}
+  .foot[hidden]{display:none!important}
+  #note{max-width:900px; color:#fff; font-weight:500; opacity:.95}
+
+  code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    background:#0b1220; color:#c9e2ff; padding:2px 6px; border-radius:6px}
+
+  /* Navigation buttons */
+  .nav-button{
+    position: fixed;
+    top: 16px;
+    z-index: 10000;
+    background: #60a5fa;
+    color: #0a2540;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 800;
+    text-decoration: none;
+    font: 600 14px/1.3 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    cursor: pointer;
+    transition: transform .1s ease;
+  }
+  .nav-button:hover{ transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,.25); }
+  .nav-button.prev{ left: 16px; }
+
+  .sr-only{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border-width:0;
+  }
+</style>
+</head>
+<body>
+<a href="example6.html" class="nav-button prev">← Previous</a>
+
+<!-- Loading overlay (Problem: no live region announcement) -->
+<div class="loading-overlay hidden" id="loadingOverlay">
+  <div class="spinner"></div>
+</div>
+
+<header>
+  <div class="nav">
+    <div class="brand"><div class="logo" aria-hidden="true"></div>MediTrack</div>
+    <nav aria-label="Primary"><a href="#">Dashboard</a> · <a href="#">Patients</a> · <a href="#">Reports</a></nav>
+  </div>
+</header>
+
+<main class="container">
+  <h1>Patient Dashboard</h1>
+  <p class="lead">Interactive patient feedback and vital monitoring.</p>
+
+  <div class="grid">
+    <!-- CARD 1: Icon-only buttons (Problem: no aria-label) -->
+    <section class="card" aria-labelledby="feedback-title" role="region">
+      <h2 id="feedback-title">Patient Feedback</h2>
+      <p>Rate today's treatment session:</p>
+      <div style="display:flex; gap:8px; margin:12px 0">
+        <!-- Problem: These buttons have no accessible label -->
+        <button class="icon-btn" id="thumbsUpBtn" data-problem="icon-button" aria-pressed="false">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="thumbsDownBtn" data-problem="icon-button" aria-pressed="false">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="refreshBtn" data-problem="icon-button" aria-pressed="false">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+        </button>
+      </div>
+      <p class="foot">Problem: Icon-only buttons with no <code>aria-label</code>. Screen reader users cannot identify button purpose.</p>
+    </section>
+
+    <!-- CARD 2: Slider without ARIA (Problem: no aria-label, aria-valuetext) -->
+    <section class="card" aria-labelledby="pain-title" role="region">
+      <h2 id="pain-title">Pain Assessment</h2>
+      <div class="slider-container">
+        <!-- Problem: Slider has no aria-label or aria-valuetext -->
+        <input
+          type="range"
+          class="slider"
+          id="painSlider"
+          min="0"
+          max="10"
+          value="5"
+          data-problem="slider"
+        />
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted)">
+          <span>No pain</span>
+          <span id="painValue">5</span>
+          <span>Worst pain</span>
+        </div>
+      </div>
+      <p class="foot">Problem: Slider missing <code>aria-label</code> and <code>aria-valuetext</code>. Screen readers cannot describe the slider's purpose or current value meaningfully.</p>
+    </section>
+
+    <!-- CARD 3: Progress without ARIA (Problem: no role="progressbar", aria-valuenow) -->
+    <section class="card" aria-labelledby="progress-title" role="region">
+      <h2 id="progress-title">Treatment Progress</h2>
+      <div style="text-align:center">
+        <!-- Problem: Progress ring has no ARIA attributes -->
+        <div class="progress-ring" id="progressRing" data-problem="progress">
+          <svg width="80" height="80">
+            <circle class="progress-circle-bg" cx="40" cy="40" r="36"/>
+            <circle class="progress-circle-fg" cx="40" cy="40" r="36"
+              stroke-dasharray="226.195" stroke-dashoffset="56.549"/>
+          </svg>
+          <div class="progress-text">75%</div>
+        </div>
+        <p style="margin-top:8px; font-size:14px">Physical therapy sessions completed</p>
+      </div>
+      <p class="foot">Problem: Visual progress indicator missing <code>role="progressbar"</code>, <code>aria-valuenow</code>, <code>aria-valuemin</code>, <code>aria-valuemax</code>. Screen readers cannot announce progress.</p>
+    </section>
+  </div>
+</main>
+
+<!-- Controls -->
+<div class="a11y-legend" role="region" aria-label="Demo controls">
+  <div class="row">
+    <button id="fixBtn" class="btn primary">Fix</button>
+    <button id="unfixBtn" class="btn warn" hidden>Unfix</button>
+    <button id="showBtn" class="btn secondary">Show Problem</button>
+    <button id="testLoadingBtn" class="btn secondary">Test Loading Overlay</button>
+  </div>
+  <div id="note" hidden>
+    <span>
+      Multiple <strong>ARIA and screen reader accessibility issues</strong> are present:
+      icon-only buttons without labels, slider without ARIA descriptions, progress indicator without ARIA attributes, and loading overlay without live region announcements.
+      These violate WCAG <code>1.3.1 Info and Relationships</code>, <code>2.4.6 Headings and Labels</code>, and <code>4.1.3 Status Messages</code>.
+      <strong>Fix</strong> adds proper <code>aria-label</code>, <code>role</code>, <code>aria-valuetext</code>, and live regions for screen readers.
+    </span>
+  </div>
+</div>
+
+<script>
+  const fixBtn = document.getElementById('fixBtn');
+  const unfixBtn = document.getElementById('unfixBtn');
+  const showBtn = document.getElementById('showBtn');
+  const testLoadingBtn = document.getElementById('testLoadingBtn');
+  const note = document.getElementById('note');
+  const problemEls = Array.from(document.querySelectorAll('.foot'));
+  const loadingOverlay = document.getElementById('loadingOverlay');
+
+  let fixed = false;
+  let shown = false;
+
+  function setProblemsVisible(show){
+    note.hidden = !show;
+    problemEls.forEach(el => el.hidden = !show);
+    showBtn.textContent = show ? 'Hide Problem' : 'Show Problem';
+    shown = show;
+  }
+  setProblemsVisible(false);
+
+  showBtn.addEventListener('click', ()=> setProblemsVisible(!shown));
+
+  // Rating button interactivity
+  const thumbsUpBtn = document.getElementById('thumbsUpBtn');
+  const thumbsDownBtn = document.getElementById('thumbsDownBtn');
+  const refreshBtn = document.getElementById('refreshBtn');
+
+  thumbsUpBtn.addEventListener('click', ()=>{
+    const isSelected = thumbsUpBtn.classList.toggle('selected');
+    thumbsUpBtn.setAttribute('aria-pressed', String(isSelected));
+    thumbsDownBtn.classList.remove('selected');
+    thumbsDownBtn.setAttribute('aria-pressed', 'false');
+  });
+
+  thumbsDownBtn.addEventListener('click', ()=>{
+    const isSelected = thumbsDownBtn.classList.toggle('selected');
+    thumbsDownBtn.setAttribute('aria-pressed', String(isSelected));
+    thumbsUpBtn.classList.remove('selected');
+    thumbsUpBtn.setAttribute('aria-pressed', 'false');
+  });
+
+  refreshBtn.addEventListener('click', ()=>{
+    thumbsUpBtn.classList.remove('selected');
+    thumbsDownBtn.classList.remove('selected');
+    thumbsUpBtn.setAttribute('aria-pressed', 'false');
+    thumbsDownBtn.setAttribute('aria-pressed', 'false');
+  });
+
+  // Pain slider value display
+  const painSlider = document.getElementById('painSlider');
+  const painValue = document.getElementById('painValue');
+  painSlider.addEventListener('input', (e)=>{
+    painValue.textContent = e.target.value;
+  });
+
+  // Test loading overlay
+  testLoadingBtn.addEventListener('click', ()=>{
+    loadingOverlay.classList.remove('hidden');
+    setTimeout(()=>{
+      loadingOverlay.classList.add('hidden');
+    }, 2000);
+  });
+
+  fixBtn.addEventListener('click', ()=>{
+    if (fixed) return;
+    applyFixes();
+    fixed = true;
+    fixBtn.hidden = true;
+    unfixBtn.hidden = false;
+    setProblemsVisible(true);
+  });
+
+  unfixBtn.addEventListener('click', ()=>{
+    if (!fixed) return;
+    revertFixes();
+    fixed = false;
+    unfixBtn.hidden = true;
+    fixBtn.hidden = false;
+  });
+
+  /* ---------- Apply accessibility fixes ---------- */
+  function applyFixes(){
+    // Fix 1: Add aria-label to icon-only buttons
+    const thumbsUpBtn = document.getElementById('thumbsUpBtn');
+    thumbsUpBtn.setAttribute('aria-label', 'Rate session as positive');
+    thumbsUpBtn.dataset.fixed = 'true';
+
+    const thumbsDownBtn = document.getElementById('thumbsDownBtn');
+    thumbsDownBtn.setAttribute('aria-label', 'Rate session as negative');
+    thumbsDownBtn.dataset.fixed = 'true';
+
+    const refreshBtn = document.getElementById('refreshBtn');
+    refreshBtn.setAttribute('aria-label', 'Refresh feedback data');
+    refreshBtn.dataset.fixed = 'true';
+
+    // Fix 2: Add aria-label and aria-valuetext to pain slider
+    const painSlider = document.getElementById('painSlider');
+    painSlider.setAttribute('aria-label', 'Pain level from 0 (no pain) to 10 (worst pain)');
+    const updateValueText = ()=>{
+      painSlider.setAttribute('aria-valuetext', `Pain level ${painSlider.value} out of 10`);
+    };
+    updateValueText();
+    painSlider.addEventListener('input', updateValueText);
+    painSlider.dataset.fixed = 'true';
+
+    // Fix 3: Add progressbar role and ARIA attributes to progress ring
+    const progressRing = document.getElementById('progressRing');
+    progressRing.setAttribute('role', 'progressbar');
+    progressRing.setAttribute('aria-label', 'Physical therapy sessions progress');
+    progressRing.setAttribute('aria-valuenow', '75');
+    progressRing.setAttribute('aria-valuemin', '0');
+    progressRing.setAttribute('aria-valuemax', '100');
+    progressRing.setAttribute('aria-valuetext', '75 percent complete');
+    progressRing.dataset.fixed = 'true';
+
+    // Fix 4: Add live region to loading overlay
+    loadingOverlay.setAttribute('role', 'status');
+    loadingOverlay.setAttribute('aria-live', 'polite');
+    loadingOverlay.setAttribute('aria-busy', 'true');
+    const srLoadingText = document.createElement('span');
+    srLoadingText.className = 'sr-only';
+    srLoadingText.textContent = 'Loading content, please wait';
+    loadingOverlay.appendChild(srLoadingText);
+    srLoadingText.dataset.fixedLoading = 'true';
+    loadingOverlay.dataset.fixed = 'true';
+  }
+
+  function revertFixes(){
+    // Remove aria-label from buttons
+    document.querySelectorAll('[data-fixed="true"]').forEach(el=>{
+      el.removeAttribute('aria-label');
+      el.removeAttribute('role');
+      el.removeAttribute('aria-valuenow');
+      el.removeAttribute('aria-valuemin');
+      el.removeAttribute('aria-valuemax');
+      el.removeAttribute('aria-valuetext');
+      el.removeAttribute('aria-live');
+      el.removeAttribute('aria-busy');
+      delete el.dataset.fixed;
+    });
+
+    // Remove sr-only text additions
+    document.querySelectorAll('[data-fixedLoading="true"]').forEach(el=>el.remove());
+  }
+</script>
+</body>
+</html>
