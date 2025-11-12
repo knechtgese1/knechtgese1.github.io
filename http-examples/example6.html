@@ -82,12 +82,12 @@
   #note{max-width:900px; color:#fff; font-weight:500; opacity:.95}
 
   /* --- Simulation styles (Monochrome/Monotype) --- */
-  body.sim-mono{
+  #content-wrapper.sim-mono{
     filter: grayscale(100%) contrast(1.05);
   }
-  /* Neutralize bold/italic cues to simulate “monotype” perception */
-  body.sim-mono .as-bold{font-weight:inherit}
-  body.sim-mono .as-italic{font-style:normal}
+  /* Neutralize bold/italic cues to simulate "monotype" perception */
+  #content-wrapper.sim-mono .as-bold{font-weight:inherit}
+  #content-wrapper.sim-mono .as-italic{font-style:normal}
 
   code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; background:#0b1220; color:#c9e2ff; padding:2px 6px; border-radius:6px}
 
@@ -114,6 +114,7 @@
 </head>
 <body>
 <a href="example5.html" class="nav-button prev">← Previous</a>
+<div id="content-wrapper">
 <header>
   <div class="nav">
     <div class="brand"><div class="logo" aria-hidden="true"></div>Aurora&nbsp;Health</div>
@@ -190,6 +191,7 @@
     </section>
   </div>
 </main>
+</div><!-- end content-wrapper -->
 
 <!-- Controls -->
 <div class="a11y-legend" role="region" aria-label="Demo controls">
@@ -233,7 +235,8 @@
 
   // Monochrome/Monotype simulator
   monoBtn.addEventListener('click', ()=>{
-    const isOn = document.body.classList.toggle('sim-mono');
+    const wrapper = document.getElementById('content-wrapper');
+    const isOn = wrapper.classList.toggle('sim-mono');
     monoBtn.setAttribute('aria-pressed', String(isOn));
     monoBtn.textContent = isOn ? 'Disable Monochrome/Monotype' : 'Enable Monochrome/Monotype';
   });
@@ -301,7 +304,7 @@
       node.removeAttribute('title');
     });
     // keep current Show/Hide state; also turn off simulation if it was on
-    document.body.classList.remove('sim-mono');
+    document.getElementById('content-wrapper').classList.remove('sim-mono');
     monoBtn.setAttribute('aria-pressed','false');
     monoBtn.textContent = 'Enable Monochrome/Monotype';
   }
