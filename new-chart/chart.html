@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Creatinine Grapher</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      height: 100vh;
+      display: flex;
+    }
+    .container {
+      display: flex;
+      flex: 1;
+    }
+    .left, .right {
+      padding: 12px;
+      box-sizing: border-box;
+    }
+    .left {
+      width: 40%;
+      border-right: 1px solid #ccc;
+      display: flex;
+      flex-direction: column;
+    }
+    textarea {
+      flex: 1;
+      width: 100%;
+      resize: none;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 8px;
+    }
+    .right {
+      width: 60%;
+      display: flex;
+      flex-direction: column;
+    }
+    #status {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    canvas {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left">
+      <h3>Paste Data Here</h3>
+      <textarea id="dataInput" placeholder="Paste your lab data here..."></textarea>
+      <small>
+        Expected format: date on one line, value on the next line, e.g.<br>
+        8/21/2018<br>
+        0.89<br>
+        Extra text like &quot;(H)&quot;, headers, and legends are ignored.
+      </small>
+    </div>
+    <div class="right">
+      <h3>Creatinine Over Time</h3>
+      <div id="status">Waiting for data…</div>
+      <canvas id="chartCanvas"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const textarea = document.getElementById('dataInput');
+    const statusEl = document.getElementById('status');
+    const ctx = document.getElementById('chartCanvas').getContext('2d');
+
+    let chart = null;
+
+    function parseData(text) {
+      const lines = text
+        .split(/\r?\n/)
+        .map(l => l.trim())
+        .filter(l => l.length > 0);
+
+      if (lines.length === 0) {
+        return null;
+      }
+
+      let refLow = null;
+      let refHigh = null;
+
+      // Try to detect reference range like "0.70 - 1.30 mg/dL"
+      for (const line of lines) {
+        const m = line.match(/^\s*(\d+(\.\d+)?)\s*-\s*(\d+(\.\d+)?)/);
+        if (m) {
+          refLow = parseFloat(m[1]);
+          refHigh = parseFloat(m[3]);
+          break;
+        }
+      }
+
+      const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/;
+      const valueRegex = /^(\d+(\.\d+)?)/;
+
+      const labels = [];
+      const values = [];
+
+      for (let i = 0; i < lines.length; i++) {
+        const dateMatch = lines[i].match(dateRegex);
+        if (!dateMatch) continue;
+
+        const month = dateMatch[1].padStart(2, '0');
+        const day = dateMatch[2].padStart(2, '0');
+        const year = dateMatch[3];
+        const isoDate = `${year}-${month}-${day}`;
+
+        // Find the next line that starts with a number (value)
+        let value = null;
+        for (let j = i + 1; j < lines.length; j++) {
+          if (dateRegex.test(lines[j])) {
+            // Next date encountered; assume no value line
+            break;
+          }
+          const vMatch = lines[j].match(valueRegex);
+          if (vMatch) {
+            value = parseFloat(vMatch[1]);
+            break;
+          }
+        }
+
+        if (value !== null && !isNaN(value)) {
+          labels.push(isoDate);
+          values.push(value);
+        }
+      }
+
+      if (labels.length === 0) {
+        return null;
+      }
+
+      return { labels, values, refLow, refHigh };
+    }
+
+    function updateChart(parsed) {
+      if (!parsed) {
+        statusEl.textContent = 'No valid data found.';
+        if (chart) {
+          chart.destroy();
+          chart = null;
+        }
+        return;
+      }
+
+      const { labels, values, refLow, refHigh } = parsed;
+
+      statusEl.textContent = `Parsed ${labels.length} data point(s)` +
+        (refHigh != null ? ` | Ref range: ${refLow}–${refHigh} mg/dL` : '');
+
+      const datasets = [
+        {
+          label: 'Creatinine (mg/dL)',
+          data: values,
+          tension: 0.2,
+          fill: false,
+          pointRadius: 4,
+          pointHoverRadius: 5
+        }
+      ];
+
+      if (refHigh != null) {
+        datasets.push({
+          label: 'Upper Ref Limit',
+          data: labels.map(() => refHigh),
+          borderDash: [5, 5],
+          pointRadius: 0,
+          fill: false
+        });
+      }
+
+      if (chart) {
+        chart.data.labels = labels;
+        chart.data.datasets = datasets;
+        chart.update();
+        return;
+      }
+
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'year'
+              },
+              title: {
+                display: true,
+                text: 'Date'
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Creatinine (mg/dL)'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: true
+            }
+          }
+        }
+      });
+    }
+
+    // Debounce input so we don't re-parse too often
+    let debounceTimer = null;
+    textarea.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        const parsed = parseData(textarea.value);
+        updateChart(parsed);
+      }, 300);
+    });
+
+    // Optional: preload with your existing example so you can see it immediately
+    textarea.value = `CREATININE
+Latest Ref Rng
+0.70 - 1.30 mg/dL
+8/21/2018
+0.89 
+9/17/2018
+1.09 
+10/2/2018
+0.98 
+10/9/2018
+1.04 
+11/5/2018
+0.93 
+11/20/2018
+0.93 
+4/24/2019
+1.18 
+6/11/2019
+1.05 
+8/12/2019
+1.35 (H) 
+12/10/2019
+1.11 
+2/20/2020
+1.51 (H) 
+8/31/2020
+0.98 
+1/6/2021
+1.23 
+8/18/2021
+1.21 
+2/16/2022
+1.33 (H) 
+3/6/2023
+1.24 
+8/6/2023
+1.67 (H) 
+8/16/2023
+1.39 (H) 
+1/30/2024
+1.55 (H) 
+5/29/2024
+1.69 (H) 
+8/29/2024
+1.59 (H) 
+10/13/2025
+1.98 (H) 
+11/24/2025
+1.65 (H) 
+
+Legend:
+(H) High`;
+    // Initial render
+    const initialParsed = parseData(textarea.value);
+    updateChart(initialParsed);
+  </script>
+</body>
+</html>
