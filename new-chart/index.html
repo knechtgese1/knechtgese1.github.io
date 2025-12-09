@@ -86,6 +86,11 @@
       stroke-width: 1.5;
       stroke-dasharray: 5, 5;
     }
+    .trend-line {
+      stroke: #4caf50;
+      stroke-width: 1.5;
+      stroke-dasharray: 4, 4;
+    }
     .tooltip {
       position: absolute;
       background: rgba(0, 0, 0, 0.8);
@@ -149,7 +154,12 @@
           <div class="legend-line ref"></div>
           <span>Ref Limits</span>
         </div>
+        <div class="legend-item" id="trendLegend" style="display: none;">
+          <div class="legend-line" style="background: repeating-linear-gradient(90deg, #4caf50 0px, #4caf50 4px, transparent 4px, transparent 8px);"></div>
+          <span>Linear Regression</span>
+        </div>
       </div>
+      <div id="trendInfo" style="font-size: 12px; color: #666; margin-bottom: 4px; display: none;"></div>
       <div id="chartContainer"></div>
       <div class="tooltip" id="tooltip"></div>
     </div>
@@ -162,6 +172,8 @@
     const tooltip = document.getElementById('tooltip');
     const legend = document.getElementById('legend');
     const refLegend = document.getElementById('refLegend');
+    const trendLegend = document.getElementById('trendLegend');
+    const trendInfo = document.getElementById('trendInfo');
 
     // Chart margins
     const margin = { top: 20, right: 30, bottom: 50, left: 60 };
@@ -262,6 +274,31 @@
       return { min: niceMin, max: niceMax, values };
     }
 
+    function linearRegression(dataPoints) {
+      const n = dataPoints.length;
+      if (n < 2) return null;
+
+      // Use time in days from first point for x values
+      const firstTime = dataPoints[0].date.getTime();
+      const msPerDay = 24 * 60 * 60 * 1000;
+
+      let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+
+      for (const d of dataPoints) {
+        const x = (d.date.getTime() - firstTime) / msPerDay;
+        const y = d.value;
+        sumX += x;
+        sumY += y;
+        sumXY += x * y;
+        sumX2 += x * x;
+      }
+
+      const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+      const intercept = (sumY - slope * sumX) / n;
+
+      return { slope, intercept, firstTime, msPerDay };
+    }
+
     function getYearTicks(minDate, maxDate) {
       const ticks = [];
       const startYear = minDate.getFullYear();
@@ -290,6 +327,7 @@
         statusEl.textContent = 'No valid data found.';
         chartContainer.innerHTML = '';
         legend.style.display = 'none';
+        trendInfo.style.display = 'none';
         return;
       }
 
@@ -300,6 +338,7 @@
 
       legend.style.display = 'flex';
       refLegend.style.display = refHigh != null ? 'flex' : 'none';
+      trendLegend.style.display = dataPoints.length >= 2 ? 'flex' : 'none';
 
       // Get container dimensions
       const rect = chartContainer.getBoundingClientRect();
@@ -373,6 +412,49 @@
       if (refLow != null) {
         const refYLow = yScaleFn(refLow);
         svg += `<line class="ref-line" x1="${margin.left}" y1="${refYLow}" x2="${width - margin.right}" y2="${refYLow}" />`;
+      }
+
+      // Linear regression line
+      const regression = linearRegression(dataPoints);
+      if (regression) {
+        const { slope, intercept, firstTime, msPerDay } = regression;
+
+        // Calculate y values at the start and end of the x-axis
+        const x1Days = (minTime - firstTime) / msPerDay;
+        const x2Days = (maxTime - firstTime) / msPerDay;
+        const y1Value = intercept + slope * x1Days;
+        const y2Value = intercept + slope * x2Days;
+
+        const lineX1 = margin.left;
+        const lineX2 = width - margin.right;
+        const lineY1 = yScaleFn(y1Value);
+        const lineY2 = yScaleFn(y2Value);
+
+        svg += `<line class="trend-line" x1="${lineX1}" y1="${lineY1}" x2="${lineX2}" y2="${lineY2}" />`;
+
+        // Display slope info with appropriate time unit based on data span
+        const dataSpanDays = (maxDate - minDate) / msPerDay;
+        let slopeValue, timeUnit;
+
+        if (dataSpanDays < 60) {
+          // Less than 2 months: show per day
+          slopeValue = slope;
+          timeUnit = 'day';
+        } else if (dataSpanDays < 365) {
+          // Less than 1 year: show per month
+          slopeValue = slope * 30.44; // average days per month
+          timeUnit = 'month';
+        } else {
+          // 1 year or more: show per year
+          slopeValue = slope * 365.25;
+          timeUnit = 'year';
+        }
+
+        const slopeSign = slopeValue >= 0 ? '+' : '';
+        trendInfo.textContent = `Linear Regression Slope: ${slopeSign}${slopeValue.toFixed(3)} mg/dL per ${timeUnit}`;
+        trendInfo.style.display = 'block';
+      } else {
+        trendInfo.style.display = 'none';
       }
 
       // Data line
