@@ -3,8 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>Creatinine Grapher</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
   <style>
     body {
       margin: 0;
@@ -44,8 +42,80 @@
       color: #666;
       margin-bottom: 4px;
     }
-    canvas {
+    #chartContainer {
       flex: 1;
+      min-height: 0;
+    }
+    #chartContainer svg {
+      width: 100%;
+      height: 100%;
+    }
+    .axis-label {
+      font-size: 12px;
+      fill: #666;
+    }
+    .axis-title {
+      font-size: 12px;
+      fill: #333;
+    }
+    .grid-line {
+      stroke: #e0e0e0;
+      stroke-width: 1;
+    }
+    .data-line {
+      fill: none;
+      stroke: #36a2eb;
+      stroke-width: 2;
+    }
+    .data-point {
+      fill: #36a2eb;
+      cursor: pointer;
+    }
+    .data-point:hover {
+      fill: #1a7fc4;
+      r: 6;
+    }
+    .ref-line {
+      stroke: #ff6384;
+      stroke-width: 1.5;
+      stroke-dasharray: 5, 5;
+    }
+    .tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      pointer-events: none;
+      display: none;
+      z-index: 100;
+    }
+    .legend {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-line {
+      width: 20px;
+      height: 2px;
+      background: #36a2eb;
+    }
+    .legend-line.ref {
+      background: #ff6384;
+      background: repeating-linear-gradient(
+        90deg,
+        #ff6384 0px,
+        #ff6384 5px,
+        transparent 5px,
+        transparent 10px
+      );
     }
   </style>
 </head>
@@ -64,16 +134,31 @@
     <div class="right">
       <h3>Creatinine Over Time</h3>
       <div id="status">Waiting for data…</div>
-      <canvas id="chartCanvas"></canvas>
+      <div class="legend" id="legend" style="display: none;">
+        <div class="legend-item">
+          <div class="legend-line"></div>
+          <span>Creatinine (mg/dL)</span>
+        </div>
+        <div class="legend-item" id="refLegend" style="display: none;">
+          <div class="legend-line ref"></div>
+          <span>Upper Ref Limit</span>
+        </div>
+      </div>
+      <div id="chartContainer"></div>
+      <div class="tooltip" id="tooltip"></div>
     </div>
   </div>
 
   <script>
     const textarea = document.getElementById('dataInput');
     const statusEl = document.getElementById('status');
-    const ctx = document.getElementById('chartCanvas').getContext('2d');
+    const chartContainer = document.getElementById('chartContainer');
+    const tooltip = document.getElementById('tooltip');
+    const legend = document.getElementById('legend');
+    const refLegend = document.getElementById('refLegend');
 
-    let chart = null;
+    // Chart margins
+    const margin = { top: 20, right: 30, bottom: 50, left: 60 };
 
     function parseData(text) {
       const lines = text
@@ -101,23 +186,21 @@
       const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/;
       const valueRegex = /^(\d+(\.\d+)?)/;
 
-      const labels = [];
-      const values = [];
+      const dataPoints = [];
 
       for (let i = 0; i < lines.length; i++) {
         const dateMatch = lines[i].match(dateRegex);
         if (!dateMatch) continue;
 
-        const month = dateMatch[1].padStart(2, '0');
-        const day = dateMatch[2].padStart(2, '0');
-        const year = dateMatch[3];
-        const isoDate = `${year}-${month}-${day}`;
+        const month = parseInt(dateMatch[1], 10) - 1;
+        const day = parseInt(dateMatch[2], 10);
+        const year = parseInt(dateMatch[3], 10);
+        const date = new Date(year, month, day);
 
         // Find the next line that starts with a number (value)
         let value = null;
         for (let j = i + 1; j < lines.length; j++) {
           if (dateRegex.test(lines[j])) {
-            // Next date encountered; assume no value line
             break;
           }
           const vMatch = lines[j].match(valueRegex);
@@ -128,163 +211,280 @@
         }
 
         if (value !== null && !isNaN(value)) {
-          labels.push(isoDate);
-          values.push(value);
+          dataPoints.push({ date, value });
         }
       }
 
-      if (labels.length === 0) {
+      if (dataPoints.length === 0) {
         return null;
       }
 
-      return { labels, values, refLow, refHigh };
+      // Sort by date
+      dataPoints.sort((a, b) => a.date - b.date);
+
+      return { dataPoints, refLow, refHigh };
     }
 
-    function updateChart(parsed) {
+    function formatDate(date) {
+      return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+    }
+
+    function formatYear(date) {
+      return date.getFullYear().toString();
+    }
+
+    function niceScale(min, max, ticks = 5) {
+      const range = max - min;
+      const roughStep = range / ticks;
+      const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
+      const residual = roughStep / magnitude;
+
+      let niceStep;
+      if (residual <= 1.5) niceStep = magnitude;
+      else if (residual <= 3) niceStep = 2 * magnitude;
+      else if (residual <= 7) niceStep = 5 * magnitude;
+      else niceStep = 10 * magnitude;
+
+      const niceMin = Math.floor(min / niceStep) * niceStep;
+      const niceMax = Math.ceil(max / niceStep) * niceStep;
+
+      const values = [];
+      for (let v = niceMin; v <= niceMax + niceStep * 0.5; v += niceStep) {
+        values.push(Math.round(v * 1000) / 1000);
+      }
+
+      return { min: niceMin, max: niceMax, values };
+    }
+
+    function getYearTicks(minDate, maxDate) {
+      const ticks = [];
+      const startYear = minDate.getFullYear();
+      const endYear = maxDate.getFullYear();
+
+      for (let year = startYear; year <= endYear + 1; year++) {
+        const date = new Date(year, 0, 1);
+        if (date >= minDate && date <= maxDate) {
+          ticks.push(date);
+        }
+      }
+
+      // Always include first and last year if they're not already there
+      if (ticks.length === 0 || ticks[0].getFullYear() > startYear) {
+        ticks.unshift(new Date(startYear, 0, 1));
+      }
+      if (ticks[ticks.length - 1].getFullYear() < endYear) {
+        ticks.push(new Date(endYear, 0, 1));
+      }
+
+      return ticks;
+    }
+
+    function renderChart(parsed) {
       if (!parsed) {
         statusEl.textContent = 'No valid data found.';
-        if (chart) {
-          chart.destroy();
-          chart = null;
-        }
+        chartContainer.innerHTML = '';
+        legend.style.display = 'none';
         return;
       }
 
-      const { labels, values, refLow, refHigh } = parsed;
+      const { dataPoints, refLow, refHigh } = parsed;
 
-      statusEl.textContent = `Parsed ${labels.length} data point(s)` +
+      statusEl.textContent = `Parsed ${dataPoints.length} data point(s)` +
         (refHigh != null ? ` | Ref range: ${refLow}–${refHigh} mg/dL` : '');
 
-      const datasets = [
-        {
-          label: 'Creatinine (mg/dL)',
-          data: values,
-          tension: 0.2,
-          fill: false,
-          pointRadius: 4,
-          pointHoverRadius: 5
-        }
-      ];
+      legend.style.display = 'flex';
+      refLegend.style.display = refHigh != null ? 'flex' : 'none';
+
+      // Get container dimensions
+      const rect = chartContainer.getBoundingClientRect();
+      const width = rect.width || 600;
+      const height = rect.height || 400;
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+
+      // Calculate scales
+      const minDate = dataPoints[0].date;
+      const maxDate = dataPoints[dataPoints.length - 1].date;
+      const dateRange = maxDate - minDate;
+      const datePadding = dateRange * 0.05;
+
+      const minTime = minDate.getTime() - datePadding;
+      const maxTime = maxDate.getTime() + datePadding;
+
+      let minValue = Math.min(...dataPoints.map(d => d.value));
+      let maxValue = Math.max(...dataPoints.map(d => d.value));
 
       if (refHigh != null) {
-        datasets.push({
-          label: 'Upper Ref Limit',
-          data: labels.map(() => refHigh),
-          borderDash: [5, 5],
-          pointRadius: 0,
-          fill: false
-        });
+        maxValue = Math.max(maxValue, refHigh);
+        minValue = Math.min(minValue, refLow);
       }
 
-      if (chart) {
-        chart.data.labels = labels;
-        chart.data.datasets = datasets;
-        chart.update();
-        return;
+      const yScale = niceScale(minValue * 0.9, maxValue * 1.1, 6);
+
+      // Scale functions
+      const xScale = (date) => {
+        const t = date.getTime();
+        return margin.left + ((t - minTime) / (maxTime - minTime)) * innerWidth;
+      };
+
+      const yScaleFn = (value) => {
+        return margin.top + innerHeight - ((value - yScale.min) / (yScale.max - yScale.min)) * innerHeight;
+      };
+
+      // Build SVG
+      let svg = `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">`;
+
+      // Y-axis grid lines and labels
+      for (const v of yScale.values) {
+        const y = yScaleFn(v);
+        svg += `<line class="grid-line" x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}" />`;
+        svg += `<text class="axis-label" x="${margin.left - 10}" y="${y + 4}" text-anchor="end">${v.toFixed(2)}</text>`;
       }
 
-      chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              type: 'time',
-              time: {
-                unit: 'year'
-              },
-              title: {
-                display: true,
-                text: 'Date'
-              }
-            },
-            y: {
-              title: {
-                display: true,
-                text: 'Creatinine (mg/dL)'
-              }
-            }
-          },
-          plugins: {
-            legend: {
-              display: true
-            }
-          }
+      // X-axis grid lines and labels (years)
+      const yearTicks = getYearTicks(new Date(minTime), new Date(maxTime));
+      for (const date of yearTicks) {
+        const x = xScale(date);
+        if (x >= margin.left && x <= width - margin.right) {
+          svg += `<line class="grid-line" x1="${x}" y1="${margin.top}" x2="${x}" y2="${height - margin.bottom}" />`;
+          svg += `<text class="axis-label" x="${x}" y="${height - margin.bottom + 20}" text-anchor="middle">${formatYear(date)}</text>`;
         }
+      }
+
+      // Axis lines
+      svg += `<line stroke="#333" stroke-width="1" x1="${margin.left}" y1="${height - margin.bottom}" x2="${width - margin.right}" y2="${height - margin.bottom}" />`;
+      svg += `<line stroke="#333" stroke-width="1" x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${height - margin.bottom}" />`;
+
+      // Axis titles
+      svg += `<text class="axis-title" x="${width / 2}" y="${height - 5}" text-anchor="middle">Date</text>`;
+      svg += `<text class="axis-title" x="${15}" y="${height / 2}" text-anchor="middle" transform="rotate(-90, 15, ${height / 2})">Creatinine (mg/dL)</text>`;
+
+      // Reference line
+      if (refHigh != null) {
+        const refY = yScaleFn(refHigh);
+        svg += `<line class="ref-line" x1="${margin.left}" y1="${refY}" x2="${width - margin.right}" y2="${refY}" />`;
+      }
+
+      // Data line
+      if (dataPoints.length > 1) {
+        let pathD = `M ${xScale(dataPoints[0].date)} ${yScaleFn(dataPoints[0].value)}`;
+        for (let i = 1; i < dataPoints.length; i++) {
+          pathD += ` L ${xScale(dataPoints[i].date)} ${yScaleFn(dataPoints[i].value)}`;
+        }
+        svg += `<path class="data-line" d="${pathD}" />`;
+      }
+
+      // Data points
+      for (let i = 0; i < dataPoints.length; i++) {
+        const d = dataPoints[i];
+        const x = xScale(d.date);
+        const y = yScaleFn(d.value);
+        svg += `<circle class="data-point" cx="${x}" cy="${y}" r="4" data-index="${i}" />`;
+      }
+
+      svg += '</svg>';
+      chartContainer.innerHTML = svg;
+
+      // Add hover interactions
+      const points = chartContainer.querySelectorAll('.data-point');
+      points.forEach(point => {
+        point.addEventListener('mouseenter', (e) => {
+          const idx = parseInt(point.getAttribute('data-index'), 10);
+          const d = dataPoints[idx];
+          tooltip.textContent = `${formatDate(d.date)}: ${d.value.toFixed(2)} mg/dL`;
+          tooltip.style.display = 'block';
+        });
+
+        point.addEventListener('mousemove', (e) => {
+          tooltip.style.left = (e.pageX + 10) + 'px';
+          tooltip.style.top = (e.pageY - 30) + 'px';
+        });
+
+        point.addEventListener('mouseleave', () => {
+          tooltip.style.display = 'none';
+        });
       });
     }
 
-    // Debounce input so we don't re-parse too often
+    // Handle resize
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const parsed = parseData(textarea.value);
+        renderChart(parsed);
+      }, 100);
+    });
+
+    // Debounce input
     let debounceTimer = null;
     textarea.addEventListener('input', () => {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
         const parsed = parseData(textarea.value);
-        updateChart(parsed);
+        renderChart(parsed);
       }, 300);
     });
 
-    // Optional: preload with your existing example so you can see it immediately
+    // Preload example data
     textarea.value = `CREATININE
 Latest Ref Rng
 0.70 - 1.30 mg/dL
 8/21/2018
-0.89 
+0.89
 9/17/2018
-1.09 
+1.09
 10/2/2018
-0.98 
+0.98
 10/9/2018
-1.04 
+1.04
 11/5/2018
-0.93 
+0.93
 11/20/2018
-0.93 
+0.93
 4/24/2019
-1.18 
+1.18
 6/11/2019
-1.05 
+1.05
 8/12/2019
-1.35 (H) 
+1.35 (H)
 12/10/2019
-1.11 
+1.11
 2/20/2020
-1.51 (H) 
+1.51 (H)
 8/31/2020
-0.98 
+0.98
 1/6/2021
-1.23 
+1.23
 8/18/2021
-1.21 
+1.21
 2/16/2022
-1.33 (H) 
+1.33 (H)
 3/6/2023
-1.24 
+1.24
 8/6/2023
-1.67 (H) 
+1.67 (H)
 8/16/2023
-1.39 (H) 
+1.39 (H)
 1/30/2024
-1.55 (H) 
+1.55 (H)
 5/29/2024
-1.69 (H) 
+1.69 (H)
 8/29/2024
-1.59 (H) 
+1.59 (H)
 10/13/2025
-1.98 (H) 
+1.98 (H)
 11/24/2025
-1.65 (H) 
+1.65 (H)
 
 Legend:
 (H) High`;
-    // Initial render
-    const initialParsed = parseData(textarea.value);
-    updateChart(initialParsed);
+
+    // Initial render (slight delay to ensure container has dimensions)
+    setTimeout(() => {
+      const parsed = parseData(textarea.value);
+      renderChart(parsed);
+    }, 50);
   </script>
 </body>
 </html>
