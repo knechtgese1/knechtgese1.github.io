@@ -71,9 +71,15 @@
       fill: #36a2eb;
       cursor: pointer;
     }
+    .data-point.out-of-range {
+      fill: #ff4444;
+    }
     .data-point:hover {
       fill: #1a7fc4;
       r: 6;
+    }
+    .data-point.out-of-range:hover {
+      fill: #cc0000;
     }
     .ref-line {
       stroke: #ff6384;
@@ -141,7 +147,7 @@
         </div>
         <div class="legend-item" id="refLegend" style="display: none;">
           <div class="legend-line ref"></div>
-          <span>Upper Ref Limit</span>
+          <span>Ref Limits</span>
         </div>
       </div>
       <div id="chartContainer"></div>
@@ -359,10 +365,14 @@
       svg += `<text class="axis-title" x="${width / 2}" y="${height - 5}" text-anchor="middle">Date</text>`;
       svg += `<text class="axis-title" x="${15}" y="${height / 2}" text-anchor="middle" transform="rotate(-90, 15, ${height / 2})">Creatinine (mg/dL)</text>`;
 
-      // Reference line
+      // Reference lines (upper and lower)
       if (refHigh != null) {
-        const refY = yScaleFn(refHigh);
-        svg += `<line class="ref-line" x1="${margin.left}" y1="${refY}" x2="${width - margin.right}" y2="${refY}" />`;
+        const refYHigh = yScaleFn(refHigh);
+        svg += `<line class="ref-line" x1="${margin.left}" y1="${refYHigh}" x2="${width - margin.right}" y2="${refYHigh}" />`;
+      }
+      if (refLow != null) {
+        const refYLow = yScaleFn(refLow);
+        svg += `<line class="ref-line" x1="${margin.left}" y1="${refYLow}" x2="${width - margin.right}" y2="${refYLow}" />`;
       }
 
       // Data line
@@ -379,7 +389,9 @@
         const d = dataPoints[i];
         const x = xScale(d.date);
         const y = yScaleFn(d.value);
-        svg += `<circle class="data-point" cx="${x}" cy="${y}" r="4" data-index="${i}" />`;
+        const isOutOfRange = (refHigh != null && d.value > refHigh) || (refLow != null && d.value < refLow);
+        const pointClass = isOutOfRange ? 'data-point out-of-range' : 'data-point';
+        svg += `<circle class="${pointClass}" cx="${x}" cy="${y}" r="4" data-index="${i}" />`;
       }
 
       svg += '</svg>';
