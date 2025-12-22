@@ -127,11 +127,11 @@
         function cleanText() {
             const input = document.getElementById('input').value;
 
-            // Remove HTML anchor tags containing bracketed numbers
-            let cleaned = input.replace(/<a[^>]*>\s*\[\d+(?:,\s*\d+)*\]\s*<\/a>/gi, '');
+            // Remove HTML anchor tags containing bracketed numbers (with optional trailing comma)
+            let cleaned = input.replace(/<a[^>]*>\s*\[\d+(?:,\s*\d+)*\]\s*<\/a>\s*,?/gi, '');
 
-            // Remove standalone bracketed numbers (with possible multiple citations like [1,2,3])
-            cleaned = cleaned.replace(/\s*\[\d+(?:,\s*\d+)*\]/g, '');
+            // Remove standalone bracketed numbers with optional trailing comma (like "[1]," or "[1,2],")
+            cleaned = cleaned.replace(/\s*\[\d+(?:,\s*\d+)*\]\s*,?/g, '');
 
             // Clean up any leftover commas before periods or other punctuation
             cleaned = cleaned.replace(/,\s*([.;:!?])/g, '$1');
