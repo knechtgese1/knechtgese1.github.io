@@ -41,6 +41,45 @@
       margin: 0 0 6px 0;
       font-size: 14px;
     }
+    .input-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .input-header h4 {
+      margin: 0;
+    }
+    .input-buttons {
+      display: flex;
+      gap: 6px;
+    }
+    .clear-btn {
+      padding: 4px 12px;
+      font-size: 12px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .clear-btn:hover {
+      background-color: #c82333;
+    }
+    .paste-btn {
+      padding: 4px 12px;
+      font-size: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .paste-btn:hover {
+      background-color: #0056b3;
+    }
     textarea {
       flex: 1;
       width: 100%;
@@ -166,13 +205,39 @@
         transparent 10px
       );
     }
+    .date-range-controls {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    .date-range-controls label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .date-range-controls select {
+      padding: 4px 8px;
+      font-size: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="left">
       <div class="input-section">
-        <h4>Paste Data Here</h4>
+        <div class="input-header">
+          <h4>Paste Data Here</h4>
+          <div class="input-buttons">
+            <button class="paste-btn" id="pasteBtn">Paste from Clipboard</button>
+            <button class="clear-btn" id="clearBtn">Clear</button>
+          </div>
+        </div>
         <textarea id="dataInput" placeholder="Paste your lab data here..."></textarea>
         <small>
           Expected format: date on one line, value on the next line, e.g.<br>
@@ -204,6 +269,16 @@
         </div>
       </div>
       <div id="trendInfo" style="font-size: 12px; color: #666; margin-bottom: 4px; display: none;"></div>
+      <div class="date-range-controls" id="dateRangeControls" style="display: none;">
+        <label>
+          Start date:
+          <select id="startDateSelect"></select>
+        </label>
+        <label>
+          End date:
+          <select id="endDateSelect"></select>
+        </label>
+      </div>
       <div id="chartContainer"></div>
       <div class="tooltip" id="tooltip"></div>
     </div>
@@ -211,6 +286,8 @@
 
   <script>
     const textarea = document.getElementById('dataInput');
+    const pasteBtn = document.getElementById('pasteBtn');
+    const clearBtn = document.getElementById('clearBtn');
     const statusEl = document.getElementById('status');
     const chartContainer = document.getElementById('chartContainer');
     const tooltip = document.getElementById('tooltip');
@@ -220,9 +297,35 @@
     const trendInfo = document.getElementById('trendInfo');
     const outputArea = document.getElementById('outputArea');
     const legendLabel = document.getElementById('legendLabel');
+    const dateRangeControls = document.getElementById('dateRangeControls');
+    const startDateSelect = document.getElementById('startDateSelect');
+    const endDateSelect = document.getElementById('endDateSelect');
 
     // Chart margins
     const margin = { top: 20, right: 30, bottom: 50, left: 60 };
+
+    // Store the full parsed data globally for filtering
+    let fullParsedData = null;
+
+    // Paste from clipboard button handler
+    pasteBtn.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        textarea.value = text;
+        const parsed = parseData(text);
+        updateAndRenderChart(parsed);
+      } catch (err) {
+        alert('Failed to read clipboard. Please make sure you have granted clipboard permissions or use Ctrl+V / Cmd+V to paste manually.');
+        console.error('Clipboard read error:', err);
+      }
+    });
+
+    // Clear button handler
+    clearBtn.addEventListener('click', () => {
+      textarea.value = '';
+      const parsed = parseData('');
+      updateAndRenderChart(parsed);
+    });
 
     function parseData(text) {
       const lines = text
@@ -262,7 +365,7 @@
       const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/;
       const valueRegex = /^(\d+(\.\d+)?)/;
 
-      const dataPoints = [];
+      const dateGroups = [];
 
       for (let i = 0; i < lines.length; i++) {
         const dateMatch = lines[i].match(dateRegex);
@@ -273,32 +376,54 @@
         const year = parseInt(dateMatch[3], 10);
         const date = new Date(year, month, day);
 
-        // Find the next line that starts with a number (value)
-        let value = null;
+        // Find ALL values that follow this date (before the next date)
+        const values = [];
         for (let j = i + 1; j < lines.length; j++) {
           if (dateRegex.test(lines[j])) {
             break;
           }
           const vMatch = lines[j].match(valueRegex);
           if (vMatch) {
-            value = parseFloat(vMatch[1]);
-            break;
+            const value = parseFloat(vMatch[1]);
+            if (!isNaN(value)) {
+              values.push(value);
+            }
           }
         }
 
-        if (value !== null && !isNaN(value)) {
-          dataPoints.push({ date, value });
+        if (values.length > 0) {
+          dateGroups.push({ date, values });
         }
       }
 
-      if (dataPoints.length === 0) {
+      if (dateGroups.length === 0) {
         return null;
       }
 
       // Sort by date
-      dataPoints.sort((a, b) => a.date - b.date);
+      dateGroups.sort((a, b) => a.date - b.date);
 
-      return { dataPoints, refLow, refHigh, labName };
+      // Now space out multiple values on the same date
+      const dataPoints = [];
+      const msPerDay = 24 * 60 * 60 * 1000;
+
+      for (const { date, values } of dateGroups) {
+        const numValues = values.length;
+
+        if (numValues === 1) {
+          // Single value: use exact date
+          dataPoints.push({ date, value: values[0] });
+        } else {
+          // Multiple values: space them equidistantly between this date and next calendar day
+          for (let j = 0; j < numValues; j++) {
+            const offset = (j / numValues) * msPerDay;
+            const adjustedDate = new Date(date.getTime() + offset);
+            dataPoints.push({ date: adjustedDate, value: values[j] });
+          }
+        }
+      }
+
+      return { dataPoints, dateGroups, refLow, refHigh, labName };
     }
 
     function formatDate(date) {
@@ -308,6 +433,58 @@
     function formatYear(date) {
       return date.getFullYear().toString();
     }
+
+    function populateDateDropdowns(dateGroups) {
+      // Get unique dates from the original date groups (not the spaced-out dataPoints)
+      const uniqueDates = dateGroups.map(g => g.date);
+
+      // Clear existing options
+      startDateSelect.innerHTML = '';
+      endDateSelect.innerHTML = '';
+
+      // Populate both dropdowns with the same dates
+      uniqueDates.forEach((date, index) => {
+        const dateStr = formatDate(date);
+        const startOption = document.createElement('option');
+        startOption.value = index;
+        startOption.textContent = dateStr;
+        startDateSelect.appendChild(startOption);
+
+        const endOption = document.createElement('option');
+        endOption.value = index;
+        endOption.textContent = dateStr;
+        endDateSelect.appendChild(endOption);
+      });
+
+      // Reset to show full date range (earliest to latest)
+      // This happens automatically whenever new data is pasted
+      startDateSelect.value = '0';
+      endDateSelect.value = (uniqueDates.length - 1).toString();
+    }
+
+    function validateAndApplyDateRange() {
+      if (!fullParsedData || !fullParsedData.dateGroups) return;
+
+      const startIdx = parseInt(startDateSelect.value, 10);
+      const endIdx = parseInt(endDateSelect.value, 10);
+      const maxIdx = fullParsedData.dateGroups.length - 1;
+
+      // If start > end, snap end to last date
+      if (startIdx > endIdx) {
+        endDateSelect.value = maxIdx.toString();
+      }
+      // If end < start, snap start to first date
+      else if (endIdx < startIdx) {
+        startDateSelect.value = '0';
+      }
+
+      // Re-render chart with filtered data
+      renderChartWithDateRange();
+    }
+
+    // Event listeners for date range dropdowns
+    startDateSelect.addEventListener('change', validateAndApplyDateRange);
+    endDateSelect.addEventListener('change', validateAndApplyDateRange);
 
     function niceScale(min, max, ticks = 5) {
       const range = max - min;
@@ -378,6 +555,58 @@
       }
 
       return ticks;
+    }
+
+    function updateAndRenderChart(parsed) {
+      // Store the full parsed data
+      fullParsedData = parsed;
+
+      if (!parsed || !parsed.dateGroups || parsed.dateGroups.length === 0) {
+        // No data: hide controls and render empty chart
+        dateRangeControls.style.display = 'none';
+        renderChart(null);
+        return;
+      }
+
+      // Show date range controls and populate dropdowns
+      dateRangeControls.style.display = 'flex';
+      populateDateDropdowns(parsed.dateGroups);
+
+      // Render chart with current date range
+      renderChartWithDateRange();
+    }
+
+    function renderChartWithDateRange() {
+      if (!fullParsedData) return;
+
+      const startIdx = parseInt(startDateSelect.value, 10);
+      const endIdx = parseInt(endDateSelect.value, 10);
+
+      // Get the date range from the original dateGroups
+      const startDate = fullParsedData.dateGroups[startIdx].date;
+      const endDate = fullParsedData.dateGroups[endIdx].date;
+
+      // Extend endDate to the end of that day (23:59:59.999)
+      // This ensures all data points on the end date are included
+      const msPerDay = 24 * 60 * 60 * 1000;
+      const endDateInclusive = new Date(endDate.getTime() + msPerDay - 1);
+
+      // Filter dataPoints to include only those within the selected range
+      // Note: dataPoints may have interpolated dates for multiple values per day
+      const filteredDataPoints = fullParsedData.dataPoints.filter(dp => {
+        return dp.date >= startDate && dp.date <= endDateInclusive;
+      });
+
+      // Create a filtered version of the parsed data
+      const filteredParsed = {
+        dataPoints: filteredDataPoints,
+        dateGroups: fullParsedData.dateGroups,
+        refLow: fullParsedData.refLow,
+        refHigh: fullParsedData.refHigh,
+        labName: fullParsedData.labName
+      };
+
+      renderChart(filteredParsed);
     }
 
     function generateFormattedOutput(parsed) {
@@ -613,8 +842,9 @@
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
-        const parsed = parseData(textarea.value);
-        renderChart(parsed);
+        if (fullParsedData) {
+          renderChartWithDateRange();
+        }
       }, 100);
     });
 
@@ -624,7 +854,7 @@
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
         const parsed = parseData(textarea.value);
-        renderChart(parsed);
+        updateAndRenderChart(parsed);
       }, 300);
     });
 
@@ -685,7 +915,7 @@ Legend:
     // Initial render (slight delay to ensure container has dimensions)
     setTimeout(() => {
       const parsed = parseData(textarea.value);
-      renderChart(parsed);
+      updateAndRenderChart(parsed);
     }, 50);
   </script>
 </body>
