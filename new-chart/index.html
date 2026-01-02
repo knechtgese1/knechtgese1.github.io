@@ -205,6 +205,107 @@
         transparent 10px
       );
     }
+    .column-selector {
+      margin-bottom: 12px;
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      display: none;
+    }
+    .column-selector h4 {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+    }
+    .column-group {
+      margin-bottom: 8px;
+    }
+    .column-group-title {
+      font-weight: bold;
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: #555;
+    }
+    .column-checkboxes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .column-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+    }
+    .column-checkbox input[type="checkbox"] {
+      cursor: pointer;
+    }
+    .column-checkbox label {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .color-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+    .series-controls {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #ddd;
+    }
+    .series-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+      font-size: 11px;
+    }
+    .output-table {
+      margin-bottom: 16px;
+    }
+    .output-table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .output-table h5 {
+      margin: 0;
+      font-size: 13px;
+      font-weight: bold;
+      color: #333;
+    }
+    .output-table-copy-btn {
+      padding: 2px 8px;
+      font-size: 10px;
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .output-table-copy-btn:hover {
+      background-color: #5a6268;
+    }
+    .output-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+    .output-table th {
+      background: #e9e9e9;
+      padding: 4px 6px;
+      text-align: left;
+      border: 1px solid #ccc;
+    }
+    .output-table td {
+      padding: 3px 6px;
+      border: 1px solid #ddd;
+    }
     .date-range-controls {
       display: flex;
       gap: 15px;
@@ -240,20 +341,25 @@
         </div>
         <textarea id="dataInput" placeholder="Paste your lab data here..."></textarea>
         <small>
-          Expected format: date on one line, value on the next line, e.g.<br>
-          8/21/2018<br>
-          0.89<br>
-          Extra text like &quot;(H)&quot;, headers, and legends are ignored.
+          Supports both single-column and multi-column table formats.<br>
+          Single: date on one line, value on next (e.g., 8/21/2018 then 0.89)<br>
+          Table: header row, optional ref ranges, then date + values per row<br>
+          <strong>Multiple tables:</strong> Paste multiple tables together - they'll be combined!<br>
+          Extra text like &quot;(H)&quot;, &quot;(L)&quot;, and legends are ignored.
         </small>
       </div>
       <div class="output-section">
-        <h4>Formatted Output</h4>
+        <div class="input-header">
+          <h4>Formatted Output</h4>
+          <button class="paste-btn" id="copyOutputBtn">Copy All</button>
+        </div>
         <div id="outputArea"></div>
       </div>
     </div>
     <div class="right">
       <h3>Lab Values Over Time</h3>
       <div id="status">Waiting for data…</div>
+      <div class="column-selector" id="columnSelector"></div>
       <div class="legend" id="legend" style="display: none;">
         <div class="legend-item">
           <div class="legend-line"></div>
@@ -288,6 +394,7 @@
     const textarea = document.getElementById('dataInput');
     const pasteBtn = document.getElementById('pasteBtn');
     const clearBtn = document.getElementById('clearBtn');
+    const copyOutputBtn = document.getElementById('copyOutputBtn');
     const statusEl = document.getElementById('status');
     const chartContainer = document.getElementById('chartContainer');
     const tooltip = document.getElementById('tooltip');
@@ -300,12 +407,96 @@
     const dateRangeControls = document.getElementById('dateRangeControls');
     const startDateSelect = document.getElementById('startDateSelect');
     const endDateSelect = document.getElementById('endDateSelect');
+    const columnSelector = document.getElementById('columnSelector');
 
     // Chart margins
     const margin = { top: 20, right: 30, bottom: 50, left: 60 };
 
     // Store the full parsed data globally for filtering
     let fullParsedData = null;
+    let selectedColumns = new Set();
+    let columnColors = {};
+    let seriesVisibility = {};
+    let trendlineVisibility = {};
+
+    // Color palette for multiple series
+    const colorPalette = [
+      '#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff',
+      '#ffcd56', '#c9cbcf', '#4caf50', '#f44336', '#2196f3'
+    ];
+
+    // Lab test categorization (based on CPRS formatter)
+    const labCategories = {
+      'Chemistry': [
+        'SODIUM', 'POTASSIUM', 'CHLORIDE', 'CO2', 'CARBON DIOXIDE',
+        'CREATININE', 'CREATININE-E', 'CREATININE,SERUM', 'CREATININE, SERUM',
+        'UREA NITROGEN', 'UREA NITROGEN, BLOOD', 'BUN',
+        'GLUCOSE', 'ANCILLARY GLUCOSE', 'GLU POC', 'FASTING GLUCOSE',
+        'CALCIUM', 'MAGNESIUM', 'MAG', 'PHOSPHORUS', 'PO4,SERUM', 'PHOS',
+        'ANION GAP', 'ANION GAP(POC)',
+        'ALBUMIN', 'ALBUMIN,ELECT.', 'PROTEIN, TOTAL', 'PROTEIN,SERUM', 'TOTAL PROTEIN,SERUM',
+        'EGFR', 'EGFR(IDMS)', 'EGFR(DC\'D 4-16-10)',
+        'OSMOLALITY', 'LACTATE', 'LACTIC', 'LACTIC ACID'
+      ],
+      'Liver': [
+        'ALT', 'ALT(SGPT)', 'AST', 'AST(SGOT)', 'SGOT', 'SGPT',
+        'ALKALINE PHOSPHATASE', 'ALP', 'ALK', 'ALK PHO',
+        'BILIRUBIN, TOTAL', 'TOTAL BILIRUBIN', 'TOT. BILIRUBIN', 'TBIL',
+        'DIRECT BILIRUBIN', 'DIR. BILIRUBIN', 'DBIL',
+        'GGT', 'GAMMA GLUTAMYLTRANSFERASE',
+        'AMMONIA', 'LIPASE', 'AMYLASE', 'PREALBUMIN'
+      ],
+      'Hematology': [
+        'WBC', 'RBC', 'HEMOGLOBIN', 'HGB', 'HEMATOCRIT', 'HCT',
+        'PLATELET', 'PLT', 'MCV', 'MCH', 'MCHC', 'RDW', 'MPV',
+        'ABSOLUTE NEUTROPHIL COUNT', 'ABSOLUTE GRANULOCYTES', 'ANC',
+        'ABSOLUTE LYMPHOCYTE COUNT', 'ABSOLUTE LYMPHOCYTES', 'ALC',
+        'ABSOLUTE MONOCYTES', 'AMC', 'ABSOLUTE EOS.', 'AEC',
+        'ABSOLUTE BASOPHILS', 'ABC',
+        'NEUTROPHIL %', 'LYMPHOCYTE %', 'MONOCYTE %', 'EOSINOPHIL %', 'BASOPHIL %',
+        'EOS %', 'IG %',
+        'RETICULOCYTES (%)', 'ABSOLUTE RETIC COUNT', 'RETIC %', 'ABS RETIC #'
+      ],
+      'Coagulation': [
+        'PT', 'PTT', 'INR', 'FIBRINOGEN',
+        'ANTI-XA LMW HEPARIN', 'ANTI-XA UF HEPARIN', 'ANTI-XA LMWH', 'ANTI-XA UFH',
+        'THROMBIN TIME', 'D-DIMER'
+      ],
+      'Endocrine': [
+        'TSH', 'T4,FREE', 'FREE T4', 'T-4', 'FREE T3',
+        'HEMOGLOBIN A1C', 'HGB A1C', 'A1C',
+        'PTH', 'PTH (INTACT)', 'PTH (INTACT)QUEST',
+        'VITAMIN D,TOTAL(SCREEN)', 'VITAMIN D TOTAL(SCREEN)', 'TOTAL VIT D', 'VIT D 25-OH(WRJ)',
+        'CORTISOL AM', 'CORTISOL PM', 'ACTH',
+        'RENIN ACTIVITY', 'RENIN ACTIVITY(PRA)', 'RENIN ACTIVITY, PLASMA(PRA)',
+        'ALDOSTERONE', 'ALDOSTERONE,PLASMA', 'ALDOSTERONE,SERUM'
+      ],
+      'Cardiac': [
+        'TROPONIN I', 'TROPONIN-I', 'TROP I',
+        'BNP', 'CK-MB', 'MB-AG',
+        'CREATINE KINASE', 'CK', 'CPK',
+        'CRP,CARDIAC RISK', 'CARDIAC CRP'
+      ],
+      'Lipids': [
+        'CHOLESTEROL', 'CHOL', 'TRIGLYCERIDE', 'TG',
+        'HDL', 'HDL CHOLESTEROL',
+        'LDL', 'LDL CHOLESTEROL (CALC)', 'LDL,DIRECT'
+      ],
+      'Other': []
+    };
+
+    function categorizeLabTest(testName) {
+      const upperName = testName.toUpperCase();
+      for (const [category, tests] of Object.entries(labCategories)) {
+        if (category === 'Other') continue;
+        for (const test of tests) {
+          if (upperName === test || upperName.includes(test) || test.includes(upperName)) {
+            return category;
+          }
+        }
+      }
+      return 'Other';
+    }
 
     // Paste from clipboard button handler
     pasteBtn.addEventListener('click', async () => {
@@ -327,6 +518,46 @@
       updateAndRenderChart(parsed);
     });
 
+    // Copy output button handler
+    copyOutputBtn.addEventListener('click', async () => {
+      const outputContent = outputArea.innerHTML;
+
+      if (!outputContent || outputContent.includes('No data to display')) {
+        alert('No data to copy');
+        return;
+      }
+
+      try {
+        // Create both HTML and plain text versions
+        const htmlContent = outputContent;
+
+        // Create a temporary element to convert HTML to plain text
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = outputContent;
+        const plainText = tempDiv.innerText;
+
+        // Use the Clipboard API to write both formats
+        const clipboardItem = new ClipboardItem({
+          'text/html': new Blob([htmlContent], { type: 'text/html' }),
+          'text/plain': new Blob([plainText], { type: 'text/plain' })
+        });
+
+        await navigator.clipboard.write([clipboardItem]);
+
+        // Visual feedback
+        const originalText = copyOutputBtn.textContent;
+        copyOutputBtn.textContent = 'Copied!';
+        copyOutputBtn.style.backgroundColor = '#28a745';
+        setTimeout(() => {
+          copyOutputBtn.textContent = originalText;
+          copyOutputBtn.style.backgroundColor = '';
+        }, 1500);
+      } catch (err) {
+        console.error('Copy failed:', err);
+        alert('Failed to copy to clipboard. Please select and copy manually (Ctrl+C / Cmd+C).');
+      }
+    });
+
     function parseData(text) {
       const lines = text
         .split(/\r?\n/)
@@ -337,6 +568,21 @@
         return null;
       }
 
+      // Detect if this is table format (multi-column) or single-column format
+      // Table format will have tabs or multiple spaces separating values
+      const isTableFormat = lines.some(line => {
+        const parts = line.split(/\t|  +/);
+        return parts.length > 2 && parts.filter(p => p.trim().length > 0).length > 2;
+      });
+
+      if (isTableFormat) {
+        return parseTableData(lines);
+      } else {
+        return parseSingleColumnData(lines);
+      }
+    }
+
+    function parseSingleColumnData(lines) {
       let refLow = null;
       let refHigh = null;
       let labName = null;
@@ -423,7 +669,155 @@
         }
       }
 
-      return { dataPoints, dateGroups, refLow, refHigh, labName };
+      return {
+        type: 'single',
+        dataPoints,
+        dateGroups,
+        refLow,
+        refHigh,
+        labName,
+        columns: labName ? [{ name: labName, refLow, refHigh }] : []
+      };
+    }
+
+    function parseTableData(lines) {
+      // Parse table format - can handle multiple tables in one paste
+      const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/;
+      const allColumns = [];
+      const allSeriesData = {}; // { columnName: [{ date, value }, ...] }
+
+      let i = 0;
+      while (i < lines.length) {
+        // Skip empty lines
+        if (lines[i].trim().length === 0) {
+          i++;
+          continue;
+        }
+
+        const parts = lines[i].split(/\t|  +/).map(p => p.trim()).filter(p => p.length > 0);
+
+        // Check if this is a header line (non-date, non-number, multiple columns)
+        if (parts.length > 1 && !dateRegex.test(parts[0]) && isNaN(parseFloat(parts[0]))) {
+          let headerLine = null;
+          let refRangeLine = null;
+          let dataStartIndex = i + 1;
+
+          if (parts[0].toLowerCase().includes('latest') || parts[0].toLowerCase().includes('ref')) {
+            // This is the "Latest Ref Rng" line
+            refRangeLine = lines[i];
+            i++;
+            continue;
+          } else {
+            // This is a header line
+            headerLine = lines[i];
+
+            // Check if next line is "Latest Ref Rng"
+            if (i + 1 < lines.length) {
+              const nextParts = lines[i + 1].split(/\t|  +/).map(p => p.trim()).filter(p => p.length > 0);
+              if (nextParts[0] && (nextParts[0].toLowerCase().includes('latest') || nextParts[0].toLowerCase().includes('ref'))) {
+                refRangeLine = lines[i + 1];
+                dataStartIndex = i + 2;
+              }
+            }
+          }
+
+          if (!headerLine) {
+            i++;
+            continue;
+          }
+
+          // Parse this table
+          const headerParts = headerLine.split(/\t|  +/).map(p => p.trim()).filter(p => p.length > 0);
+          const columnNames = headerParts;
+
+          // Parse reference ranges
+          let refRanges = [];
+          if (refRangeLine) {
+            const refParts = refRangeLine.split(/\t|  +/).map(p => p.trim()).filter(p => p.length > 0);
+            refRanges = refParts.map(part => {
+              const match = part.match(/(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)/);
+              if (match) {
+                return { low: parseFloat(match[1]), high: parseFloat(match[2]) };
+              }
+              return null;
+            });
+          }
+
+          // Initialize columns for this table
+          const tableColumns = [];
+          for (let colIdx = 0; colIdx < columnNames.length; colIdx++) {
+            let colName = columnNames[colIdx];
+
+            // Handle duplicate column names by appending a number
+            let uniqueName = colName;
+            let suffix = 2;
+            while (allSeriesData[uniqueName]) {
+              uniqueName = `${colName} (${suffix})`;
+              suffix++;
+            }
+
+            const refRangeIndex = refRanges.length > columnNames.length ? colIdx + 1 : colIdx;
+            const refRange = refRanges[refRangeIndex] || null;
+
+            const col = {
+              name: uniqueName,
+              refLow: refRange ? refRange.low : null,
+              refHigh: refRange ? refRange.high : null,
+              category: categorizeLabTest(colName)
+            };
+
+            tableColumns.push(col);
+            allColumns.push(col);
+            allSeriesData[uniqueName] = [];
+          }
+
+          // Parse data rows for this table
+          for (let dataIdx = dataStartIndex; dataIdx < lines.length; dataIdx++) {
+            const dataParts = lines[dataIdx].split(/\t|  +/).map(p => p.trim()).filter(p => p.length > 0);
+            if (dataParts.length === 0) continue;
+
+            // Stop if we hit another header line
+            if (dataParts.length > 1 && !dateRegex.test(dataParts[0]) && isNaN(parseFloat(dataParts[0]))) {
+              break;
+            }
+
+            const dateMatch = dataParts[0].match(dateRegex);
+            if (!dateMatch) continue;
+
+            const month = parseInt(dateMatch[1], 10) - 1;
+            const day = parseInt(dateMatch[2], 10);
+            const year = parseInt(dateMatch[3], 10);
+            const date = new Date(year, month, day);
+
+            // Parse values for each column in this table
+            for (let j = 1; j < dataParts.length && j - 1 < tableColumns.length; j++) {
+              const valueStr = dataParts[j].replace(/\(H\)|\(L\)/g, '').trim();
+              const value = parseFloat(valueStr);
+              if (!isNaN(value)) {
+                const colName = tableColumns[j - 1].name;
+                allSeriesData[colName].push({ date, value });
+              }
+            }
+          }
+
+          i = dataStartIndex;
+        } else {
+          i++;
+        }
+      }
+
+      if (allColumns.length === 0) {
+        return null;
+      }
+
+      // Remove columns with no data
+      const validColumns = allColumns.filter(col => allSeriesData[col.name].length > 0);
+
+      return {
+        type: 'table',
+        columns: validColumns,
+        seriesData: allSeriesData
+      };
     }
 
     function formatDate(date) {
@@ -463,23 +857,44 @@
     }
 
     function validateAndApplyDateRange() {
-      if (!fullParsedData || !fullParsedData.dateGroups) return;
+      if (!fullParsedData) return;
 
       const startIdx = parseInt(startDateSelect.value, 10);
       const endIdx = parseInt(endDateSelect.value, 10);
-      const maxIdx = fullParsedData.dateGroups.length - 1;
 
-      // If start > end, snap end to last date
-      if (startIdx > endIdx) {
-        endDateSelect.value = maxIdx.toString();
-      }
-      // If end < start, snap start to first date
-      else if (endIdx < startIdx) {
-        startDateSelect.value = '0';
-      }
+      if (fullParsedData.type === 'single') {
+        // Single column mode
+        if (!fullParsedData.dateGroups) return;
+        const maxIdx = fullParsedData.dateGroups.length - 1;
 
-      // Re-render chart with filtered data
-      renderChartWithDateRange();
+        // If start > end, snap end to last date
+        if (startIdx > endIdx) {
+          endDateSelect.value = maxIdx.toString();
+        }
+        // If end < start, snap start to first date
+        else if (endIdx < startIdx) {
+          startDateSelect.value = '0';
+        }
+
+        // Re-render chart with filtered data
+        renderChartWithDateRange();
+      } else if (fullParsedData.type === 'table') {
+        // Multi-column mode
+        const allDates = getAllDatesFromTableData(fullParsedData);
+        const maxIdx = allDates.length - 1;
+
+        // If start > end, snap end to last date
+        if (startIdx > endIdx) {
+          endDateSelect.value = maxIdx.toString();
+        }
+        // If end < start, snap start to first date
+        else if (endIdx < startIdx) {
+          startDateSelect.value = '0';
+        }
+
+        // Re-render chart with filtered data
+        renderChartFromParsedData();
+      }
     }
 
     // Event listeners for date range dropdowns
@@ -557,23 +972,317 @@
       return ticks;
     }
 
+    function renderColumnSelector(parsed) {
+      if (!parsed || parsed.type !== 'table') {
+        columnSelector.style.display = 'none';
+        return;
+      }
+
+      columnSelector.style.display = 'block';
+
+      // Group columns by category
+      const categorized = {};
+      for (const col of parsed.columns) {
+        const cat = col.category || 'Other';
+        if (!categorized[cat]) categorized[cat] = [];
+        categorized[cat].push(col);
+      }
+
+      // Assign colors
+      let colorIndex = 0;
+      for (const col of parsed.columns) {
+        if (!columnColors[col.name]) {
+          columnColors[col.name] = colorPalette[colorIndex % colorPalette.length];
+          colorIndex++;
+        }
+        if (!(col.name in seriesVisibility)) {
+          seriesVisibility[col.name] = true;
+          selectedColumns.add(col.name);
+        }
+        if (!(col.name in trendlineVisibility)) {
+          trendlineVisibility[col.name] = true;
+        }
+      }
+
+      let html = '<h4>Select Columns to Display</h4>';
+
+      // Render by category
+      const sortedCategories = Object.keys(categorized).sort((a, b) => {
+        if (a === 'Other') return 1;
+        if (b === 'Other') return -1;
+        return a.localeCompare(b);
+      });
+
+      for (const category of sortedCategories) {
+        if (categorized[category].length === 0) continue;
+
+        html += `<div class="column-group">`;
+        html += `<div class="column-group-title">${category}</div>`;
+        html += `<div class="column-checkboxes">`;
+
+        for (const col of categorized[category]) {
+          const checked = seriesVisibility[col.name] ? 'checked' : '';
+          const color = columnColors[col.name];
+          html += `
+            <div class="column-checkbox">
+              <label>
+                <input type="checkbox" ${checked} onchange="toggleColumn('${col.name}')" />
+                <span class="color-indicator" style="background:${color}"></span>
+                ${col.name}
+              </label>
+            </div>`;
+        }
+
+        html += `</div>`;
+        html += `</div>`;
+      }
+
+      columnSelector.innerHTML = html;
+    }
+
+    window.toggleColumn = function(columnName) {
+      if (seriesVisibility[columnName]) {
+        seriesVisibility[columnName] = false;
+        selectedColumns.delete(columnName);
+      } else {
+        seriesVisibility[columnName] = true;
+        selectedColumns.add(columnName);
+      }
+      renderChartFromParsedData();
+    };
+
+    window.copyTableCategory = async function(category) {
+      // Find the table element for this category
+      const tableDiv = document.querySelector(`.output-table[data-category="${category}"]`);
+      if (!tableDiv) return;
+
+      const tableElement = tableDiv.querySelector('table');
+      if (!tableElement) return;
+
+      try {
+        // Create HTML content (just the table with header)
+        const categoryHeader = `<h5>${category}</h5>`;
+        const htmlContent = categoryHeader + tableElement.outerHTML;
+
+        // Create plain text version
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlContent;
+        const plainText = tempDiv.innerText;
+
+        // Copy to clipboard
+        const clipboardItem = new ClipboardItem({
+          'text/html': new Blob([htmlContent], { type: 'text/html' }),
+          'text/plain': new Blob([plainText], { type: 'text/plain' })
+        });
+
+        await navigator.clipboard.write([clipboardItem]);
+
+        // Visual feedback - find the button that was clicked
+        const button = tableDiv.querySelector('.output-table-copy-btn');
+        if (button) {
+          const originalText = button.textContent;
+          const originalColor = button.style.backgroundColor;
+          button.textContent = 'Copied!';
+          button.style.backgroundColor = '#28a745';
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.style.backgroundColor = originalColor;
+          }, 1500);
+        }
+      } catch (err) {
+        console.error('Copy failed:', err);
+        alert('Failed to copy table. Please select and copy manually.');
+      }
+    };
+
+    function generateCategorizedOutput(parsed) {
+      if (!parsed || parsed.type !== 'table') {
+        return null;
+      }
+
+      // Group columns by category
+      const categorized = {};
+      for (const col of parsed.columns) {
+        const cat = col.category || 'Other';
+        if (!categorized[cat]) categorized[cat] = [];
+        categorized[cat].push(col);
+      }
+
+      let html = '';
+
+      const sortedCategories = Object.keys(categorized).sort((a, b) => {
+        if (a === 'Other') return 1;
+        if (b === 'Other') return -1;
+        return a.localeCompare(b);
+      });
+
+      for (const category of sortedCategories) {
+        if (categorized[category].length === 0) continue;
+
+        const cols = categorized[category];
+
+        // Get all unique dates across all columns in this category
+        const allDates = new Set();
+        for (const col of cols) {
+          for (const dataPoint of parsed.seriesData[col.name]) {
+            allDates.add(dataPoint.date.getTime());
+          }
+        }
+        const sortedDates = Array.from(allDates).map(t => new Date(t)).sort((a, b) => b - a);
+
+        html += `<div class="output-table" data-category="${category}">`;
+        html += `<div class="output-table-header">`;
+        html += `<h5>${category}</h5>`;
+        html += `<button class="output-table-copy-btn" onclick="copyTableCategory('${category}')">Copy</button>`;
+        html += `</div>`;
+        html += `<table>`;
+        html += `<tr><th>Date</th>`;
+        for (const col of cols) {
+          html += `<th>${col.name}</th>`;
+        }
+        html += `</tr>`;
+
+        for (const date of sortedDates) {
+          html += `<tr><td>${formatDate(date)}</td>`;
+
+          for (const col of cols) {
+            const dataPoint = parsed.seriesData[col.name].find(dp => dp.date.getTime() === date.getTime());
+            if (dataPoint) {
+              const isHigh = col.refHigh != null && dataPoint.value > col.refHigh;
+              const isLow = col.refLow != null && dataPoint.value < col.refLow;
+              const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
+              const colorClass = isHigh ? 'high' : (isLow ? 'low' : '');
+              html += `<td><span class="${colorClass}">${dataPoint.value.toFixed(2)}${flag}</span></td>`;
+            } else {
+              html += `<td>—</td>`;
+            }
+          }
+
+          html += `</tr>`;
+        }
+
+        html += `</table>`;
+        html += `</div>`;
+      }
+
+      return html;
+    }
+
     function updateAndRenderChart(parsed) {
       // Store the full parsed data
       fullParsedData = parsed;
 
-      if (!parsed || !parsed.dateGroups || parsed.dateGroups.length === 0) {
-        // No data: hide controls and render empty chart
+      if (!parsed) {
         dateRangeControls.style.display = 'none';
+        columnSelector.style.display = 'none';
         renderChart(null);
         return;
       }
 
-      // Show date range controls and populate dropdowns
-      dateRangeControls.style.display = 'flex';
-      populateDateDropdowns(parsed.dateGroups);
+      if (parsed.type === 'single') {
+        // Single column mode
+        dateRangeControls.style.display = parsed.dateGroups && parsed.dateGroups.length > 0 ? 'flex' : 'none';
+        columnSelector.style.display = 'none';
 
-      // Render chart with current date range
-      renderChartWithDateRange();
+        if (parsed.dateGroups && parsed.dateGroups.length > 0) {
+          populateDateDropdowns(parsed.dateGroups);
+          renderChartWithDateRange();
+        } else {
+          renderChart(null);
+        }
+      } else if (parsed.type === 'table') {
+        // Multi-column mode
+        renderColumnSelector(parsed);
+
+        // Populate date dropdowns for table mode
+        const allDates = getAllDatesFromTableData(parsed);
+        if (allDates.length > 0) {
+          dateRangeControls.style.display = 'flex';
+          populateDateDropdownsFromDates(allDates);
+        } else {
+          dateRangeControls.style.display = 'none';
+        }
+
+        renderChartFromParsedData();
+      }
+    }
+
+    function getAllDatesFromTableData(parsed) {
+      const dateSet = new Set();
+      for (const col of parsed.columns) {
+        for (const dp of parsed.seriesData[col.name]) {
+          dateSet.add(dp.date.getTime());
+        }
+      }
+      return Array.from(dateSet).map(t => new Date(t)).sort((a, b) => a - b);
+    }
+
+    function populateDateDropdownsFromDates(dates) {
+      // Clear existing options
+      startDateSelect.innerHTML = '';
+      endDateSelect.innerHTML = '';
+
+      // Populate both dropdowns with the dates
+      dates.forEach((date, index) => {
+        const dateStr = formatDate(date);
+        const startOption = document.createElement('option');
+        startOption.value = index;
+        startOption.textContent = dateStr;
+        startDateSelect.appendChild(startOption);
+
+        const endOption = document.createElement('option');
+        endOption.value = index;
+        endOption.textContent = dateStr;
+        endDateSelect.appendChild(endOption);
+      });
+
+      // Reset to show full date range (earliest to latest)
+      startDateSelect.value = '0';
+      endDateSelect.value = (dates.length - 1).toString();
+    }
+
+    function renderChartFromParsedData() {
+      if (!fullParsedData || fullParsedData.type !== 'table') return;
+
+      // Get selected columns
+      const visibleColumns = fullParsedData.columns.filter(col => seriesVisibility[col.name]);
+
+      if (visibleColumns.length === 0) {
+        renderMultiSeriesChart(null);
+        return;
+      }
+
+      // Get date range filter if available
+      let startDate = null;
+      let endDate = null;
+      if (startDateSelect.options.length > 0 && endDateSelect.options.length > 0) {
+        const allDates = getAllDatesFromTableData(fullParsedData);
+        const startIdx = parseInt(startDateSelect.value, 10);
+        const endIdx = parseInt(endDateSelect.value, 10);
+
+        if (!isNaN(startIdx) && !isNaN(endIdx) && startIdx < allDates.length && endIdx < allDates.length) {
+          startDate = allDates[startIdx];
+          endDate = new Date(allDates[endIdx].getTime() + 24 * 60 * 60 * 1000 - 1); // End of day
+        }
+      }
+
+      // Build multi-series data
+      const multiSeriesData = {
+        columns: visibleColumns,
+        seriesData: {},
+        type: 'table'
+      };
+
+      for (const col of visibleColumns) {
+        // Filter by date range if specified
+        let seriesPoints = fullParsedData.seriesData[col.name];
+        if (startDate && endDate) {
+          seriesPoints = seriesPoints.filter(dp => dp.date >= startDate && dp.date <= endDate);
+        }
+        multiSeriesData.seriesData[col.name] = seriesPoints;
+      }
+
+      renderMultiSeriesChart(multiSeriesData);
     }
 
     function renderChartWithDateRange() {
@@ -599,6 +1308,7 @@
 
       // Create a filtered version of the parsed data
       const filteredParsed = {
+        type: 'single',
         dataPoints: filteredDataPoints,
         dateGroups: fullParsedData.dateGroups,
         refLow: fullParsedData.refLow,
@@ -615,43 +1325,398 @@
         return;
       }
 
-      const { dataPoints, refLow, refHigh, labName } = parsed;
+      if (parsed.type === 'table') {
+        // Generate categorized table output
+        const html = generateCategorizedOutput(parsed);
+        outputArea.innerHTML = html || '<span style="color: #999;">No data to display</span>';
+      } else {
+        // Single column output
+        const { dataPoints, refLow, refHigh, labName } = parsed;
 
-      // Generate output in reverse chronological order (most recent first)
-      const sortedPoints = [...dataPoints].sort((a, b) => b.date - a.date);
+        // Generate output in reverse chronological order (most recent first)
+        const sortedPoints = [...dataPoints].sort((a, b) => b.date - a.date);
 
-      // Find max width for value column (including flag) for alignment
-      const maxValueWidth = Math.max(...sortedPoints.map(d => {
-        const isHigh = refHigh != null && d.value > refHigh;
-        const isLow = refLow != null && d.value < refLow;
-        const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
-        return (d.value.toFixed(2) + flag).length;
-      }));
+        // Find max width for value column (including flag) for alignment
+        const maxValueWidth = Math.max(...sortedPoints.map(d => {
+          const isHigh = refHigh != null && d.value > refHigh;
+          const isLow = refLow != null && d.value < refLow;
+          const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
+          return (d.value.toFixed(2) + flag).length;
+        }));
 
-      const header = labName || 'Lab Value';
-      let html = `<strong>${header}:</strong>\n`;
-      for (const d of sortedPoints) {
-        const dateStr = formatDate(d.date);
-        const isHigh = refHigh != null && d.value > refHigh;
-        const isLow = refLow != null && d.value < refLow;
+        const header = labName || 'Lab Value';
+        let html = `<strong>${header}:</strong>\n`;
+        for (const d of sortedPoints) {
+          const dateStr = formatDate(d.date);
+          const isHigh = refHigh != null && d.value > refHigh;
+          const isLow = refLow != null && d.value < refLow;
 
-        const rawValue = d.value.toFixed(2);
-        const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
-        const paddedValue = (rawValue + flag).padEnd(maxValueWidth);
+          const rawValue = d.value.toFixed(2);
+          const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
+          const paddedValue = (rawValue + flag).padEnd(maxValueWidth);
 
-        let valueStr;
-        if (isHigh) {
-          valueStr = `<span class="high">${paddedValue}</span>`;
-        } else if (isLow) {
-          valueStr = `<span class="low">${paddedValue}</span>`;
-        } else {
-          valueStr = paddedValue;
+          let valueStr;
+          if (isHigh) {
+            valueStr = `<span class="high">${paddedValue}</span>`;
+          } else if (isLow) {
+            valueStr = `<span class="low">${paddedValue}</span>`;
+          } else {
+            valueStr = paddedValue;
+          }
+
+          html += `  ${valueStr} @ ${dateStr}\n`;
         }
 
-        html += `  ${valueStr} @ ${dateStr}\n`;
+        outputArea.innerHTML = html;
+      }
+    }
+
+    function renderMultiSeriesChart(multiData) {
+      // Update formatted output
+      generateFormattedOutput(fullParsedData);
+
+      if (!multiData || multiData.columns.length === 0) {
+        statusEl.textContent = 'No columns selected';
+        chartContainer.innerHTML = '';
+        legend.style.display = 'none';
+        trendInfo.style.display = 'none';
+        return;
       }
 
-      outputArea.innerHTML = html;
+      const numSeries = multiData.columns.length;
+      const useNormalizedAxis = numSeries > 1;
+
+      // Get all data points across all series
+      let allDates = new Set();
+      for (const col of multiData.columns) {
+        for (const dp of multiData.seriesData[col.name]) {
+          allDates.add(dp.date.getTime());
+        }
+      }
+      allDates = Array.from(allDates).map(t => new Date(t)).sort((a, b) => a - b);
+
+      if (allDates.length === 0) {
+        statusEl.textContent = 'No data points';
+        chartContainer.innerHTML = '';
+        return;
+      }
+
+      const minDate = allDates[0];
+      const maxDate = allDates[allDates.length - 1];
+      const dateRange = maxDate - minDate;
+      const datePadding = dateRange * 0.05;
+      const minTime = minDate.getTime() - datePadding;
+      const maxTime = maxDate.getTime() + datePadding;
+
+      // Normalize function
+      const normalizeValue = (value, refLow, refHigh) => {
+        if (!useNormalizedAxis || refLow == null || refHigh == null) {
+          return value;
+        }
+        const refMid = (refLow + refHigh) / 2;
+        const refRange = refHigh - refLow;
+        return 100 + ((value - refMid) / refRange) * 100;
+      };
+
+      // Determine Y-axis scale
+      let yScale;
+      if (useNormalizedAxis) {
+        // Normalized: auto-scale based on actual data
+        // First normalize all values to get the range
+        let minNormalized = Infinity;
+        let maxNormalized = -Infinity;
+
+        for (const col of multiData.columns) {
+          for (const dp of multiData.seriesData[col.name]) {
+            const normalized = normalizeValue(dp.value, col.refLow, col.refHigh);
+            minNormalized = Math.min(minNormalized, normalized);
+            maxNormalized = Math.max(maxNormalized, normalized);
+          }
+        }
+
+        // Ensure 100% is always visible (minimum top of scale is 100%)
+        maxNormalized = Math.max(maxNormalized, 100);
+
+        // Add some padding
+        const range = maxNormalized - minNormalized;
+        const padding = range * 0.1;
+        yScale = niceScale(minNormalized - padding, maxNormalized + padding, 6);
+
+        statusEl.textContent = `Showing ${numSeries} series (normalized to % of reference range)`;
+      } else {
+        // Single series: use actual values
+        const col = multiData.columns[0];
+        const values = multiData.seriesData[col.name].map(dp => dp.value);
+        let minValue = Math.min(...values);
+        let maxValue = Math.max(...values);
+
+        if (col.refHigh != null) {
+          maxValue = Math.max(maxValue, col.refHigh);
+          minValue = Math.min(minValue, col.refLow);
+        }
+
+        yScale = niceScale(minValue * 0.9, maxValue * 1.1, 6);
+        statusEl.textContent = `Showing ${col.name} | ${multiData.seriesData[col.name].length} data point(s)` +
+          (col.refHigh != null ? ` | Ref range: ${col.refLow}–${col.refHigh}` : '');
+      }
+
+      // Get container dimensions
+      const rect = chartContainer.getBoundingClientRect();
+      const width = rect.width || 600;
+      const height = rect.height || 400;
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+
+      // Scale functions
+      const xScale = (date) => {
+        const t = date.getTime();
+        return margin.left + ((t - minTime) / (maxTime - minTime)) * innerWidth;
+      };
+
+      const yScaleFn = (value) => {
+        return margin.top + innerHeight - ((value - yScale.min) / (yScale.max - yScale.min)) * innerHeight;
+      };
+
+      // Build SVG
+      let svg = `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">`;
+
+      // Y-axis grid lines and labels
+      for (const v of yScale.values) {
+        const y = yScaleFn(v);
+        svg += `<line class="grid-line" x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}" />`;
+        let label = v.toFixed(useNormalizedAxis ? 0 : 2);
+        if (useNormalizedAxis) label += '%';
+        svg += `<text class="axis-label" x="${margin.left - 10}" y="${y + 4}" text-anchor="end">${label}</text>`;
+      }
+
+      // X-axis grid lines and labels (years)
+      const yearTicks = getYearTicks(new Date(minTime), new Date(maxTime));
+      for (const date of yearTicks) {
+        const x = xScale(date);
+        if (x >= margin.left && x <= width - margin.right) {
+          svg += `<line class="grid-line" x1="${x}" y1="${margin.top}" x2="${x}" y2="${height - margin.bottom}" />`;
+          svg += `<text class="axis-label" x="${x}" y="${height - margin.bottom + 20}" text-anchor="middle">${formatYear(date)}</text>`;
+        }
+      }
+
+      // Axis lines
+      svg += `<line stroke="#333" stroke-width="1" x1="${margin.left}" y1="${height - margin.bottom}" x2="${width - margin.right}" y2="${height - margin.bottom}" />`;
+      svg += `<line stroke="#333" stroke-width="1" x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${height - margin.bottom}" />`;
+
+      // Axis titles
+      const yAxisLabel = useNormalizedAxis ? '% of Reference Range' : multiData.columns[0].name;
+      svg += `<text class="axis-title" x="${width / 2}" y="${height - 5}" text-anchor="middle">Date</text>`;
+      svg += `<text class="axis-title" x="${15}" y="${height / 2}" text-anchor="middle" transform="rotate(-90, 15, ${height / 2})">${yAxisLabel}</text>`;
+
+      // Reference lines (only for single series with actual values)
+      if (!useNormalizedAxis && multiData.columns[0].refHigh != null) {
+        const col = multiData.columns[0];
+        const refYHigh = yScaleFn(col.refHigh);
+        const refYLow = yScaleFn(col.refLow);
+        svg += `<line class="ref-line" x1="${margin.left}" y1="${refYHigh}" x2="${width - margin.right}" y2="${refYHigh}" />`;
+        svg += `<line class="ref-line" x1="${margin.left}" y1="${refYLow}" x2="${width - margin.right}" y2="${refYLow}" />`;
+      }
+
+      // For normalized mode, draw reference zone at 100%
+      if (useNormalizedAxis) {
+        const y100 = yScaleFn(100);
+        svg += `<line stroke="#4caf50" stroke-width="2" stroke-dasharray="2,2" x1="${margin.left}" y1="${y100}" x2="${width - margin.right}" y2="${y100}" />`;
+      }
+
+      // Linear regression for single series
+      let regressionInfo = null;
+      if (multiData.columns.length === 1) {
+        const col = multiData.columns[0];
+        const dataPoints = multiData.seriesData[col.name].sort((a, b) => a.date - b.date);
+
+        if (dataPoints.length >= 2) {
+          const regression = linearRegression(dataPoints);
+          if (regression) {
+            const { slope, intercept, firstTime, msPerDay } = regression;
+
+            // Calculate y values at the start and end of the x-axis
+            const x1Days = (minTime - firstTime) / msPerDay;
+            const x2Days = (maxTime - firstTime) / msPerDay;
+            let y1Value = intercept + slope * x1Days;
+            let y2Value = intercept + slope * x2Days;
+
+            // If using normalized axis, normalize the regression line values
+            if (useNormalizedAxis) {
+              y1Value = normalizeValue(y1Value, col.refLow, col.refHigh);
+              y2Value = normalizeValue(y2Value, col.refLow, col.refHigh);
+            }
+
+            const lineX1 = margin.left;
+            const lineX2 = width - margin.right;
+            const lineY1 = yScaleFn(y1Value);
+            const lineY2 = yScaleFn(y2Value);
+
+            svg += `<line class="trend-line" x1="${lineX1}" y1="${lineY1}" x2="${lineX2}" y2="${lineY2}" />`;
+
+            // Calculate slope info
+            const dataSpanDays = (maxDate - minDate) / msPerDay;
+            let slopeValue, timeUnit;
+
+            if (dataSpanDays < 60) {
+              slopeValue = slope;
+              timeUnit = 'day';
+            } else if (dataSpanDays < 365) {
+              slopeValue = slope * 30.44;
+              timeUnit = 'month';
+            } else {
+              slopeValue = slope * 365.25;
+              timeUnit = 'year';
+            }
+
+            regressionInfo = { slopeValue, timeUnit, col };
+          }
+        }
+      }
+
+      // Draw each series
+      const seriesMetadata = [];
+      const outOfRangeColor = '#dc3545'; // Bootstrap danger red
+
+      for (const col of multiData.columns) {
+        const color = columnColors[col.name];
+        const dataPoints = multiData.seriesData[col.name].sort((a, b) => a.date - b.date);
+
+        // Normalize data if needed
+        const normalizedPoints = dataPoints.map(dp => ({
+          ...dp,
+          displayValue: normalizeValue(dp.value, col.refLow, col.refHigh)
+        }));
+
+        // Data line
+        if (normalizedPoints.length > 1) {
+          let pathD = `M ${xScale(normalizedPoints[0].date)} ${yScaleFn(normalizedPoints[0].displayValue)}`;
+          for (let i = 1; i < normalizedPoints.length; i++) {
+            pathD += ` L ${xScale(normalizedPoints[i].date)} ${yScaleFn(normalizedPoints[i].displayValue)}`;
+          }
+          svg += `<path fill="none" stroke="${color}" stroke-width="2" d="${pathD}" />`;
+        }
+
+        // Data points
+        for (let i = 0; i < normalizedPoints.length; i++) {
+          const dp = normalizedPoints[i];
+          const x = xScale(dp.date);
+          const y = yScaleFn(dp.displayValue);
+          const isOutOfRange = (col.refHigh != null && dp.value > col.refHigh) || (col.refLow != null && dp.value < col.refLow);
+
+          if (isOutOfRange) {
+            // Hollow red circle for out-of-range values
+            svg += `<circle fill="white" stroke="${outOfRangeColor}" stroke-width="2" cx="${x}" cy="${y}" r="5" data-series="${col.name}" data-index="${i}" class="out-of-range" style="cursor:pointer" />`;
+
+            // Add H or L label
+            const isHigh = col.refHigh != null && dp.value > col.refHigh;
+            const label = isHigh ? 'H' : 'L';
+            svg += `<text x="${x}" y="${y + 1}" text-anchor="middle" font-size="7" font-weight="bold" fill="${outOfRangeColor}" pointer-events="none">${label}</text>`;
+          } else {
+            // Normal filled circle for in-range values
+            svg += `<circle fill="${color}" cx="${x}" cy="${y}" r="4" data-series="${col.name}" data-index="${i}" style="cursor:pointer" />`;
+          }
+        }
+
+        seriesMetadata.push({ col, dataPoints, normalizedPoints, color });
+      }
+
+      svg += '</svg>';
+      chartContainer.innerHTML = svg;
+
+      // Add hover interactions
+      const points = chartContainer.querySelectorAll('circle');
+      points.forEach(point => {
+        const originalFill = point.getAttribute('fill');
+        const originalStroke = point.getAttribute('stroke');
+        const originalStrokeWidth = point.getAttribute('stroke-width');
+        const originalR = point.getAttribute('r');
+
+        point.addEventListener('mouseenter', (e) => {
+          const seriesName = point.getAttribute('data-series');
+          const idx = parseInt(point.getAttribute('data-index'), 10);
+          const meta = seriesMetadata.find(m => m.col.name === seriesName);
+          if (meta) {
+            const dp = meta.dataPoints[idx];
+            const col = meta.col;
+
+            // Check if value is out of range
+            const isHigh = col.refHigh != null && dp.value > col.refHigh;
+            const isLow = col.refLow != null && dp.value < col.refLow;
+            const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
+
+            tooltip.textContent = `${seriesName}: ${dp.value.toFixed(2)}${flag} @ ${formatDate(dp.date)}`;
+            tooltip.style.display = 'block';
+
+            // Make point larger and add/enhance stroke
+            point.setAttribute('r', parseFloat(originalR) + 2);
+            if (originalFill === 'white') {
+              // Out-of-range point: make stroke thicker
+              point.setAttribute('stroke-width', '3');
+            } else {
+              // Normal point: add white stroke
+              point.setAttribute('stroke', 'white');
+              point.setAttribute('stroke-width', '2');
+            }
+          }
+        });
+
+        point.addEventListener('mousemove', (e) => {
+          tooltip.style.left = (e.pageX + 10) + 'px';
+          tooltip.style.top = (e.pageY - 30) + 'px';
+        });
+
+        point.addEventListener('mouseleave', () => {
+          tooltip.style.display = 'none';
+
+          // Restore original appearance
+          point.setAttribute('r', originalR);
+          if (originalStroke) {
+            point.setAttribute('stroke', originalStroke);
+            point.setAttribute('stroke-width', originalStrokeWidth);
+          } else {
+            point.removeAttribute('stroke');
+            point.removeAttribute('stroke-width');
+          }
+        });
+      });
+
+      // Update legend
+      legend.style.display = 'flex';
+      legend.innerHTML = '';
+      for (const meta of seriesMetadata) {
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.innerHTML = `
+          <div class="legend-line" style="background: ${meta.color}"></div>
+          <span>${meta.col.name}</span>
+        `;
+        legend.appendChild(item);
+      }
+
+      // Show trend line in legend if we have regression
+      if (regressionInfo) {
+        const trendItem = document.createElement('div');
+        trendItem.className = 'legend-item';
+        trendItem.innerHTML = `
+          <div class="legend-line" style="background: repeating-linear-gradient(90deg, #4caf50 0px, #4caf50 4px, transparent 4px, transparent 8px);"></div>
+          <span>Linear Regression</span>
+        `;
+        legend.appendChild(trendItem);
+      }
+
+      // Display regression slope info
+      if (regressionInfo) {
+        const { slopeValue, timeUnit, col } = regressionInfo;
+        const slopeSign = slopeValue >= 0 ? '+' : '';
+        const unit = useNormalizedAxis ? '% of ref range' : (col.name.includes('Sodium') || col.name.includes('Potassium') || col.name.includes('Chloride') ? 'mmol/L' : 'units');
+        trendInfo.textContent = `Linear Regression Slope: ${slopeSign}${slopeValue.toFixed(3)} ${unit} per ${timeUnit}`;
+        trendInfo.style.display = 'block';
+      } else {
+        trendInfo.style.display = 'none';
+      }
+
+      refLegend.style.display = 'none';
+      trendLegend.style.display = 'none';
     }
 
     function renderChart(parsed) {
@@ -858,59 +1923,29 @@
       }, 300);
     });
 
-    // Preload example data
-    textarea.value = `CREATININE
-Latest Ref Rng
-0.70 - 1.30 mg/dL
-8/21/2018
-0.89
-9/17/2018
-1.09
-10/2/2018
-0.98
-10/9/2018
-1.04
-11/5/2018
-0.93
-11/20/2018
-0.93
-4/24/2019
-1.18
-6/11/2019
-1.05
-8/12/2019
-1.35 (H)
-12/10/2019
-1.11
-2/20/2020
-1.51 (H)
-8/31/2020
-0.98
-1/6/2021
-1.23
-8/18/2021
-1.21
-2/16/2022
-1.33 (H)
-3/6/2023
-1.24
-8/6/2023
-1.67 (H)
-8/16/2023
-1.39 (H)
-1/30/2024
-1.55 (H)
-5/29/2024
-1.69 (H)
-8/29/2024
-1.59 (H)
-10/13/2025
-1.98 (H)
-11/24/2025
-1.65 (H)
-
-Legend:
-(H) High`;
+    // Preload example data (multi-column electrolyte panel)
+    textarea.value = `    Sodium    Potassium    Chloride    CO2
+Latest Ref Rng    135 - 146 mmol/L    3.5 - 5.1 mmol/L    98 - 110 mmol/L    22 - 29 mmol/L
+12/23/2016    139    4.0    103    28
+5/24/2017    137    3.8    100    25
+5/25/2017    140    3.2 (L)    104    29
+5/26/2017    135    3.4 (L)    101    25
+11/6/2017    142    3.4 (L)    103    30 (H)
+4/9/2018    137    4.1    98    27
+6/8/2018    139    4.7    100    29
+10/3/2018    141    3.9    103    28
+2/18/2019    144    4.7    101    34 (H)
+7/5/2019    139    3.3 (L)    100    30 (H)
+10/10/2019    136    5.9 (H)    103    25
+10/16/2019    136    4.9    100    26
+12/17/2019    142    3.4 (L)    101    34 (H)
+2/14/2020    137    4.5    102    27
+9/27/2021    140    4.5    99    31 (H)
+4/27/2022    138    4.8    99    28
+8/2/2023    143    4.2    107    29
+1/22/2024    142    5.0    105    31 (H)
+8/16/2024    140    4.7    107    26
+12/16/2024    138    4.4    101    25`;
 
     // Initial render (slight delay to ensure container has dimensions)
     setTimeout(() => {
