@@ -244,12 +244,24 @@
       display: flex;
       align-items: center;
       gap: 4px;
+      transition: opacity 0.2s;
+    }
+    .column-checkbox label:hover {
+      opacity: 1 !important;
     }
     .color-indicator {
       width: 12px;
       height: 12px;
       border-radius: 2px;
       display: inline-block;
+    }
+    .series-dimmed {
+      opacity: 0.15 !important;
+      transition: opacity 0.2s;
+    }
+    .series-highlighted {
+      opacity: 1 !important;
+      transition: opacity 0.2s;
     }
     .series-controls {
       margin-top: 8px;
@@ -1025,7 +1037,7 @@
           const color = columnColors[col.name];
           html += `
             <div class="column-checkbox">
-              <label>
+              <label data-series-name="${col.name}">
                 <input type="checkbox" ${checked} onchange="toggleColumn('${col.name}')" />
                 <span class="color-indicator" style="background:${color}"></span>
                 ${col.name}
@@ -1038,6 +1050,69 @@
       }
 
       columnSelector.innerHTML = html;
+
+      // Add hover listeners to column labels
+      const labels = columnSelector.querySelectorAll('label[data-series-name]');
+      labels.forEach(label => {
+        label.addEventListener('mouseenter', () => {
+          const seriesName = label.getAttribute('data-series-name');
+          highlightSeries(seriesName);
+        });
+
+        label.addEventListener('mouseleave', () => {
+          unhighlightAllSeries();
+        });
+      });
+    }
+
+    function highlightSeries(seriesName) {
+      // Dim all labels except the hovered one
+      const allLabels = columnSelector.querySelectorAll('label[data-series-name]');
+      allLabels.forEach(label => {
+        if (label.getAttribute('data-series-name') !== seriesName) {
+          label.style.opacity = '0.3';
+        }
+      });
+
+      // Dim all graph elements except the hovered series
+      const allPaths = chartContainer.querySelectorAll('path[data-series]');
+      const allCircles = chartContainer.querySelectorAll('circle[data-series]');
+
+      allPaths.forEach(path => {
+        if (path.getAttribute('data-series') !== seriesName) {
+          path.classList.add('series-dimmed');
+        } else {
+          path.classList.add('series-highlighted');
+        }
+      });
+
+      allCircles.forEach(circle => {
+        if (circle.getAttribute('data-series') !== seriesName) {
+          circle.classList.add('series-dimmed');
+        } else {
+          circle.classList.add('series-highlighted');
+        }
+      });
+    }
+
+    function unhighlightAllSeries() {
+      // Restore all labels
+      const allLabels = columnSelector.querySelectorAll('label[data-series-name]');
+      allLabels.forEach(label => {
+        label.style.opacity = '';
+      });
+
+      // Restore all graph elements
+      const allPaths = chartContainer.querySelectorAll('path[data-series]');
+      const allCircles = chartContainer.querySelectorAll('circle[data-series]');
+
+      allPaths.forEach(path => {
+        path.classList.remove('series-dimmed', 'series-highlighted');
+      });
+
+      allCircles.forEach(circle => {
+        circle.classList.remove('series-dimmed', 'series-highlighted');
+      });
     }
 
     window.toggleColumn = function(columnName) {
@@ -1593,7 +1668,7 @@
           for (let i = 1; i < normalizedPoints.length; i++) {
             pathD += ` L ${xScale(normalizedPoints[i].date)} ${yScaleFn(normalizedPoints[i].displayValue)}`;
           }
-          svg += `<path fill="none" stroke="${color}" stroke-width="2" d="${pathD}" />`;
+          svg += `<path fill="none" stroke="${color}" stroke-width="2" d="${pathD}" data-series="${col.name}" style="cursor:pointer" />`;
         }
 
         // Data points
@@ -1623,7 +1698,20 @@
       svg += '</svg>';
       chartContainer.innerHTML = svg;
 
-      // Add hover interactions
+      // Add hover interactions to paths (lines)
+      const paths = chartContainer.querySelectorAll('path[data-series]');
+      paths.forEach(path => {
+        path.addEventListener('mouseenter', () => {
+          const seriesName = path.getAttribute('data-series');
+          highlightSeries(seriesName);
+        });
+
+        path.addEventListener('mouseleave', () => {
+          unhighlightAllSeries();
+        });
+      });
+
+      // Add hover interactions to points
       const points = chartContainer.querySelectorAll('circle');
       points.forEach(point => {
         const originalFill = point.getAttribute('fill');
@@ -1657,6 +1745,9 @@
               point.setAttribute('stroke', 'white');
               point.setAttribute('stroke-width', '2');
             }
+
+            // Highlight the entire series
+            highlightSeries(seriesName);
           }
         });
 
@@ -1677,6 +1768,9 @@
             point.removeAttribute('stroke');
             point.removeAttribute('stroke-width');
           }
+
+          // Unhighlight series
+          unhighlightAllSeries();
         });
       });
 
