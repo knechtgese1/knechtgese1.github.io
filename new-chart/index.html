@@ -1307,7 +1307,7 @@
               const isLow = col.refLow != null && dataPoint.value < col.refLow;
               const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
               const colorClass = isHigh ? 'high' : (isLow ? 'low' : '');
-              html += `<td><span class="${colorClass}">${dataPoint.value.toFixed(2)}${flag}</span></td>`;
+              html += `<td><span class="${colorClass}">${dataPoint.value}${flag}</span></td>`;
             } else {
               html += `<td>—</td>`;
             }
@@ -1512,7 +1512,7 @@
             const isHigh = col.refHigh != null && dataPoint.value > col.refHigh;
             const isLow = col.refLow != null && dataPoint.value < col.refLow;
             const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
-            const valueStr = dataPoint.value.toFixed(2) + flag;
+            const valueStr = dataPoint.value + flag;
             row += pad(valueStr, 12) + '  ';
           } else {
             row += pad('—', 12) + '  ';
@@ -1610,7 +1610,7 @@
           const isHigh = refHigh != null && d.value > refHigh;
           const isLow = refLow != null && d.value < refLow;
           const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
-          return (d.value.toFixed(2) + flag).length;
+          return (d.value + flag).length;
         }));
 
         const header = labName || 'Lab Value';
@@ -1620,8 +1620,8 @@
           const isHigh = refHigh != null && d.value > refHigh;
           const isLow = refLow != null && d.value < refLow;
 
-          const rawValue = d.value.toFixed(2);
-          const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
+          const rawValue = d.value;
+          const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '';
           const paddedValue = (rawValue + flag).padEnd(maxValueWidth);
 
           let valueStr;
@@ -1926,7 +1926,7 @@
             const isLow = col.refLow != null && dp.value < col.refLow;
             const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
 
-            tooltip.textContent = `${seriesName}: ${dp.value.toFixed(2)}${flag} @ ${formatDate(dp.date)}`;
+            tooltip.textContent = `${seriesName}: ${dp.value}${flag} @ ${formatDate(dp.date)}`;
             tooltip.style.display = 'block';
 
             // Make point larger and add/enhance stroke
@@ -2175,7 +2175,7 @@
         point.addEventListener('mouseenter', (e) => {
           const idx = parseInt(point.getAttribute('data-index'), 10);
           const d = dataPoints[idx];
-          tooltip.textContent = `${formatDate(d.date)}: ${d.value.toFixed(2)} mg/dL`;
+          tooltip.textContent = `${formatDate(d.date)}: ${d.value} mg/dL`;
           tooltip.style.display = 'block';
         });
 
