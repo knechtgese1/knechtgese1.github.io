@@ -100,6 +100,7 @@
       border: 1px solid #ccc;
       box-sizing: border-box;
       white-space: pre-wrap;
+      line-height: 1.4;
     }
     #outputArea .high {
       color: red;
@@ -108,6 +109,36 @@
     #outputArea .low {
       color: blue;
       font-weight: bold;
+    }
+    #outputArea.plain-text-mode {
+      background: #ffffff;
+      border: 2px solid #777;
+      line-height: 1.3;
+    }
+    .plain-text-section {
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .plain-text-header {
+      position: relative;
+      margin-bottom: 4px;
+      text-align: right;
+    }
+    .plain-text-copy-btn {
+      padding: 2px 8px;
+      font-size: 10px;
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .plain-text-copy-btn:hover {
+      background-color: #5a6268;
+    }
+    .plain-text-content {
+      white-space: pre;
     }
     .right {
       width: 60%;
@@ -363,7 +394,10 @@
       <div class="output-section">
         <div class="input-header">
           <h4>Formatted Output</h4>
-          <button class="paste-btn" id="copyOutputBtn">Copy All</button>
+          <div class="input-buttons">
+            <button class="paste-btn" id="toggleFormatBtn">Plain Text</button>
+            <button class="paste-btn" id="copyOutputBtn">Copy All</button>
+          </div>
         </div>
         <div id="outputArea"></div>
       </div>
@@ -407,6 +441,7 @@
     const pasteBtn = document.getElementById('pasteBtn');
     const clearBtn = document.getElementById('clearBtn');
     const copyOutputBtn = document.getElementById('copyOutputBtn');
+    const toggleFormatBtn = document.getElementById('toggleFormatBtn');
     const statusEl = document.getElementById('status');
     const chartContainer = document.getElementById('chartContainer');
     const tooltip = document.getElementById('tooltip');
@@ -420,6 +455,9 @@
     const startDateSelect = document.getElementById('startDateSelect');
     const endDateSelect = document.getElementById('endDateSelect');
     const columnSelector = document.getElementById('columnSelector');
+
+    // Output format state
+    let isPlainTextFormat = false;
 
     // Chart margins
     const margin = { top: 20, right: 30, bottom: 50, left: 60 };
@@ -568,6 +606,15 @@
         console.error('Copy failed:', err);
         alert('Failed to copy to clipboard. Please select and copy manually (Ctrl+C / Cmd+C).');
       }
+    });
+
+    // Toggle format button handler
+    toggleFormatBtn.addEventListener('click', () => {
+      isPlainTextFormat = !isPlainTextFormat;
+      toggleFormatBtn.textContent = isPlainTextFormat ? 'Table View' : 'Plain Text';
+
+      // Regenerate output with current format
+      generateFormattedOutput(fullParsedData);
     });
 
     function parseData(text) {
@@ -1170,6 +1217,39 @@
       }
     };
 
+    window.copyPlainTextCategory = async function(category) {
+      // Find the plain text section for this category
+      const section = document.querySelector(`.plain-text-section[data-category="${category}"]`);
+      if (!section) return;
+
+      const contentDiv = section.querySelector('.plain-text-content');
+      if (!contentDiv) return;
+
+      try {
+        // Get the plain text from the data attribute
+        const plainText = decodeURIComponent(contentDiv.getAttribute('data-plain-text'));
+
+        // Copy as plain text only
+        await navigator.clipboard.writeText(plainText);
+
+        // Visual feedback
+        const button = section.querySelector('.plain-text-copy-btn');
+        if (button) {
+          const originalText = button.textContent;
+          const originalColor = button.style.backgroundColor;
+          button.textContent = 'Copied!';
+          button.style.backgroundColor = '#28a745';
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.style.backgroundColor = originalColor;
+          }, 1500);
+        }
+      } catch (err) {
+        console.error('Copy failed:', err);
+        alert('Failed to copy text. Please select and copy manually.');
+      }
+    };
+
     function generateCategorizedOutput(parsed) {
       if (!parsed || parsed.type !== 'table') {
         return null;
@@ -1394,11 +1474,125 @@
       renderChart(filteredParsed);
     }
 
+    function pad(str, width) {
+      // Right-align by padding on the left with spaces
+      const s = String(str);
+      return s.length >= width ? s : ' '.repeat(width - s.length) + s;
+    }
+
+    function generatePlainTextForCategory(parsed, category, cols) {
+      // Helper function to generate plain text for a single category
+      let plainText = category.toUpperCase() + ':\n';
+
+      // Get all unique dates across all columns in this category
+      const allDates = new Set();
+      for (const col of cols) {
+        for (const dataPoint of parsed.seriesData[col.name]) {
+          allDates.add(dataPoint.date.getTime());
+        }
+      }
+      const sortedDates = Array.from(allDates).map(t => new Date(t)).sort((a, b) => b - a);
+
+      // Build header row with column names (truncate long names)
+      let headerRow = '            ';  // Date column spacing (12 chars for date)
+      for (const col of cols) {
+        const colName = col.name.length > 10 ? col.name.substring(0, 10) : col.name;
+        headerRow += pad(colName, 12) + '  ';
+      }
+      plainText += headerRow.trimEnd() + '\n';
+
+      // Build data rows
+      for (const date of sortedDates) {
+        const dateStr = formatDate(date).padEnd(10);  // Fixed width date
+        let row = dateStr + '  ';
+
+        for (const col of cols) {
+          const dataPoint = parsed.seriesData[col.name].find(dp => dp.date.getTime() === date.getTime());
+          if (dataPoint) {
+            const isHigh = col.refHigh != null && dataPoint.value > col.refHigh;
+            const isLow = col.refLow != null && dataPoint.value < col.refLow;
+            const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
+            const valueStr = dataPoint.value.toFixed(2) + flag;
+            row += pad(valueStr, 12) + '  ';
+          } else {
+            row += pad('—', 12) + '  ';
+          }
+        }
+
+        plainText += row.trimEnd() + '\n';
+      }
+
+      return plainText;
+    }
+
+    function generatePlainTextOutput(parsed) {
+      if (!parsed || parsed.type !== 'table') {
+        return null;
+      }
+
+      // Group columns by category
+      const categorized = {};
+      for (const col of parsed.columns) {
+        const cat = col.category || 'Other';
+        if (!categorized[cat]) categorized[cat] = [];
+        categorized[cat].push(col);
+      }
+
+      let html = '';
+
+      const sortedCategories = Object.keys(categorized).sort((a, b) => {
+        if (a === 'Other') return 1;
+        if (b === 'Other') return -1;
+        return a.localeCompare(b);
+      });
+
+      for (const category of sortedCategories) {
+        if (categorized[category].length === 0) continue;
+
+        const cols = categorized[category];
+        const plainText = generatePlainTextForCategory(parsed, category, cols);
+
+        // Convert to HTML with proper formatting and add copy button
+        let sectionHtml = plainText
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/\(H\)/g, '<span class="high">(H)</span>')
+          .replace(/\(L\)/g, '<span class="low">(L)</span>');
+
+        html += `<div class="plain-text-section" data-category="${category}">`;
+        html += `<div class="plain-text-header">`;
+        html += `<button class="output-table-copy-btn plain-text-copy-btn" onclick="copyPlainTextCategory('${category}')">Copy</button>`;
+        html += `</div>`;
+        html += `<div class="plain-text-content" data-plain-text="${encodeURIComponent(plainText)}">${sectionHtml}</div>`;
+        html += `</div>`;
+      }
+
+      return html;
+    }
+
     function generateFormattedOutput(parsed) {
       if (!parsed) {
         outputArea.innerHTML = '<span style="color: #999;">No data to display</span>';
+        outputArea.classList.remove('plain-text-mode');
         return;
       }
+
+      // Plain text format
+      if (isPlainTextFormat && parsed.type === 'table') {
+        const html = generatePlainTextOutput(parsed);
+        if (html) {
+          outputArea.innerHTML = html;
+          outputArea.style.fontFamily = 'Courier, monospace';
+          outputArea.style.fontSize = '11px';
+          outputArea.classList.add('plain-text-mode');
+          return;
+        }
+      }
+
+      // Reset font styling for table view
+      outputArea.style.fontFamily = 'monospace';
+      outputArea.style.fontSize = '14px';
+      outputArea.classList.remove('plain-text-mode');
 
       if (parsed.type === 'table') {
         // Generate categorized table output
