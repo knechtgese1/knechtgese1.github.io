@@ -1621,7 +1621,7 @@
           const isLow = refLow != null && d.value < refLow;
 
           const rawValue = d.value;
-          const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '';
+          const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
           const paddedValue = (rawValue + flag).padEnd(maxValueWidth);
 
           let valueStr;
