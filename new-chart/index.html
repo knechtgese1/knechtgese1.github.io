@@ -477,62 +477,164 @@
 
     // Lab test categorization (based on CPRS formatter)
     const labCategories = {
-      'Chemistry': [
-        'SODIUM', 'POTASSIUM', 'CHLORIDE', 'CO2', 'CARBON DIOXIDE',
+      'Chem': [
         'CREATININE', 'CREATININE-E', 'CREATININE,SERUM', 'CREATININE, SERUM',
+        'SODIUM', 'POTASSIUM', 'CHLORIDE', 'CO2', 'CARBON DIOXIDE',
         'UREA NITROGEN', 'UREA NITROGEN, BLOOD', 'BUN',
-        'GLUCOSE', 'ANCILLARY GLUCOSE', 'GLU POC', 'FASTING GLUCOSE',
-        'CALCIUM', 'MAGNESIUM', 'MAG', 'PHOSPHORUS', 'PO4,SERUM', 'PHOS',
-        'ANION GAP', 'ANION GAP(POC)',
-        'ALBUMIN', 'ALBUMIN,ELECT.', 'PROTEIN, TOTAL', 'PROTEIN,SERUM', 'TOTAL PROTEIN,SERUM',
-        'EGFR', 'EGFR(IDMS)', 'EGFR(DC\'D 4-16-10)',
-        'OSMOLALITY', 'LACTATE', 'LACTIC', 'LACTIC ACID'
+        'CALCIUM', 'MAGNESIUM', 'MAG', 'PHOSPHORUS', 'PO4,SERUM', 'PHOS'
+      ],
+      'CBC': [
+        'WBC', 'HEMOGLOBIN', 'HGB', 'HEMATOCRIT', 'HCT',
+        'PLATELET', 'PLT', 'MCV'
+      ],
+      'Diff': [
+        'ABSOLUTE NEUTROPHIL COUNT', 'ABSOLUTE GRANULOCYTES', 'ANC', 'PMN', 'NEUTROPHIL %',
+        'ABSOLUTE LYMPHOCYTE COUNT', 'ABSOLUTE LYMPHOCYTES', 'ALC', 'LYMPH', 'LYMPHOCYTE %',
+        'ABSOLUTE MONOCYTES', 'AMC', 'MONO', 'MONOCYTE %',
+        'ABSOLUTE EOS.', 'AEC', 'EOS', 'EOSINOPHIL %', 'EOS %',
+        'ABSOLUTE BASOPHILS', 'ABC', 'BASO', 'BASOPHIL %',
+        'BANDS', 'PROMYELOCYTES', 'MYELOCYTES', 'METAMYELOCYTES', 'BLASTS'
       ],
       'Liver': [
-        'ALT', 'ALT(SGPT)', 'AST', 'AST(SGOT)', 'SGOT', 'SGPT',
+        'AST', 'AST(SGOT)', 'SGOT',
+        'ALT', 'ALT(SGPT)', 'SGPT',
         'ALKALINE PHOSPHATASE', 'ALP', 'ALK', 'ALK PHO',
         'BILIRUBIN, TOTAL', 'TOTAL BILIRUBIN', 'TOT. BILIRUBIN', 'TBIL',
         'DIRECT BILIRUBIN', 'DIR. BILIRUBIN', 'DBIL',
-        'GGT', 'GAMMA GLUTAMYLTRANSFERASE',
-        'AMMONIA', 'LIPASE', 'AMYLASE', 'PREALBUMIN'
+        'ALBUMIN', 'ALBUMIN,ELECT.',
+        'PROTEIN, TOTAL', 'PROTEIN,SERUM', 'TOTAL PROTEIN,SERUM',
+        'AMMONIA'
       ],
-      'Hematology': [
-        'WBC', 'RBC', 'HEMOGLOBIN', 'HGB', 'HEMATOCRIT', 'HCT',
-        'PLATELET', 'PLT', 'MCV', 'MCH', 'MCHC', 'RDW', 'MPV',
-        'ABSOLUTE NEUTROPHIL COUNT', 'ABSOLUTE GRANULOCYTES', 'ANC',
-        'ABSOLUTE LYMPHOCYTE COUNT', 'ABSOLUTE LYMPHOCYTES', 'ALC',
-        'ABSOLUTE MONOCYTES', 'AMC', 'ABSOLUTE EOS.', 'AEC',
-        'ABSOLUTE BASOPHILS', 'ABC',
-        'NEUTROPHIL %', 'LYMPHOCYTE %', 'MONOCYTE %', 'EOSINOPHIL %', 'BASOPHIL %',
-        'EOS %', 'IG %',
-        'RETICULOCYTES (%)', 'ABSOLUTE RETIC COUNT', 'RETIC %', 'ABS RETIC #'
+      'Coags': [
+        'PT', 'INR', 'PTT', 'FIBRINOGEN', 'D-DIMER'
       ],
-      'Coagulation': [
-        'PT', 'PTT', 'INR', 'FIBRINOGEN',
-        'ANTI-XA LMW HEPARIN', 'ANTI-XA UF HEPARIN', 'ANTI-XA LMWH', 'ANTI-XA UFH',
-        'THROMBIN TIME', 'D-DIMER'
+      'Cardiac': [
+        'TROPONIN I', 'TROPONIN-I', 'TROP I',
+        'CK-MB', 'MB-AG',
+        'CREATINE KINASE', 'CK', 'CPK',
+        'BNP'
+      ],
+      'Lipid-A1c': [
+        'HEMOGLOBIN A1C', 'HGB A1C', 'A1C',
+        'CHOLESTEROL', 'CHOL',
+        'LDL', 'LDL CHOLESTEROL (CALC)', 'LDL,DIRECT',
+        'HDL', 'HDL CHOLESTEROL',
+        'TRIGLYCERIDE', 'TG',
+        'VLDL'
       ],
       'Endocrine': [
         'TSH', 'T4,FREE', 'FREE T4', 'T-4', 'FREE T3',
-        'HEMOGLOBIN A1C', 'HGB A1C', 'A1C',
         'PTH', 'PTH (INTACT)', 'PTH (INTACT)QUEST',
         'VITAMIN D,TOTAL(SCREEN)', 'VITAMIN D TOTAL(SCREEN)', 'TOTAL VIT D', 'VIT D 25-OH(WRJ)',
         'CORTISOL AM', 'CORTISOL PM', 'ACTH',
         'RENIN ACTIVITY', 'RENIN ACTIVITY(PRA)', 'RENIN ACTIVITY, PLASMA(PRA)',
         'ALDOSTERONE', 'ALDOSTERONE,PLASMA', 'ALDOSTERONE,SERUM'
       ],
-      'Cardiac': [
-        'TROPONIN I', 'TROPONIN-I', 'TROP I',
-        'BNP', 'CK-MB', 'MB-AG',
-        'CREATINE KINASE', 'CK', 'CPK',
-        'CRP,CARDIAC RISK', 'CARDIAC CRP'
-      ],
-      'Lipids': [
-        'CHOLESTEROL', 'CHOL', 'TRIGLYCERIDE', 'TG',
-        'HDL', 'HDL CHOLESTEROL',
-        'LDL', 'LDL CHOLESTEROL (CALC)', 'LDL,DIRECT'
-      ],
       'Other': []
+    };
+
+    // Short headers for plain text output (matching CPRS formatter)
+    const shortHeaders = {
+      'CREATININE': 'Cr',
+      'CREATININE-E': 'Cr',
+      'CREATININE,SERUM': 'Cr',
+      'CREATININE, SERUM': 'Cr',
+      'SODIUM': 'Na',
+      'POTASSIUM': 'K',
+      'CHLORIDE': 'Cl',
+      'CO2': 'CO2',
+      'CARBON DIOXIDE': 'CO2',
+      'UREA NITROGEN': 'BUN',
+      'UREA NITROGEN, BLOOD': 'BUN',
+      'BUN': 'BUN',
+      'CALCIUM': 'Ca',
+      'MAGNESIUM': 'Mg',
+      'MAG': 'Mg',
+      'PHOSPHORUS': 'PO4',
+      'PO4,SERUM': 'PO4',
+      'PHOS': 'PO4',
+      'WBC': 'WBC',
+      'HEMOGLOBIN': 'Hgb',
+      'HGB': 'Hgb',
+      'HEMATOCRIT': 'Hct',
+      'HCT': 'Hct',
+      'PLATELET': 'Plt',
+      'PLT': 'Plt',
+      'MCV': 'MCV',
+      'ABSOLUTE NEUTROPHIL COUNT': 'PMN',
+      'ABSOLUTE GRANULOCYTES': 'PMN',
+      'ANC': 'PMN',
+      'PMN': 'PMN',
+      'NEUTROPHIL %': 'PMN',
+      'ABSOLUTE LYMPHOCYTE COUNT': 'Lymph',
+      'ABSOLUTE LYMPHOCYTES': 'Lymph',
+      'ALC': 'Lymph',
+      'LYMPH': 'Lymph',
+      'LYMPHOCYTE %': 'Lymph',
+      'ABSOLUTE MONOCYTES': 'Mono',
+      'AMC': 'Mono',
+      'MONO': 'Mono',
+      'MONOCYTE %': 'Mono',
+      'ABSOLUTE EOS.': 'Eos',
+      'AEC': 'Eos',
+      'EOS': 'Eos',
+      'EOSINOPHIL %': 'Eos',
+      'EOS %': 'Eos',
+      'ABSOLUTE BASOPHILS': 'Baso',
+      'ABC': 'Baso',
+      'BASO': 'Baso',
+      'BASOPHIL %': 'Baso',
+      'BANDS': 'Bands',
+      'AST': 'AST',
+      'AST(SGOT)': 'AST',
+      'SGOT': 'AST',
+      'ALT': 'ALT',
+      'ALT(SGPT)': 'ALT',
+      'SGPT': 'ALT',
+      'ALKALINE PHOSPHATASE': 'ALK',
+      'ALP': 'ALK',
+      'ALK': 'ALK',
+      'ALK PHO': 'ALK',
+      'BILIRUBIN, TOTAL': 'TBil',
+      'TOTAL BILIRUBIN': 'TBil',
+      'TOT. BILIRUBIN': 'TBil',
+      'TBIL': 'TBil',
+      'DIRECT BILIRUBIN': 'DBil',
+      'DIR. BILIRUBIN': 'DBil',
+      'DBIL': 'DBil',
+      'ALBUMIN': 'Albumin',
+      'ALBUMIN,ELECT.': 'Albumin',
+      'PROTEIN, TOTAL': 'Protein',
+      'PROTEIN,SERUM': 'Protein',
+      'TOTAL PROTEIN,SERUM': 'Protein',
+      'AMMONIA': 'Ammonia',
+      'PT': 'PT',
+      'INR': 'INR',
+      'PTT': 'PTT',
+      'FIBRINOGEN': 'Fibrinogen',
+      'D-DIMER': 'D-dimer',
+      'TROPONIN I': 'Trop I',
+      'TROPONIN-I': 'Trop I',
+      'TROP I': 'Trop I',
+      'CK-MB': 'CK-MB',
+      'MB-AG': 'CK-MB',
+      'CREATINE KINASE': 'CK',
+      'CK': 'CK',
+      'CPK': 'CK',
+      'BNP': 'BNP',
+      'HEMOGLOBIN A1C': 'A1c',
+      'HGB A1C': 'A1c',
+      'A1C': 'A1c',
+      'CHOLESTEROL': 'CHOL',
+      'CHOL': 'CHOL',
+      'LDL': 'LDL',
+      'LDL CHOLESTEROL (CALC)': 'LDL',
+      'LDL,DIRECT': 'LDL',
+      'HDL': 'HDL',
+      'HDL CHOLESTEROL': 'HDL',
+      'TRIGLYCERIDE': 'TG',
+      'TG': 'TG',
+      'VLDL': 'VLDL'
     };
 
     function categorizeLabTest(testName) {
@@ -1065,12 +1167,9 @@
 
       let html = '<h4>Select Columns to Display</h4>';
 
-      // Render by category
-      const sortedCategories = Object.keys(categorized).sort((a, b) => {
-        if (a === 'Other') return 1;
-        if (b === 'Other') return -1;
-        return a.localeCompare(b);
-      });
+      // Order categories to match CPRS formatter
+      const categoryOrder = ['Chem', 'CBC', 'Diff', 'Cardiac', 'Liver', 'Coags', 'Lipid-A1c', 'Endocrine', 'Other'];
+      const sortedCategories = categoryOrder.filter(cat => categorized[cat]);
 
       for (const category of sortedCategories) {
         if (categorized[category].length === 0) continue;
@@ -1265,11 +1364,9 @@
 
       let html = '';
 
-      const sortedCategories = Object.keys(categorized).sort((a, b) => {
-        if (a === 'Other') return 1;
-        if (b === 'Other') return -1;
-        return a.localeCompare(b);
-      });
+      // Order categories to match CPRS formatter
+      const categoryOrder = ['Chem', 'CBC', 'Diff', 'Cardiac', 'Liver', 'Coags', 'Lipid-A1c', 'Endocrine', 'Other'];
+      const sortedCategories = categoryOrder.filter(cat => categorized[cat]);
 
       for (const category of sortedCategories) {
         if (categorized[category].length === 0) continue;
@@ -1443,6 +1540,12 @@
     function renderChartWithDateRange() {
       if (!fullParsedData) return;
 
+      // If this is table data, use the multi-series rendering instead
+      if (fullParsedData.type === 'table') {
+        renderChartFromParsedData();
+        return;
+      }
+
       const startIdx = parseInt(startDateSelect.value, 10);
       const endIdx = parseInt(endDateSelect.value, 10);
 
@@ -1475,13 +1578,18 @@
     }
 
     function pad(str, width) {
-      // Right-align by padding on the left with spaces
+      // Right-align by padding on the left with spaces (matching CPRS formatter)
       const s = String(str);
       return s.length >= width ? s : ' '.repeat(width - s.length) + s;
     }
 
+    function replaceHTMLTags(str) {
+      // Remove HTML tags to get actual text length
+      return str.replace(/<[^>]*>/g, '');
+    }
+
     function generatePlainTextForCategory(parsed, category, cols) {
-      // Helper function to generate plain text for a single category
+      // Helper function to generate plain text for a single category (matching CPRS formatter)
       let plainText = category.toUpperCase() + ':\n';
 
       // Get all unique dates across all columns in this category
@@ -1493,32 +1601,54 @@
       }
       const sortedDates = Array.from(allDates).map(t => new Date(t)).sort((a, b) => b - a);
 
-      // Build header row with column names (truncate long names)
-      let headerRow = '            ';  // Date column spacing (12 chars for date)
+      // Build header row using short column names
+      let headerRow = '';
       for (const col of cols) {
-        const colName = col.name.length > 10 ? col.name.substring(0, 10) : col.name;
-        headerRow += pad(colName, 12) + '  ';
+        const originalName = col.name.toUpperCase();
+        const shortName = shortHeaders[originalName] || col.name;
+        const colWidth = Math.max(6, shortName.length + 1);
+        headerRow += shortName + ' '.repeat(Math.max(0, colWidth - shortName.length));
       }
       plainText += headerRow.trimEnd() + '\n';
 
+      // Add separator line (matching CPRS formatter width cap of 55 chars)
+      const separatorLength = Math.min(replaceHTMLTags(headerRow).length, 55);
+      plainText += '='.repeat(separatorLength) + '\n';
+
       // Build data rows
       for (const date of sortedDates) {
-        const dateStr = formatDate(date).padEnd(10);  // Fixed width date
-        let row = dateStr + '  ';
+        let row = '';
 
         for (const col of cols) {
+          const originalName = col.name.toUpperCase();
+          const shortName = shortHeaders[originalName] || col.name;
+          const colWidth = Math.max(6, shortName.length + 1);
+
           const dataPoint = parsed.seriesData[col.name].find(dp => dp.date.getTime() === date.getTime());
           if (dataPoint) {
             const isHigh = col.refHigh != null && dataPoint.value > col.refHigh;
             const isLow = col.refLow != null && dataPoint.value < col.refLow;
-            const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
-            const valueStr = dataPoint.value + flag;
-            row += pad(valueStr, 12) + '  ';
+
+            // Build value string with color tags (like CPRS formatter)
+            // NO (H) or (L) text in plain text mode - only color coding
+            let valueStr;
+            if (isHigh) {
+              valueStr = "<span style='color: red; font-weight: bold'>" + dataPoint.value + "</span>";
+            } else if (isLow) {
+              valueStr = "<span style='color: blue; font-weight: bold'>" + dataPoint.value + "</span>";
+            } else {
+              valueStr = String(dataPoint.value);
+            }
+
+            // Pad to column width based on visible text length (excluding HTML tags)
+            const spacesNeeded = Math.max(0, colWidth - replaceHTMLTags(valueStr).length);
+            row += valueStr + ' '.repeat(spacesNeeded);
           } else {
-            row += pad('—', 12) + '  ';
+            row += ' '.repeat(colWidth);
           }
         }
 
+        row += ' @ ' + formatDate(date);
         plainText += row.trimEnd() + '\n';
       }
 
@@ -1540,11 +1670,9 @@
 
       let html = '';
 
-      const sortedCategories = Object.keys(categorized).sort((a, b) => {
-        if (a === 'Other') return 1;
-        if (b === 'Other') return -1;
-        return a.localeCompare(b);
-      });
+      // Order categories to match CPRS formatter
+      const categoryOrder = ['Chem', 'CBC', 'Diff', 'Cardiac', 'Liver', 'Coags', 'Lipid-A1c', 'Endocrine', 'Other'];
+      const sortedCategories = categoryOrder.filter(cat => categorized[cat]);
 
       for (const category of sortedCategories) {
         if (categorized[category].length === 0) continue;
@@ -1552,18 +1680,17 @@
         const cols = categorized[category];
         const plainText = generatePlainTextForCategory(parsed, category, cols);
 
-        // Convert to HTML with proper formatting and add copy button
-        let sectionHtml = plainText
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/\(H\)/g, '<span class="high">(H)</span>')
-          .replace(/\(L\)/g, '<span class="low">(L)</span>');
+        // The plainText contains HTML span tags for coloring when displayed
+        let sectionHtml = plainText;
+
+        // For copying, we need a clean version without HTML tags
+        const plainTextForCopy = plainText.replace(/<[^>]*>/g, '');
 
         html += `<div class="plain-text-section" data-category="${category}">`;
         html += `<div class="plain-text-header">`;
         html += `<button class="output-table-copy-btn plain-text-copy-btn" onclick="copyPlainTextCategory('${category}')">Copy</button>`;
         html += `</div>`;
-        html += `<div class="plain-text-content" data-plain-text="${encodeURIComponent(plainText)}">${sectionHtml}</div>`;
+        html += `<div class="plain-text-content" data-plain-text="${encodeURIComponent(plainTextForCopy)}">${sectionHtml}</div>`;
         html += `</div>`;
       }
 
