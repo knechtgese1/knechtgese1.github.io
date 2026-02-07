@@ -435,15 +435,19 @@
     }
     .date-range-controls {
       display: flex;
-      gap: 15px;
-      align-items: center;
+      flex-direction: column; /* avoid pushing controls off-screen in narrow right pane */
+      gap: 8px;
+      align-items: flex-start;
       margin-bottom: 8px;
       font-size: 12px;
+      width: 100%;
+      box-sizing: border-box;
     }
     .date-range-controls label {
       display: flex;
       align-items: center;
       gap: 6px;
+      width: 100%;
     }
     .date-range-controls select {
       padding: 4px 8px;
@@ -452,6 +456,9 @@
       border-radius: 4px;
       background: white;
       cursor: pointer;
+      width: 100%;
+      max-width: 220px;
+      box-sizing: border-box;
     }
   </style>
 </head>
