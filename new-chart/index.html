@@ -513,6 +513,17 @@
       </div>
       <div id="trendInfo" style="font-size: 12px; color: #666; margin-bottom: 4px; display: none;"></div>
       <div class="date-range-controls" id="dateRangeControls" style="display: none;">
+        <div style="display:flex; gap:12px; align-items:center; margin-bottom:6px; flex-wrap:wrap;">
+          <span style="font-weight:600;">Range:</span>
+          <label style="display:flex; align-items:center; gap:6px;">
+            <input type="radio" name="rangePreset" id="rangeWeek" value="week" />
+            Week
+          </label>
+          <label style="display:flex; align-items:center; gap:6px;">
+            <input type="radio" name="rangePreset" id="rangeAll" value="all" checked />
+            All
+          </label>
+        </div>
         <label>
           Start date:
           <select id="startDateSelect"></select>
@@ -544,6 +555,8 @@
     const outputArea = document.getElementById('outputArea');
     const legendLabel = document.getElementById('legendLabel');
     const dateRangeControls = document.getElementById('dateRangeControls');
+    const rangeWeekRadio = document.getElementById('rangeWeek');
+    const rangeAllRadio = document.getElementById('rangeAll');
     const startDateSelect = document.getElementById('startDateSelect');
     const endDateSelect = document.getElementById('endDateSelect');
     const columnSelector = document.getElementById('columnSelector');
@@ -573,6 +586,49 @@
 
     // Output format state
     let isPlainTextFormat = false;
+
+    // Date range preset (CPRS-Formatter uses Date.now()-7*msDay for "week")
+    let rangePreset = 'all'; // 'all' | 'week'
+
+    const msDay = 86400000;
+    function isWithinPresetRange(date) {
+      if (rangePreset !== 'week') return true;
+      return date.getTime() > Date.now() - 7 * msDay;
+    }
+
+    function applyRangePresetToDropdowns() {
+      if (!fullParsedData) return;
+
+      // Determine the ordered list of available dates.
+      let dates = [];
+      if (fullParsedData.type === 'single' && fullParsedData.dateGroups) {
+        dates = fullParsedData.dateGroups.map(g => g.date);
+      } else if (fullParsedData.type === 'table') {
+        dates = getAllDatesFromTableData(fullParsedData);
+      }
+      if (dates.length === 0) return;
+
+      // Default: all
+      if (rangePreset === 'all') {
+        startDateSelect.value = '0';
+        endDateSelect.value = (dates.length - 1).toString();
+        validateAndApplyDateRange();
+        return;
+      }
+
+      // Week: start at the earliest date that is within last 7 days.
+      const threshold = Date.now() - 7 * msDay;
+      let startIdx = 0;
+      for (let i = 0; i < dates.length; i++) {
+        if (dates[i].getTime() >= threshold) {
+          startIdx = i;
+          break;
+        }
+      }
+      startDateSelect.value = startIdx.toString();
+      endDateSelect.value = (dates.length - 1).toString();
+      validateAndApplyDateRange();
+    }
 
     // Chart margins
     const margin = { top: 20, right: 30, bottom: 50, left: 60 };
@@ -1130,6 +1186,10 @@
       // This happens automatically whenever new data is pasted
       startDateSelect.value = '0';
       endDateSelect.value = (uniqueDates.length - 1).toString();
+
+      // Reset preset to All when new data arrives
+      rangePreset = 'all';
+      if (rangeAllRadio) rangeAllRadio.checked = true;
     }
 
     function validateAndApplyDateRange() {
@@ -1174,8 +1234,31 @@
     }
 
     // Event listeners for date range dropdowns
-    startDateSelect.addEventListener('change', validateAndApplyDateRange);
-    endDateSelect.addEventListener('change', validateAndApplyDateRange);
+    startDateSelect.addEventListener('change', () => {
+      // If user manually adjusts dropdowns, switch preset to "all" to match intent.
+      rangePreset = 'all';
+      rangeAllRadio.checked = true;
+      validateAndApplyDateRange();
+    });
+    endDateSelect.addEventListener('change', () => {
+      rangePreset = 'all';
+      rangeAllRadio.checked = true;
+      validateAndApplyDateRange();
+    });
+
+    // Preset radios (CPRS-Formatter behavior is relative to Date.now())
+    rangeWeekRadio.addEventListener('change', () => {
+      if (rangeWeekRadio.checked) {
+        rangePreset = 'week';
+        applyRangePresetToDropdowns();
+      }
+    });
+    rangeAllRadio.addEventListener('change', () => {
+      if (rangeAllRadio.checked) {
+        rangePreset = 'all';
+        applyRangePresetToDropdowns();
+      }
+    });
 
     function niceScale(min, max, ticks = 5) {
       const range = max - min;
@@ -1512,6 +1595,7 @@
         html += `</tr>`;
 
         for (const date of sortedDates) {
+          if (!isWithinPresetRange(date)) continue;
           html += `<tr><td>${formatDate(date)}</td>`;
 
           for (const col of cols) {
@@ -1555,6 +1639,7 @@
 
         if (parsed.dateGroups && parsed.dateGroups.length > 0) {
           populateDateDropdowns(parsed.dateGroups);
+          applyRangePresetToDropdowns();
           renderChartWithDateRange();
         } else {
           renderChart(null);
@@ -1568,6 +1653,7 @@
         if (allDates.length > 0) {
           dateRangeControls.style.display = 'flex';
           populateDateDropdownsFromDates(allDates);
+          applyRangePresetToDropdowns();
         } else {
           dateRangeControls.style.display = 'none';
         }
@@ -1608,6 +1694,10 @@
       // Reset to show full date range (earliest to latest)
       startDateSelect.value = '0';
       endDateSelect.value = (dates.length - 1).toString();
+
+      // Reset preset to All when new data arrives
+      rangePreset = 'all';
+      if (rangeAllRadio) rangeAllRadio.checked = true;
     }
 
     function renderChartFromParsedData() {
@@ -1648,6 +1738,8 @@
         if (startDate && endDate) {
           seriesPoints = seriesPoints.filter(dp => dp.date >= startDate && dp.date <= endDate);
         }
+        // Also apply preset (CPRS week) filter
+        seriesPoints = seriesPoints.filter(dp => isWithinPresetRange(dp.date));
         multiSeriesData.seriesData[col.name] = seriesPoints;
       }
 
@@ -1678,7 +1770,7 @@
       // Filter dataPoints to include only those within the selected range
       // Note: dataPoints may have interpolated dates for multiple values per day
       const filteredDataPoints = fullParsedData.dataPoints.filter(dp => {
-        return dp.date >= startDate && dp.date <= endDateInclusive;
+        return dp.date >= startDate && dp.date <= endDateInclusive && isWithinPresetRange(dp.date);
       });
 
       // Create a filtered version of the parsed data
@@ -1767,6 +1859,7 @@
 
       // Build data rows
       for (const date of sortedDates) {
+        if (!isWithinPresetRange(date)) continue;
         let row = '';
 
         for (const col of cols) {
