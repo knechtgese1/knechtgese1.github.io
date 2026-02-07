@@ -6,13 +6,68 @@
   <style>
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: rgb(255, 251, 240); /* CPRS-ish */
       height: 100vh;
-      display: flex;
+      overflow: hidden;
     }
+
+    /* CPRS-style app frame */
+    .app-frame {
+      width: 870px;
+      height: calc(100vh - 20px);
+      margin: 10px auto;
+      border-radius: 5px;
+      border-width: 1px 2px 2px 1px;
+      border-style: solid;
+      border-color: rgb(221, 221, 221) rgb(153, 153, 153) rgb(153, 153, 153) rgb(221, 221, 221);
+      background-color: rgb(240, 240, 240);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .titlebar {
+      height: 22px;
+      line-height: 22px;
+      padding: 0 10px;
+      font-size: 11px;
+      font-weight: bold;
+      color: black;
+      border-bottom: 1px solid white;
+      background: linear-gradient(rgb(152,180,208),rgb(185,209,234));
+      flex: 0 0 auto;
+      user-select: none;
+    }
+
+    .tabbar {
+      display: flex;
+      gap: 6px;
+      padding: 6px 8px;
+      border-bottom: 1px solid #ccc;
+      background: #f2f2f2;
+      flex: 0 0 auto;
+    }
+
+    .tabbar button {
+      padding: 4px 10px;
+      font-size: 12px;
+      border: 1px solid #999;
+      background: #e6e6e6;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .tabbar button.active {
+      background: white;
+      border-color: #777;
+    }
+
     .container {
       display: flex;
       flex: 1;
+      min-height: 0;
     }
     .left, .right {
       padding: 12px;
@@ -85,7 +140,7 @@
       width: 100%;
       resize: none;
       font-family: monospace;
-      font-size: 14px;
+      font-size: 11px;
       padding: 8px;
       box-sizing: border-box;
     }
@@ -94,7 +149,7 @@
       width: 100%;
       overflow-y: auto;
       font-family: monospace;
-      font-size: 14px;
+      font-size: 11px;
       padding: 8px;
       background: #f9f9f9;
       border: 1px solid #ccc;
@@ -145,6 +200,34 @@
       width: 60%;
       display: flex;
       flex-direction: column;
+    }
+
+    /* Tabs: Output (formatter-first) vs Graph */
+    body.mode-output .left {
+      width: 70%;
+      border-right: 1px solid #ccc;
+    }
+    body.mode-output .right {
+      width: 30%;
+      display: flex;
+    }
+
+    /* In Formatter tab, keep the column checklist visible but hide the graph UI */
+    body.mode-output #chartContainer,
+    body.mode-output .legend,
+    body.mode-output #trendInfo,
+    body.mode-output #tooltip,
+    body.mode-output #status,
+    body.mode-output .right h3 {
+      display: none !important;
+    }
+
+    body.mode-graph .right {
+      display: flex;
+    }
+    body.mode-graph .left {
+      width: 40%;
+      border-right: 1px solid #ccc;
     }
     #status {
       font-size: 12px;
@@ -351,17 +434,29 @@
       border: 1px solid #ddd;
     }
     .date-range-controls {
-      display: flex;
-      gap: 15px;
-      align-items: center;
+      display: block;
       margin-bottom: 8px;
       font-size: 12px;
+      width: 100%;
+      box-sizing: border-box;
     }
-    .date-range-controls label {
-      display: flex;
+
+    .date-grid {
+      display: grid;
+      grid-template-columns: 78px 1fr;
+      column-gap: 10px;
+      row-gap: 8px;
       align-items: center;
-      gap: 6px;
+      width: 100%;
     }
+
+    .date-label {
+      text-align: right;
+      color: #333;
+      white-space: nowrap;
+    }
+
+    .date-field select,
     .date-range-controls select {
       padding: 4px 8px;
       font-size: 12px;
@@ -369,11 +464,19 @@
       border-radius: 4px;
       background: white;
       cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
     }
   </style>
 </head>
-<body>
-  <div class="container">
+<body class="mode-output">
+  <div class="app-frame">
+    <div class="titlebar">CPRS Formatter 2.0</div>
+    <div class="tabbar" role="tablist" aria-label="View">
+      <button id="tabOutput" class="active" type="button" role="tab" aria-selected="true">Formatter</button>
+      <button id="tabGraph" type="button" role="tab" aria-selected="false">Graph</button>
+    </div>
+    <div class="container">
     <div class="left">
       <div class="input-section">
         <div class="input-header">
@@ -423,18 +526,17 @@
       </div>
       <div id="trendInfo" style="font-size: 12px; color: #666; margin-bottom: 4px; display: none;"></div>
       <div class="date-range-controls" id="dateRangeControls" style="display: none;">
-        <label>
-          Start date:
-          <select id="startDateSelect"></select>
-        </label>
-        <label>
-          End date:
-          <select id="endDateSelect"></select>
-        </label>
+        <div class="date-grid">
+          <div class="date-label">Start date:</div>
+          <div class="date-field"><select id="startDateSelect"></select></div>
+          <div class="date-label">End date:</div>
+          <div class="date-field"><select id="endDateSelect"></select></div>
+        </div>
       </div>
       <div id="chartContainer"></div>
       <div class="tooltip" id="tooltip"></div>
     </div>
+  </div>
   </div>
 
   <script>
@@ -457,8 +559,32 @@
     const endDateSelect = document.getElementById('endDateSelect');
     const columnSelector = document.getElementById('columnSelector');
 
+    // Tabs (Formatter vs Graph)
+    const tabOutput = document.getElementById('tabOutput');
+    const tabGraph = document.getElementById('tabGraph');
+
+    function setTab(mode) {
+      document.body.classList.toggle('mode-output', mode === 'output');
+      document.body.classList.toggle('mode-graph', mode === 'graph');
+
+      tabOutput.classList.toggle('active', mode === 'output');
+      tabGraph.classList.toggle('active', mode === 'graph');
+
+      tabOutput.setAttribute('aria-selected', mode === 'output' ? 'true' : 'false');
+      tabGraph.setAttribute('aria-selected', mode === 'graph' ? 'true' : 'false');
+
+      // When switching to graph, re-render to ensure SVG sizes are correct.
+      if (mode === 'graph') {
+        setTimeout(() => renderChartFromParsedData(), 0);
+      }
+    }
+
+    tabOutput.addEventListener('click', () => setTab('output'));
+    tabGraph.addEventListener('click', () => setTab('graph'));
+
     // Output format state
-    let isPlainTextFormat = false;
+    // Default to plain text view (EMR-friendly)
+    let isPlainTextFormat = true;
 
     // Chart margins
     const margin = { top: 20, right: 30, bottom: 50, left: 60 };
@@ -720,6 +846,9 @@
       generateFormattedOutput(fullParsedData);
     });
 
+    // Initialize toggle button label based on default format
+    toggleFormatBtn.textContent = isPlainTextFormat ? 'Table View' : 'Plain Text';
+
     function parseData(text) {
       const lines = text
         .split(/\r?\n/)
@@ -953,11 +1082,13 @@
 
             // Parse values for each column in this table
             for (let j = 1; j < dataParts.length && j - 1 < tableColumns.length; j++) {
-              const valueStr = dataParts[j].replace(/\(H\)|\(L\)/g, '').trim();
+              const raw = dataParts[j];
+              const valueStr = raw.replace(/\(H\)|\(L\)/g, '').trim();
               const value = parseFloat(valueStr);
               if (!isNaN(value)) {
                 const colName = tableColumns[j - 1].name;
-                allSeriesData[colName].push({ date, value });
+                const decimals = countDecimalsFromText(valueStr);
+                allSeriesData[colName].push({ date, value, decimals });
               }
             }
           }
@@ -974,6 +1105,12 @@
 
       // Remove columns with no data
       const validColumns = allColumns.filter(col => allSeriesData[col.name].length > 0);
+
+      // Compute per-column decimal precision (max decimals seen in that column)
+      for (const col of validColumns) {
+        const pts = allSeriesData[col.name] || [];
+        col.decimals = pts.reduce((m, dp) => Math.max(m, dp.decimals || 0), 0);
+      }
 
       return {
         type: 'table',
@@ -1372,7 +1509,9 @@
       for (const category of sortedCategories) {
         if (categorized[category].length === 0) continue;
 
-        const cols = categorized[category];
+        // Respect the column selections (checkboxes) for the text output too.
+        const cols = categorized[category].filter(c => selectedColumns.has(c.name));
+        if (cols.length === 0) continue;
 
         // Get all unique dates across all columns in this category
         const allDates = new Set();
@@ -1405,7 +1544,8 @@
               const isLow = col.refLow != null && dataPoint.value < col.refLow;
               const flag = isHigh ? ' (H)' : (isLow ? ' (L)' : '');
               const colorClass = isHigh ? 'high' : (isLow ? 'low' : '');
-              html += `<td><span class="${colorClass}">${dataPoint.value}${flag}</span></td>`;
+              const formattedValue = formatNumberWithDecimals(dataPoint.value, col.decimals || 0);
+              html += `<td><span class="${colorClass}">${formattedValue}${flag}</span></td>`;
             } else {
               html += `<td>—</td>`;
             }
@@ -1584,6 +1724,19 @@
       return s.length >= width ? s : ' '.repeat(width - s.length) + s;
     }
 
+    function countDecimalsFromText(numText) {
+      const s = String(numText);
+      const idx = s.indexOf('.');
+      return idx === -1 ? 0 : (s.length - idx - 1);
+    }
+
+    function formatNumberWithDecimals(value, decimals) {
+      if (value == null || value === '—') return '—';
+      const n = Number(value);
+      if (!Number.isFinite(n)) return String(value);
+      return decimals > 0 ? n.toFixed(decimals) : String(n);
+    }
+
     function replaceHTMLTags(str) {
       // Remove HTML tags to get actual text length
       return str.replace(/<[^>]*>/g, '');
@@ -1667,11 +1820,13 @@
             // NO (H) or (L) text in plain text mode - only color coding
             let valueStr;
             if (isHigh) {
-              valueStr = "<span style='color: red; font-weight: bold'>" + dataPoint.value + "</span>";
+              const formatted = formatNumberWithDecimals(dataPoint.value, col.decimals || 0);
+              valueStr = "<span style='color: red; font-weight: bold'>" + formatted + "</span>";
             } else if (isLow) {
-              valueStr = "<span style='color: blue; font-weight: bold'>" + dataPoint.value + "</span>";
+              const formatted = formatNumberWithDecimals(dataPoint.value, col.decimals || 0);
+              valueStr = "<span style='color: blue; font-weight: bold'>" + formatted + "</span>";
             } else {
-              valueStr = String(dataPoint.value);
+              valueStr = formatNumberWithDecimals(dataPoint.value, col.decimals || 0);
             }
 
             // Pad to column width based on visible text length (excluding HTML tags)
@@ -1711,7 +1866,10 @@
       for (const category of sortedCategories) {
         if (categorized[category].length === 0) continue;
 
-        const cols = categorized[category];
+        // Respect the column selections (checkboxes) for plain-text output as well.
+        const cols = categorized[category].filter(c => selectedColumns.has(c.name));
+        if (cols.length === 0) continue;
+
         const colGroups = chunkColumnsByWidth(cols, MAX_PLAIN_TEXT_WIDTH);
 
         for (let gi = 0; gi < colGroups.length; gi++) {
@@ -1752,7 +1910,6 @@
         if (html) {
           outputArea.innerHTML = html;
           outputArea.style.fontFamily = 'Courier, monospace';
-          outputArea.style.fontSize = '11px';
           outputArea.classList.add('plain-text-mode');
           return;
         }
@@ -1760,7 +1917,6 @@
 
       // Reset font styling for table view
       outputArea.style.fontFamily = 'monospace';
-      outputArea.style.fontSize = '14px';
       outputArea.classList.remove('plain-text-mode');
 
       if (parsed.type === 'table') {
