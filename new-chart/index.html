@@ -140,7 +140,7 @@
       width: 100%;
       resize: none;
       font-family: monospace;
-      font-size: 14px;
+      font-size: 11px;
       padding: 8px;
       box-sizing: border-box;
     }
@@ -149,7 +149,7 @@
       width: 100%;
       overflow-y: auto;
       font-family: monospace;
-      font-size: 14px;
+      font-size: 11px;
       padding: 8px;
       background: #f9f9f9;
       border: 1px solid #ccc;
@@ -1910,7 +1910,6 @@
         if (html) {
           outputArea.innerHTML = html;
           outputArea.style.fontFamily = 'Courier, monospace';
-          outputArea.style.fontSize = '11px';
           outputArea.classList.add('plain-text-mode');
           return;
         }
@@ -1918,7 +1917,6 @@
 
       // Reset font styling for table view
       outputArea.style.fontFamily = 'monospace';
-      outputArea.style.fontSize = '14px';
       outputArea.classList.remove('plain-text-mode');
 
       if (parsed.type === 'table') {
