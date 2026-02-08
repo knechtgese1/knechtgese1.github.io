@@ -19,6 +19,23 @@
   --font-meter: "Meter";
 }
 
+/* Form controls don't reliably inherit font styling across browsers. */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  line-height: 1.2;
+}
+
+button {
+  padding: 0.35rem 0.75rem;
+}
+
+input[type="number"] {
+  padding: 0.25rem 0.4rem;
+}
+
 @font-face {
   font-family: "Rhythm";
   src: url("./fonts/Rhythm/Rhyth.otf") format("opentype");

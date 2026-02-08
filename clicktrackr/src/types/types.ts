@@ -10,11 +10,21 @@ export type Meter = {
 }
 
 export type Measure = {
-  meter: string | JSX.Element;
+  /** Time signature numerator */
+  num: number;
+  /** Time signature denominator */
+  den: number;
+  /** Optional display glyph (e.g. common time/cut time) */
   display?: string;
-  num?: number;
-  den?: number;
+  /** Optional alt text for the display glyph */
+  alt?: string;
+  /** Rhythm fill string rendered with the Rhythm font (display-oriented) */
   fill: string;
+  /**
+   * Additive grouping in units of the denominator.
+   * Example: 7/8 as 3+2+2 => [3, 2, 2]
+   */
+  grouping?: number[];
 }
 
 export type AdditiveMeter = {
