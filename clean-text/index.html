@@ -149,11 +149,15 @@
             // 4) Clean up any leftover commas (one or more) before periods or other punctuation
             cleaned = cleaned.replace(/(?:,\s*)+([.;:!?])/g, '$1');
 
-            // 5) Clean up double spaces
-            cleaned = cleaned.replace(/\s{2,}/g, ' ');
+            // 5) Ensure bullet lines start on their own line
+            // Example: "... adjustment. 1 - Underwent ..." -> "... adjustment.\n- Underwent ..."
+            cleaned = cleaned.replace(/(\S)[ \t]+-\s+/g, '$1\n- ');
 
-            // 6) Clean up space before punctuation
-            cleaned = cleaned.replace(/\s+([.;:,!?])/g, '$1');
+            // 6) Clean up double spaces (preserve newlines)
+            cleaned = cleaned.replace(/[ \t]{2,}/g, ' ');
+
+            // 7) Clean up space before punctuation (preserve newlines)
+            cleaned = cleaned.replace(/[ \t]+([.;:,!?])/g, '$1');
 
             document.getElementById('output').value = cleaned.trim();
         }
