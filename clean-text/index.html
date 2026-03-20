@@ -105,7 +105,7 @@
 </head>
 <body>
     <h1>Clean Text</h1>
-    <p class="description">Paste text with citation brackets [1], [2], etc. and get a cleaned version without them.</p>
+    <p class="description">Paste text with citations and get a cleaned version. Removes bracketed citations like [1] and also footnote-style trailing numbers like “... text 6,7 8”. Also converts the “” bullet character into “-”.</p>
 
     <div class="input-section">
         <label for="input">Input (paste text with citations):</label>
@@ -127,19 +127,32 @@
         function cleanText() {
             const input = document.getElementById('input').value;
 
-            // Remove HTML anchor tags containing bracketed numbers (with optional trailing comma)
-            let cleaned = input.replace(/<a[^>]*>\s*\[\d+(?:,\s*\d+)*\]\s*<\/a>\s*,?/gi, '');
+            // 0) Normalize the common bullet char from copy/paste into a normal dash bullet.
+            // (The input often contains U+2022/variants; in your sample it’s U+2022-like "".)
+            let cleaned = input.replace(//g, '-');
 
-            // Remove standalone bracketed numbers with optional trailing comma (like "[1]," or "[1,2],")
+            // 1) Remove HTML anchor tags containing bracketed numbers (with optional trailing comma)
+            cleaned = cleaned.replace(/<a[^>]*>\s*\[\d+(?:,\s*\d+)*\]\s*<\/a>\s*,?/gi, '');
+
+            // 2) Remove standalone bracketed numbers with optional trailing comma (like "[1]," or "[1,2],")
             cleaned = cleaned.replace(/\s*\[\d+(?:,\s*\d+)*\]\s*,?/g, '');
 
-            // Clean up any leftover commas (one or more) before periods or other punctuation
+            // 3) Remove footnote-style citation numbers that appear as trailing tokens at end-of-line/paragraph
+            // Examples we want to remove:
+            //   "... plan includes ... 1 - Underwent ..."
+            //   "... addressed ... 6,7 8"
+            //   "... observed. 9,10,11"
+            // Heuristic: remove 1–3 digit number clusters (optionally comma-separated, optionally multiple groups)
+            // when followed by a dash bullet, newline, or end-of-text. Avoid 4-digit years.
+            cleaned = cleaned.replace(/\s+(?:(?:[1-9]\d{0,2})(?:\s*,\s*(?:[1-9]\d{0,2}))*)(?:\s+(?:[1-9]\d{0,2})(?:\s*,\s*(?:[1-9]\d{0,2}))*)*\s*(?=(?:-\s)|\n|$)/g, ' ');
+
+            // 4) Clean up any leftover commas (one or more) before periods or other punctuation
             cleaned = cleaned.replace(/(?:,\s*)+([.;:!?])/g, '$1');
 
-            // Clean up double spaces
+            // 5) Clean up double spaces
             cleaned = cleaned.replace(/\s{2,}/g, ' ');
 
-            // Clean up space before punctuation
+            // 6) Clean up space before punctuation
             cleaned = cleaned.replace(/\s+([.;:,!?])/g, '$1');
 
             document.getElementById('output').value = cleaned.trim();
